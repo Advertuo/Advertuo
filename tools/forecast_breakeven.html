@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entreprise A — Outil Prévision 2024–2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg:#0a0f1a; --card:#111827; --card2:#0f1929; --border:#1e293b; --border2:#2d3748;
+  --pos:#10b981; --neg:#ef4444; --sub:#3b82f6; --tot:#6366f1;
+  --txt:#e2e8f0; --dim:#64748b; --acc:#38bdf8; --gold:#f59e0b; --orange:#fb923c;
+  --mono:'IBM Plex Mono',monospace; --head:'Syne',sans-serif; --sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;font-size:13px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.hdr{background:linear-gradient(135deg,#0b1426 0%,#1a2540 100%);padding:16px 24px 0;border-bottom:1px solid var(--border)}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.logo{width:38px;height:38px;background:linear-gradient(135deg,#0891b2,#1d4ed8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;font-size:13px;color:#fff;letter-spacing:-0.5px;flex-shrink:0}
+.hdr h1{font-family:var(--head);font-size:16px;font-weight:700;color:var(--txt)}
+.hdr p{font-size:10.5px;color:var(--dim);margin-top:2px}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}
+.tab-btn{padding:8px 16px;border-radius:6px 6px 0 0;border:none;background:transparent;color:var(--dim);cursor:pointer;font-size:11px;font-weight:600;font-family:var(--sans);border-bottom:2px solid transparent;transition:all .15s}
+.tab-btn.active{background:rgba(56,189,248,.08);color:var(--acc);border-bottom:2px solid var(--acc)}
+.tab-btn:hover:not(.active){color:var(--txt)}
+.content{padding:20px 24px;max-width:1200px}
+.section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+.section-title{font-family:var(--head);font-size:12px;color:var(--acc);margin-bottom:14px;letter-spacing:0.5px;text-transform:uppercase}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.kpi-lbl{color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-val{font-family:var(--mono);font-size:17px;font-weight:600}
+.kpi-val.pos{color:var(--pos)} .kpi-val.neg{color:var(--neg)} .kpi-val.gold{color:var(--gold)} .kpi-val.acc{color:var(--acc)}
+.kpi-unit{font-size:10px;font-weight:400;color:var(--dim);margin-left:3px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:7px 10px;text-align:right;color:var(--acc);border-bottom:2px solid var(--border);font-weight:600;font-size:10.5px;white-space:nowrap;font-family:var(--sans)}
+th:first-child{text-align:left}
+td{padding:5px 10px;text-align:right;border-bottom:1px solid rgba(30,41,59,.5);font-family:var(--mono);font-size:11.5px;white-space:nowrap}
+td:first-child{text-align:left;font-family:var(--sans);font-size:12px;color:var(--txt)}
+tr.subtotal td{color:var(--sub);font-weight:600;border-top:1px solid var(--border)}
+tr.total td{color:var(--tot);font-weight:700;background:rgba(99,102,241,.05);border-top:2px solid var(--border)}
+tr.section-hdr td{color:var(--gold);font-size:10px;letter-spacing:.5px;text-transform:uppercase;padding-top:12px;padding-bottom:4px;font-family:var(--sans);font-weight:600;background:transparent;border:none}
+tr:hover td{background:rgba(56,189,248,.03)}
+tr.subtotal:hover td,tr.total:hover td{background:rgba(56,189,248,.05)}
+tr.section-hdr:hover td{background:transparent}
+.editable{background:transparent;border:none;border-bottom:1px solid rgba(56,189,248,.35);color:var(--acc);font-family:var(--mono);font-size:11.5px;width:90px;text-align:right;outline:none;padding:1px 3px;transition:border-color .15s}
+.editable:focus{border-bottom-color:var(--acc);background:rgba(56,189,248,.06)}
+.editable.computed{color:var(--dim);border-bottom-style:dashed;pointer-events:none}
+.computed-cell{color:var(--acc);font-family:var(--mono)}
+.computed-cell.pos{color:var(--pos)} .computed-cell.neg{color:var(--neg)}
+.slider-wrap{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px}
+.slider-lbl{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.slider-val{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--acc);margin:4px 0}
+input[type=range]{width:100%;accent-color:var(--acc);height:4px}
+input[type=number]{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.25);border-radius:4px;color:var(--acc);font-family:var(--mono);font-size:12px;padding:4px 8px;outline:none;width:100%}
+input[type=number]:focus{border-color:var(--acc)}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9.5px;font-weight:600;font-family:var(--sans)}
+.badge-pos{background:rgba(16,185,129,.15);color:var(--pos)}
+.badge-neg{background:rgba(239,68,68,.15);color:var(--neg)}
+.badge-gold{background:rgba(245,158,11,.15);color:var(--gold)}
+.toggle-wrap{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.toggle-btn{padding:5px 12px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:10.5px;font-family:var(--sans);font-weight:600;transition:all .15s}
+.toggle-btn.active{border-color:var(--gold);background:rgba(245,158,11,.1);color:var(--gold)}
+.info-box{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:8px;padding:14px;font-size:11.5px;line-height:1.7;color:var(--txt)}
+.info-box h4{color:var(--gold);font-size:11px;margin-bottom:8px;font-family:var(--head)}
+.warn-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:14px;font-size:11.5px;line-height:1.7}
+.warn-box h4{color:var(--neg);font-size:11px;margin-bottom:8px;font-family:var(--head)}
+.flex-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ovx{overflow-x:auto}
+.chart-wrap{overflow-x:auto;margin:8px 0}
+.month-bar-wrap{display:flex;align-items:flex-end;gap:4px;height:120px;padding:4px 0}
+.month-bar{display:flex;flex-direction:column;align-items:center;flex:1;min-width:36px}
+.month-bar-fill{width:100%;background:var(--sub);border-radius:3px 3px 0 0;opacity:.8;transition:height .3s}
+.month-bar-fill:hover{opacity:1}
+.month-bar-val{font-family:var(--mono);font-size:8px;color:var(--acc);margin-top:3px}
+.month-bar-lbl{font-size:8px;color:var(--dim);margin-top:2px}
+.param-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.param-item{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px}
+.param-item label{display:block;color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.flex-wrap{display:flex;gap:8px;flex-wrap:wrap}
+.sep-line{border:none;border-top:1px solid var(--border);margin:12px 0}
+/* ── HEATMAP ── */
+.hm-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hm-table{border-collapse:separate;border-spacing:2px;font-size:10.5px}
+.hm-table th{color:var(--dim);font-size:9.5px;font-weight:600;font-family:var(--sans);padding:3px 6px;text-align:center;white-space:nowrap;background:transparent;border:none}
+.hm-table th.row-hdr{text-align:right;min-width:70px;color:var(--gold);font-size:9px}
+.hm-cell{padding:4px 5px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:600;border-radius:3px;cursor:default;position:relative;min-width:68px;transition:transform .1s,box-shadow .1s}
+.hm-cell:hover{transform:scale(1.08);z-index:10;box-shadow:0 0 0 2px #fff6,0 4px 12px #000a}
+.hm-cell.current{box-shadow:0 0 0 2px #f59e0b,inset 0 0 0 1px #f59e0b44;z-index:5}
+.hm-sub{font-size:8px;font-weight:400;opacity:.85;display:block;margin-top:1px}
+.hm-legend{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:10px;color:var(--dim)}
+.hm-legend-bar{height:12px;width:220px;border-radius:3px;background:linear-gradient(to right,#7f1d1d,#ea580c,#a16207,#166534,#065f46)}
+.tooltip{display:none;position:fixed;background:#1e293b;border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-size:10.5px;color:var(--txt);z-index:100;pointer-events:none;max-width:200px;line-height:1.6;box-shadow:0 8px 24px #000a}
+.hm-cell:hover .tooltip{display:block}
+/* TOOLTIP POSITIONING via JS */
+.export-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.08);color:var(--pos);cursor:pointer;font-size:11px;font-family:var(--sans);font-weight:700;transition:all .2s;margin-left:auto;white-space:nowrap}
+.export-btn:hover{background:rgba(16,185,129,.18);border-color:var(--pos);transform:translateY(-1px)}
+.export-btn svg{flex-shrink:0}
+.rh-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:5px;padding:3px 8px;font-size:10px;color:var(--gold);font-family:var(--sans)}
+@media(max-width:768px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.content{padding:14px}.hdr{padding:12px 16px 0}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">A</div>
+    <div>
+      <h1>Entreprise A — Outil Prévision Financière</h1>
+      <p>Données consolidées 2024–2025 • Budget 2026 interactif • Source: États financiers consolidés + Échéancier CashFlow v3</p>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+    <div class="tabs" style="flex:1">
+      <button class="tab-btn active" onclick="switchTab('pl')">📊 1. P&amp;L</button>
+      <button class="tab-btn" onclick="switchTab('bfr')">⚖️ 2. BFR &amp; Cash Flow</button>
+      <button class="tab-btn" onclick="switchTab('tresor')">🏦 3. Trésorerie</button>
+      <button class="tab-btn" onclick="switchTab('mensuel')">📅 4. CA Mensuel &amp; Clients</button>
+      <button class="tab-btn" onclick="switchTab('be')">🎯 5. Breakeven</button>
+      <button class="tab-btn" onclick="switchTab('heatmap')">🌡️ 6. Heatmap</button>
+    </div>
+    <button class="export-btn" onclick="exportToExcel()" title="Exporter tous les tableaux + graphiques vers Excel">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exporter Excel
+    </button>
+  </div>
+</div>
+
+<div class="content">
+  <div id="tab-pl"></div>
+  <div id="tab-bfr" style="display:none"></div>
+  <div id="tab-tresor" style="display:none"></div>
+  <div id="tab-mensuel" style="display:none"></div>
+  <div id="tab-be" style="display:none"></div>
+  <div id="tab-heatmap" style="display:none"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────
+const fmt = v => isNaN(v)||v===null ? '–' : Math.round(v).toLocaleString('fr-FR');
+const fmtK = v => isNaN(v)||v===null ? '–' : fmt(v)+' k€';
+const fmtPct = v => isNaN(v)||v===null ? '–' : (v*100).toFixed(1)+'%';
+const fmtPct1 = v => isNaN(v)||v===null ? '–' : v.toFixed(1)+'%';
+const clr = v => v > 0 ? 'var(--pos)' : v < 0 ? 'var(--neg)' : 'var(--dim)';
+
+// Fixed historical data (k€ unless noted)
+const HIST = {
+  '2024': { ca:105641, cogs:-85723, sal:-10052, struct:-7117, oor:233, amort:-561, fin:-1233, excep:-326, is_:-157, capex:2928 },
+  '2025': { ca:98471,  cogs:-80063, sal:-11162, struct:-7597, oor:1284, amort:-723, fin:-1143, excep:0,    is_:-8,   capex:562  },
+};
+
+const BFR_HIST = {
+  '2024': { stocks:7573, ar:4839, ap:-14458, dio:32.2, dso:16.7, dpo:61.6 },
+  '2025': { stocks:5758, ar:5076, ap:-15916, dio:26.3, dso:18.8, dpo:72.6 },
+};
+
+const TFT_HIST = {
+  '2024': { open:4917, flux_op:6715, flux_inv:-2843, flux_fin:-3255, var_treso:617 },
+  '2025': { open:5534, flux_op:3000, flux_inv:-4748, flux_fin:1422, var_treso:-326 },
+};
+
+const MONTHLY_SEASONALITY = [0.088,0.067,0.070,0.061,0.058,0.067,0.069,0.104,0.114,0.097,0.097,0.111];
+const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
+// ─────────────────────────────────────────────
+// MUTABLE STATE (2026 parameters)
+// ─────────────────────────────────────────────
+const S = {
+  ca: 93548,      // CA k€
+  tx_gm: 15.89,   // Taux GM %
+  etp: 250,       // ETP
+  cost_etp: 42520,// Coût annuel par ETP €
+  etp_mode: false,// false = saisie directe, true = ETP × coût
+  sal: -10630,    // Salaires k€ (en mode direct)
+  struct: -7235,  // Frais structure k€
+  oor: 500,       // Autres produits/charges k€
+  amort: -767,    // Amortissements k€
+  fin: -873,      // Résultat financier k€
+  excep: 0,       // Exceptionnel k€
+  is_: 1035,      // IS k€
+  capex: 0,       // Capex k€
+  // BFR
+  dio: 26,
+  dso: 18.8,
+  dpo: 55,
+  // Clients
+  b2c_pct: 80,
+  b2b_30: 38, b2b_30fm: 27, b2b_45fm: 18, b2b_60: 12, b2b_bad: 5,
+  // Financement estimé
+  flux_fin: -2500,
+  // Breakeven
+  be_target: 2,
+  be_margin: 15.89,
+};
+
+// ─────────────────────────────────────────────
+// COMPUTED P&L
+// ─────────────────────────────────────────────
+function computeYear(p) {
+  const cogs = -(p.ca * (1 - p.tx_gm/100));
+  const gm = p.ca + cogs;
+  const tx_gm_c = gm / p.ca;
+  const sal = p.etp_mode ? -(p.etp * p.cost_etp / 1000) : p.sal;
+  const ebitda = gm + sal + p.struct + p.oor;
+  const ebit = ebitda + p.amort;
+  const net = ebit + p.fin + p.excep + p.is_;
+  return { ca:p.ca, cogs, gm, tx_gm_c, sal, struct:p.struct, oor:p.oor, ebitda, amort:p.amort, ebit, fin:p.fin, excep:p.excep, is_:p.is_, net, capex:p.capex };
+}
+
+function computeHistYear(h) {
+  const gm = h.ca + h.cogs;
+  const tx_gm_c = gm / h.ca;
+  const ebitda = gm + h.sal + h.struct + h.oor;
+  const ebit = ebitda + h.amort;
+  const net = ebit + h.fin + h.excep + h.is_;
+  return { ...h, gm, tx_gm_c, ebitda, ebit, net };
+}
+
+function computeBFR(ca, cogs_abs) {
+  const stocks = cogs_abs * S.dio / 365;
+  const ar = ca * S.dso / 365;
+  const ap = -(cogs_abs * S.dpo / 365);
+  return { stocks, ar, ap, net: stocks + ar + ap };
+}
+
+function compute2026() {
+  const pl = computeYear(S);
+  const cogs_abs = Math.abs(pl.cogs);
+  const bfr = computeBFR(pl.ca, cogs_abs);
+  const bfr_2025 = BFR_HIST['2025'].stocks + BFR_HIST['2025'].ar + BFR_HIST['2025'].ap;
+  const delta_bfr_cash = bfr_2025 - bfr.net; // positive = cash inflow
+  const caf = pl.ebitda + pl.fin + pl.excep + pl.is_;
+  const flux_op = caf + delta_bfr_cash;
+  const flux_inv = -Math.abs(pl.capex);
+  const var_treso = flux_op + flux_inv + S.flux_fin;
+  const open_2026 = TFT_HIST['2025'].open + TFT_HIST['2025'].var_treso;
+  const close_2026 = open_2026 + var_treso;
+  return { pl, bfr, bfr_2025, delta_bfr_cash, caf, flux_op, flux_inv, flux_fin:S.flux_fin, var_treso, open_2026, close_2026 };
+}
+
+// ─────────────────────────────────────────────
+// WATERFALL SVG
+// ─────────────────────────────────────────────
+function waterfall(data, title, opts={}) {
+  const {w=700, h=340} = opts;
+  const mg = {t:44, r:20, b:62, l:78};
+  const cW = w - mg.l - mg.r, cH = h - mg.t - mg.b;
+  let cum = 0;
+  const bars = data.map(d => {
+    let bot, top;
+    if (d.t==='s'||d.t==='T') { bot=Math.min(0,d.v); top=Math.max(0,d.v); cum=d.v; }
+    else { const p=cum; cum+=d.v; bot=Math.min(p,cum); top=Math.max(p,cum); }
+    return {...d, bot, top, ce:cum};
+  });
+  const vals = bars.flatMap(b=>[b.bot,b.top]);
+  const yMin=Math.min(0,...vals), yMax=Math.max(0,...vals);
+  const pad=(yMax-yMin)*0.18;
+  const dMin=yMin-pad, dMax=yMax+pad;
+  const yS=v=>cH*(1-(v-dMin)/(dMax-dMin));
+  const slotW=cW/data.length, barW=slotW*0.55;
+  const xS=i=>i*slotW+(slotW-barW)/2;
+  const range=dMax-dMin, rawStep=range/6;
+  const mag=Math.pow(10,Math.floor(Math.log10(Math.abs(rawStep)||1)));
+  const step=([1,2,5,10].find(s=>s*mag>=rawStep)||1)*mag;
+  const ticks=[];
+  for(let v=Math.ceil(dMin/step)*step;v<=dMax+step*0.01;v+=step) ticks.push(Math.round(v));
+
+  const C={pos:'#10b981',neg:'#ef4444',sub:'#3b82f6',tot:'#6366f1',txt:'#e2e8f0',dim:'#64748b',border:'#1e293b'};
+  let s=`<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${w}px;min-width:340px">
+<g transform="translate(${mg.l},${mg.t})">
+<text x="${cW/2}" y="-22" text-anchor="middle" fill="${C.txt}" font-size="12" font-weight="700" font-family="Syne,sans-serif">${title}</text>`;
+  for(const t of ticks) {
+    s+=`<line x1="0" y1="${yS(t).toFixed(1)}" x2="${cW}" y2="${yS(t).toFixed(1)}" stroke="${C.border}" stroke-width="${t===0?1.3:0.4}" stroke-dasharray="${t===0?'':'3,4'}"/>
+<text x="-7" y="${(yS(t)+3.5).toFixed(1)}" text-anchor="end" fill="${C.dim}" font-size="9" font-family="IBM Plex Mono,monospace">${fmt(t)}</text>`;
+  }
+  for(let i=0;i<bars.length-1;i++){
+    const nx=bars[i+1];
+    if(nx.t!=='s'&&nx.t!=='T') s+=`<line x1="${(xS(i)+barW).toFixed(1)}" y1="${yS(bars[i].ce).toFixed(1)}" x2="${xS(i+1).toFixed(1)}" y2="${yS(bars[i].ce).toFixed(1)}" stroke="${C.border}" stroke-width="0.7" stroke-dasharray="2,3"/>`;
+  }
+  for(let i=0;i<bars.length;i++){
+    const b=bars[i];
+    const x=xS(i).toFixed(1), yT=yS(b.top).toFixed(1), yB=yS(b.bot).toFixed(1), bh=Math.max(yS(b.bot)-yS(b.top),2).toFixed(1);
+    const color=b.t==='T'?C.tot:b.t==='s'?C.sub:b.v>=0?C.pos:C.neg;
+    const ly=(b.v>=0?yS(b.top)-5:yS(b.bot)+11).toFixed(1);
+    const lbl=b.n.length>11?b.n.slice(0,11)+'…':b.n;
+    s+=`<rect x="${x}" y="${yT}" width="${barW.toFixed(1)}" height="${bh}" fill="${color}" rx="2.5" opacity="0.85"/>
+<text x="${(xS(i)+barW/2).toFixed(1)}" y="${ly}" text-anchor="middle" fill="${color}" font-size="8" font-weight="700" font-family="IBM Plex Mono,monospace">${b.v>0?'+':''}${fmt(b.v)}</text>
+<text x="${(xS(i)+barW/2).toFixed(1)}" y="${(cH+13).toFixed(1)}" text-anchor="middle" fill="${C.dim}" font-size="8" font-family="IBM Plex Sans,sans-serif">${lbl}</text>`;
+  }
+  return s+'</g></svg>';
+}
+
+// ─────────────────────────────────────────────
+// TAB 1 — P&L
+// ─────────────────────────────────────────────
+function renderPL() {
+  const h24 = computeHistYear(HIST['2024']);
+  const h25 = computeHistYear(HIST['2025']);
+  const r26 = compute2026().pl;
+  const sal26 = S.etp_mode ? -(S.etp * S.cost_etp / 1000) : S.sal;
+
+  function row(cls, label, v24, v25, field, isComputed, extraCls='') {
+    const v26 = field==='tx_gm' ? (r26.tx_gm_c*100).toFixed(2)+'%'
+      : field==='gm' ? r26.gm : field==='ebitda' ? r26.ebitda
+      : field==='ebit' ? r26.ebit : field==='net' ? r26.net
+      : field==='sal' ? sal26 : field==='cogs' ? r26.cogs : null;
+    const inputVal = field==='sal' ? (S.etp_mode ? sal26.toFixed(0) : S.sal)
+      : field==='struct' ? S.struct : field==='oor' ? S.oor
+      : field==='amort' ? S.amort : field==='fin' ? S.fin
+      : field==='excep' ? S.excep : field==='is_' ? S.is_
+      : field==='capex' ? S.capex : field==='ca' ? S.ca
+      : field==='tx_gm_input' ? S.tx_gm : null;
+
+    let c26cell = '';
+    if(isComputed) {
+      const n = typeof v26==='number' ? v26 : parseFloat(v26);
+      const col = extraCls==='tx' ? 'var(--acc)' : clr(n);
+      c26cell = `<td class="computed-cell" style="color:${col}">${typeof v26==='string'?v26:fmtK(v26)}</td>`;
+    } else {
+      const isDisabled = field==='sal' && S.etp_mode;
+      c26cell = `<td><input class="editable${isDisabled?' computed':''}" type="number" value="${parseFloat(inputVal).toFixed(0)}" 
+        step="100" ${isDisabled?'disabled':''} onchange="updateState('${isDisabled?'':field}',+this.value)" oninput="updateState('${isDisabled?'':field}',+this.value)"></td>`;
+    }
+    
+    const d = (typeof v25==='number' && typeof v24==='number') ? v25 - v24 : null;
+    const dpct = d !== null && v24 ? (d/Math.abs(v24)*100).toFixed(1) : null;
+    const dColor = d!==null ? clr(d) : 'var(--dim)';
+    
+    return `<tr class="${cls}">
+      <td>${label}</td>
+      <td style="color:var(--dim)">${typeof v24==='string'?v24:fmtK(v24)}</td>
+      <td>${typeof v25==='string'?v25:fmtK(v25)}</td>
+      ${c26cell}
+      <td style="color:${dColor};font-size:10.5px">${d!==null?(d>0?'+':'')+fmtK(d):'–'}</td>
+      <td style="color:${dColor};font-size:10.5px">${dpct!==null?(d>0?'+':'')+dpct+'%':'–'}</td>
+    </tr>`;
+  }
+
+  // Waterfall data for 2026
+  const wf26 = [
+    {n:'CA+Autres',v:r26.ca+r26.oor,t:'s'},
+    {n:'COGS',v:r26.cogs,t:'d'},
+    {n:'Marge Brute',v:r26.gm,t:'s'},
+    {n:'Salaires',v:sal26,t:'d'},
+    {n:'Structure',v:r26.struct,t:'d'},
+    {n:'EBITDA',v:r26.ebitda,t:'s'},
+    {n:'Amort.',v:r26.amort,t:'d'},
+    {n:'EBIT',v:r26.ebit,t:'s'},
+    {n:'Financier',v:r26.fin,t:'d'},
+    {n:'IS',v:r26.is_,t:'d'},
+    {n:'Rés. Net',v:r26.net,t:'T'},
+  ];
+
+  const rhSection = `
+  <div class="section" style="border-color:rgba(245,158,11,.3)">
+    <div class="section-title" style="color:var(--gold)">⚙ Paramètres RH — Impact Salaires 2026</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+      <span style="color:var(--dim);font-size:11px">Mode calcul salaires :</span>
+      <button class="toggle-btn${!S.etp_mode?' active':''}" onclick="updateState('etp_mode',false)">Saisie directe</button>
+      <button class="toggle-btn${S.etp_mode?' active':''}" onclick="updateState('etp_mode',true)">ETP × Coût/ETP</button>
+      ${S.etp_mode?`<span class="rh-badge">Salaires = ${S.etp} ETP × ${fmt(S.cost_etp/1000)} k€ = ${fmtK(-(S.etp*S.cost_etp/1000))}</span>`:''}
+    </div>
+    <div class="param-grid">
+      <div class="param-item">
+        <label>ETP 2026</label>
+        <input type="number" value="${S.etp}" min="100" max="500" step="1" oninput="updateState('etp',+this.value)">
+        <div style="color:var(--dim);font-size:10px;margin-top:4px">2025 réel : ~250 ETP estimé</div>
+      </div>
+      <div class="param-item">
+        <label>Coût annuel moyen par ETP (€)</label>
+        <input type="number" value="${S.cost_etp}" min="20000" max="80000" step="500" oninput="updateState('cost_etp',+this.value)">
+        <div style="color:var(--dim);font-size:10px;margin-top:4px">2025 réel : ~44 600 €/ETP • 2026 budg. : ~42 520 €/ETP</div>
+      </div>
+      <div class="param-item">
+        <label>Masse salariale calculée 2026</label>
+        <div class="kpi-val ${sal26<0?'neg':'pos'}" style="font-size:16px">${fmtK(sal26)}</div>
+        <div style="color:var(--dim);font-size:10px;margin-top:4px">Budget : ${fmtK(-10630)} • Δ : <span style="color:${clr(sal26-(-10630))}">${fmtK(sal26-(-10630))}</span></div>
+      </div>
+      <div class="param-item">
+        <label>Économie vs 2025 (${fmtK(-11162)})</label>
+        <div class="kpi-val ${sal26-(-11162)>0?'pos':'neg'}" style="font-size:16px">${fmtK(sal26-(-11162))}</div>
+        <div style="color:var(--dim);font-size:10px;margin-top:4px">Nb ETP équiv. : ${((sal26-(-11162))/(S.cost_etp/1000)).toFixed(1)} ETP</div>
+      </div>
+    </div>
+  </div>`;
+
+  return `
+  <div class="section">
+    <div class="section-title">Compte de Résultat — 2024 Réel / 2025 Estimé / 2026 Budget (k€)</div>
+    <div style="color:var(--dim);font-size:10.5px;margin-bottom:10px">
+      ✏ Colonnes 2026 éditables • Δ = 2025 vs 2024 • Source : États financiers consolidés + Échéancier 2026 v3
+    </div>
+    <div class="ovx">
+    <table>
+      <thead><tr>
+        <th style="min-width:220px">Libellé (A6:A59 Paramètres)</th>
+        <th>2024 Réel</th><th>2025 Estimé</th><th style="color:var(--gold)">2026 Budget ✏</th>
+        <th>Δ 24→25</th><th>Δ%</th>
+      </tr></thead>
+      <tbody>
+        <tr class="section-hdr"><td colspan="6">① CHIFFRE D'AFFAIRES</td></tr>
+        ${row('','Ventes / CA (k€)', h24.ca, h25.ca, 'ca', false)}
+        ${row('','Coût des Ventes / COGS (k€)', h24.cogs, h25.cogs, 'tx_gm_input', false)}
+        <tr><td style="color:var(--dim);font-size:10px;padding-left:16px">↳ Taux GM (%) — saisir pour recalculer COGS 2026</td>
+          <td style="color:var(--dim);font-family:var(--mono)">${fmtPct(h24.tx_gm_c)}</td>
+          <td style="color:var(--dim);font-family:var(--mono)">${fmtPct(h25.tx_gm_c)}</td>
+          <td><input class="editable" type="number" value="${S.tx_gm.toFixed(2)}" step="0.1" min="5" max="40" oninput="updateState('tx_gm',+this.value)"></td>
+          <td></td><td></td>
+        </tr>
+        ${row('subtotal','Marge Brute / Gross Margin (k€)', h24.gm, h25.gm, 'gm', true)}
+        
+        <tr class="section-hdr"><td colspan="6">② CHARGES OPÉRATIONNELLES</td></tr>
+        ${row('','Salaires / Charges de personnel (k€)', h24.sal, h25.sal, 'sal', false)}
+        ${row('','Frais de Structure (k€)', h24.struct, h25.struct, 'struct', false)}
+        ${row('','Autres Produits/Charges — OOR (k€)', h24.oor, h25.oor, 'oor', false)}
+        ${row('subtotal','EBITDA (k€)', h24.ebitda, h25.ebitda, 'ebitda', true)}
+        ${row('','Amortissements & Dépréciations (k€)', h24.amort, h25.amort, 'amort', false)}
+        ${row('subtotal','EBIT / Rés. d\'Exploitation (k€)', h24.ebit, h25.ebit, 'ebit', true)}
+        
+        <tr class="section-hdr"><td colspan="6">③ RÉSULTAT FINANCIER & EXCEPTIONNEL</td></tr>
+        ${row('','Résultat Financier (k€)', h24.fin, h25.fin, 'fin', false)}
+        ${row('','Résultat Exceptionnel (k€)', h24.excep, h25.excep, 'excep', false)}
+        ${row('','Impôt sur les Sociétés (k€)', h24.is_, h25.is_, 'is_', false)}
+        ${row('total','Résultat Net Consolidé (k€)', h24.net, h25.net, 'net', true)}
+        
+        <tr class="section-hdr"><td colspan="6">④ INVESTISSEMENTS</td></tr>
+        ${row('','Capex / Immobilisations (k€)', h24.capex, h25.capex, 'capex', false)}
+      </tbody>
+    </table>
+    </div>
+  </div>
+  
+  ${rhSection}
+  
+  <div class="section">
+    <div class="section-title">Bridge P&L 2026 (Waterfall)</div>
+    <div class="flex-row">
+      <div class="kpi"><div class="kpi-lbl">CA 2026</div><div class="kpi-val acc">${fmtK(r26.ca)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Taux GM</div><div class="kpi-val acc">${(r26.tx_gm_c*100).toFixed(1)}%</div></div>
+      <div class="kpi"><div class="kpi-lbl">EBITDA</div><div class="kpi-val ${r26.ebitda>=0?'pos':'neg'}">${fmtK(r26.ebitda)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">EBIT</div><div class="kpi-val ${r26.ebit>=0?'pos':'neg'}">${fmtK(r26.ebit)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Résultat Net</div><div class="kpi-val ${r26.net>=0?'pos':'neg'}">${fmtK(r26.net)}</div></div>
+    </div>
+    <div class="chart-wrap">${waterfall(wf26,'Bridge P&L 2026 — Entreprise A (k€)',{w:720,h:340})}</div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// TAB 2 — BFR & CASH FLOW
+// ─────────────────────────────────────────────
+function renderBFR() {
+  const D = compute2026();
+  const {bfr, bfr_2025, delta_bfr_cash, caf, flux_op, flux_inv, var_treso} = D;
+  const bfr24 = BFR_HIST['2024']; const bfr25 = BFR_HIST['2025'];
+  const net_bfr_24 = bfr24.stocks+bfr24.ar+bfr24.ap;
+  const net_bfr_25 = bfr25.stocks+bfr25.ar+bfr25.ap;
+
+  const cfWF = [
+    {n:'EBITDA',v:D.pl.ebitda,t:'s'},
+    {n:'Financier',v:D.pl.fin,t:'d'},
+    {n:'IS',v:D.pl.is_,t:'d'},
+    {n:'CAF',v:D.caf,t:'s'},
+    {n:'Δ BFR',v:delta_bfr_cash,t:'d'},
+    {n:'Flux Op.',v:flux_op,t:'s'},
+    {n:'Capex',v:flux_inv,t:'d'},
+    {n:'FCF',v:flux_op+flux_inv,t:'s'},
+    {n:'Financement',v:S.flux_fin,t:'d'},
+    {n:'Δ Tréso',v:var_treso,t:'T'},
+  ];
+
+  return `
+  <div class="section">
+    <div class="section-title">② BFR — Besoin en Fonds de Roulement (paramètres éditables)</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div class="slider-wrap">
+        <div class="slider-lbl">DIO — Jours de Stock</div>
+        <input type="range" min="10" max="60" step="0.5" value="${S.dio}" oninput="updateState('dio',+this.value)">
+        <div class="slider-val">${S.dio} <span style="font-size:11px;color:var(--dim)">jours</span></div>
+        <div style="color:var(--dim);font-size:9.5px">2024: 32.2j • 2025: 26.3j • Budget 2026: 26j</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-lbl">DSO — Délai Clients</div>
+        <input type="range" min="5" max="45" step="0.5" value="${S.dso}" oninput="updateState('dso',+this.value)">
+        <div class="slider-val">${S.dso} <span style="font-size:11px;color:var(--dim)">jours</span></div>
+        <div style="color:var(--dim);font-size:9.5px">2024: 16.7j • 2025: 18.8j • Budget 2026: 18.8j</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-lbl">DPO — Délai Fournisseurs</div>
+        <input type="range" min="20" max="120" step="1" value="${S.dpo}" oninput="updateState('dpo',+this.value)">
+        <div class="slider-val" style="color:${S.dpo>65?'var(--neg)':S.dpo<45?'var(--gold)':'var(--acc)'}">${S.dpo} <span style="font-size:11px;color:var(--dim)">jours</span></div>
+        <div style="color:var(--dim);font-size:9.5px">2024: 61.6j • 2025: 72.6j (crise) • Budget 2026: 55j</div>
+      </div>
+    </div>
+    <div class="ovx">
+    <table>
+      <thead><tr><th>Indicateur BFR</th><th>2024 Réel</th><th>2025 Estimé</th><th style="color:var(--gold)">2026 Calculé</th></tr></thead>
+      <tbody>
+        <tr><td>Stocks (k€)</td><td style="color:var(--dim)">${fmtK(bfr24.stocks)}</td><td>${fmtK(bfr25.stocks)}</td><td class="computed-cell" style="color:var(--acc)">${fmtK(bfr.stocks)}</td></tr>
+        <tr><td>Créances Clients / AR (k€)</td><td style="color:var(--dim)">${fmtK(bfr24.ar)}</td><td>${fmtK(bfr25.ar)}</td><td class="computed-cell" style="color:var(--acc)">${fmtK(bfr.ar)}</td></tr>
+        <tr><td>Dettes Fournisseurs / AP (k€)</td><td style="color:var(--dim)">${fmtK(bfr24.ap)}</td><td>${fmtK(bfr25.ap)}</td><td class="computed-cell" style="color:var(--acc)">${fmtK(bfr.ap)}</td></tr>
+        <tr class="subtotal"><td>BFR Net (k€)</td><td style="color:var(--dim)">${fmtK(net_bfr_24)}</td><td>${fmtK(net_bfr_25)}</td>
+          <td class="computed-cell" style="color:${bfr.net<bfr_2025?'var(--neg)':'var(--pos)'}">${fmtK(bfr.net)}</td></tr>
+        <tr><td style="color:var(--dim);font-size:10.5px">Δ BFR vs 2025 → Impact Cash</td><td></td><td></td>
+          <td style="color:${delta_bfr_cash<0?'var(--neg)':'var(--pos)'};font-family:var(--mono)">${fmtK(delta_bfr_cash)} ${delta_bfr_cash<0?'⚠ sortie':'✓ entrée'}</td></tr>
+      </tbody>
+    </table>
+    </div>
+    ${S.dpo>65?`<div class="warn-box" style="margin-top:12px"><h4>⚠ DPO élevé (${S.dpo}j)</h4>Allongement des délais fournisseurs au-delà de 60j expose à des pénalités LME et risques de ruptures de crédit (cf. situation Ingram/TD Synnex 2025).</div>`:''}
+    ${S.dpo<45?`<div class="info-box" style="margin-top:12px"><h4>💡 DPO bas (${S.dpo}j)</h4>DPO réduit libère de la trésorerie fournisseurs mais peut créer une sortie cash importante vs 2025 (DPO 72.6j).</div>`:''}
+  </div>
+
+  <div class="section">
+    <div class="section-title">Cash Flow 2026 — EBITDA → Δ Trésorerie</div>
+    <div style="margin-bottom:12px">
+      <label style="color:var(--dim);font-size:10px;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px">Flux de Financement estimé 2026 (k€)</label>
+      <input type="number" value="${S.flux_fin}" step="100" style="width:200px" oninput="updateState('flux_fin',+this.value)">
+      <span style="color:var(--dim);font-size:10px;margin-left:8px">Ex: remboursements emprunts, augmentation de capital, cessions</span>
+    </div>
+    <div class="flex-row">
+      <div class="kpi"><div class="kpi-lbl">CAF</div><div class="kpi-val ${caf>=0?'pos':'neg'}">${fmtK(caf)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Δ BFR Cash</div><div class="kpi-val ${delta_bfr_cash>=0?'pos':'neg'}">${fmtK(delta_bfr_cash)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Flux Op.</div><div class="kpi-val ${flux_op>=0?'pos':'neg'}">${fmtK(flux_op)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">FCF</div><div class="kpi-val ${flux_op+flux_inv>=0?'pos':'neg'}">${fmtK(flux_op+flux_inv)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Δ Trésorerie</div><div class="kpi-val ${var_treso>=0?'pos':'neg'}">${fmtK(var_treso)}</div></div>
+    </div>
+    <div class="chart-wrap">${waterfall(cfWF,'Bridge EBITDA → Δ Trésorerie 2026 (k€)',{w:680,h:320})}</div>
+  </div>
+  
+  <div class="section">
+    <div class="section-title">Comparaison Cash Flow 2024–2026</div>
+    <div class="ovx">
+    <table>
+      <thead><tr><th>Flux</th><th>2024 Réel</th><th>2025 Estimé</th><th style="color:var(--gold)">2026 Projeté</th></tr></thead>
+      <tbody>
+        <tr><td>Flux Opérationnel (k€)</td><td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].flux_op)}</td><td>${fmtK(TFT_HIST['2025'].flux_op)}</td><td class="computed-cell" style="color:${flux_op>=0?'var(--pos)':'var(--neg)'}">${fmtK(flux_op)}</td></tr>
+        <tr><td>Flux Investissement (k€)</td><td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].flux_inv)}</td><td>${fmtK(TFT_HIST['2025'].flux_inv)}</td><td class="computed-cell" style="color:${flux_inv>=0?'var(--pos)':'var(--neg)'}">${fmtK(flux_inv)}</td></tr>
+        <tr><td>Flux Financement (k€)</td><td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].flux_fin)}</td><td>${fmtK(TFT_HIST['2025'].flux_fin)}</td><td class="computed-cell" style="color:var(--acc)">${fmtK(S.flux_fin)}</td></tr>
+        <tr class="total"><td>Variation Trésorerie (k€)</td><td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].var_treso)}</td><td>${fmtK(TFT_HIST['2025'].var_treso)}</td><td class="computed-cell" style="color:${var_treso>=0?'var(--pos)':'var(--neg)'}">${fmtK(var_treso)}</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// TAB 3 — TRÉSORERIE
+// ─────────────────────────────────────────────
+function renderTresor() {
+  const D = compute2026();
+  const open_25 = 5534, close_25 = 5207;
+  const open_26 = close_25, close_26 = open_26 + D.var_treso;
+  const runway = close_26 > 0 && D.flux_op < 0 ? (close_26 / (Math.abs(D.flux_op)/12)).toFixed(1) : null;
+
+  const cashWF = [
+    {n:'Ouv. 2024',v:4917,t:'s'},
+    {n:'Flux Op 24',v:6715,t:'d'},
+    {n:'Flux Inv 24',v:-2843,t:'d'},
+    {n:'Flux Fin 24',v:-3255,t:'d'},
+    {n:'Fin 2024',v:open_25,t:'s'},
+    {n:'Flux Op 25',v:TFT_HIST['2025'].flux_op,t:'d'},
+    {n:'Flux Inv 25',v:TFT_HIST['2025'].flux_inv,t:'d'},
+    {n:'Flux Fin 25',v:TFT_HIST['2025'].flux_fin,t:'d'},
+    {n:'Fin 2025',v:close_25,t:'s'},
+    {n:'Flux Op 26',v:D.flux_op,t:'d'},
+    {n:'Flux Inv 26',v:D.flux_inv,t:'d'},
+    {n:'Flux Fin 26',v:S.flux_fin,t:'d'},
+    {n:'Fin 2026',v:close_26,t:'T'},
+  ];
+
+  return `
+  <div class="section">
+    <div class="section-title">Évolution Trésorerie 2024–2026 (k€ consolidés)</div>
+    <div class="flex-row">
+      <div class="kpi"><div class="kpi-lbl">Ouv. 2024</div><div class="kpi-val pos">${fmtK(4917)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Fin 2024</div><div class="kpi-val gold">${fmtK(open_25)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Fin 2025</div><div class="kpi-val ${close_25>3000?'gold':'neg'}">${fmtK(close_25)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Fin 2026 (projeté)</div><div class="kpi-val ${close_26>0?close_26>3000?'pos':'gold':'neg'}">${fmtK(close_26)}</div></div>
+      ${runway?`<div class="kpi"><div class="kpi-lbl">Runway (mois)</div><div class="kpi-val ${+runway>6?'gold':'neg'}">${runway}<span class="kpi-unit">mois</span></div></div>`:''}
+    </div>
+    <div class="chart-wrap">${waterfall(cashWF,'Évolution Trésorerie Consolidée 2024–2026 (k€)',{w:850,h:360})}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Trésorerie Entreprise A (entité seule)</div>
+    <div class="ovx">
+    <table>
+      <thead><tr><th>Flux / Solde</th><th>2024</th><th>2025</th><th style="color:var(--gold)">2026 Estimé</th></tr></thead>
+      <tbody>
+        <tr class="subtotal"><td>Trésorerie ouverture (k€)</td>
+          <td style="color:var(--dim)">4 508</td><td>4 508</td><td class="computed-cell acc">${fmtK(open_26)}</td></tr>
+        <tr><td>Flux opérationnel (k€)</td>
+          <td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].flux_op)}</td><td>${fmtK(TFT_HIST['2025'].flux_op)}</td>
+          <td class="computed-cell" style="color:${D.flux_op>=0?'var(--pos)':'var(--neg)'}">${fmtK(D.flux_op)}</td></tr>
+        <tr><td>Flux investissement (k€)</td>
+          <td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].flux_inv)}</td><td>${fmtK(TFT_HIST['2025'].flux_inv)}</td>
+          <td class="computed-cell" style="color:${D.flux_inv>=0?'var(--pos)':'var(--neg)'}">${fmtK(D.flux_inv)}</td></tr>
+        <tr><td>Flux financement (k€)</td>
+          <td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].flux_fin)}</td><td>${fmtK(TFT_HIST['2025'].flux_fin)}</td>
+          <td class="computed-cell acc">${fmtK(S.flux_fin)}</td></tr>
+        <tr><td>Variation totale (k€)</td>
+          <td style="color:var(--dim)">${fmtK(TFT_HIST['2024'].var_treso)}</td><td>${fmtK(TFT_HIST['2025'].var_treso)}</td>
+          <td class="computed-cell" style="color:${D.var_treso>=0?'var(--pos)':'var(--neg)'}">${fmtK(D.var_treso)}</td></tr>
+        <tr class="total"><td>Trésorerie clôture (k€)</td>
+          <td style="color:var(--dim)">${fmtK(open_25)}</td><td>${fmtK(close_25)}</td>
+          <td class="computed-cell" style="color:${close_26>0?close_26>2000?'var(--pos)':'var(--gold)':'var(--neg)'}">${fmtK(close_26)}</td></tr>
+      </tbody>
+    </table>
+    </div>
+    ${close_26 < 2000 ? `<div class="warn-box" style="margin-top:12px"><h4>⚠ Risque de liquidité critique</h4>Trésorerie fin 2026 projetée à ${fmtK(close_26)}. En dessous de 2M€, le risque de cessation de paiements est majeur. Échéance dette senior juin 2026 à prioriser.</div>` : ''}
+    ${close_26 >= 2000 && close_26 < 4000 ? `<div class="info-box" style="margin-top:12px"><h4>💡 Vigilance trésorerie</h4>Trésorerie fin 2026 à ${fmtK(close_26)} — coussin de sécurité limité. Surveiller les covenants bancaires et la ligne de crédit fournisseurs.</div>` : ''}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// TAB 4 — CA MENSUEL & CLIENTS
+// ─────────────────────────────────────────────
+function renderMensuel() {
+  const r26 = compute2026().pl;
+  const monthly = MONTHLY_SEASONALITY.map(pct => r26.ca * pct);
+  const maxM = Math.max(...monthly);
+
+  const monthBars = MONTHS.map((m,i) => {
+    const v = monthly[i];
+    const h = Math.round((v/maxM)*100);
+    return `<div class="month-bar">
+      <div class="month-bar-fill" style="height:${h}%;background:${v>maxM*0.1?'var(--sub)':'var(--border2)'}"></div>
+      <div class="month-bar-val">${Math.round(v)}</div>
+      <div class="month-bar-lbl">${m}</div>
+    </div>`;
+  }).join('');
+
+  const b2b_sum = S.b2b_30+S.b2b_30fm+S.b2b_45fm+S.b2b_60+S.b2b_bad;
+  const b2c = S.b2c_pct/100;
+  const b2b = 1 - b2c;
+  const dso_eff = b2c * 0.5 + b2b * (S.b2b_30*0.38+S.b2b_30fm*0.55+S.b2b_45fm*0.67+S.b2b_60*0.90+S.b2b_bad*1.20)/100 * 45;
+
+  return `
+  <div class="section">
+    <div class="section-title">Répartition CA Mensuel 2026 — Saisonnalité historique (k€)</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div class="kpi"><div class="kpi-lbl">CA Budget 2026</div><div class="kpi-val acc">${fmtK(r26.ca)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Pic (Sep)</div><div class="kpi-val gold">${fmtK(monthly[8])}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Creux (Mai)</div><div class="kpi-val dim" style="color:var(--dim)">${fmtK(monthly[4])}</div></div>
+    </div>
+    <div class="month-bar-wrap">${monthBars}</div>
+    <div style="color:var(--dim);font-size:10px;margin-top:6px">Saisonnalité basée sur données 2024 réelles (Danea ERP)</div>
+    <div class="ovx" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Mois</th><th>% Saison.</th><th>CA HT 2026 (k€)</th><th>CA TTC (k€)</th></tr></thead>
+      <tbody>
+        ${MONTHS.map((m,i) => {
+          const v = monthly[i];
+          return `<tr><td>${m}</td>
+            <td style="font-family:var(--mono)">${(MONTHLY_SEASONALITY[i]*100).toFixed(1)}%</td>
+            <td class="computed-cell acc">${fmtK(v)}</td>
+            <td style="color:var(--dim);font-family:var(--mono)">${fmtK(v*1.2)}</td></tr>`;
+        }).join('')}
+        <tr class="total"><td>TOTAL</td><td style="font-family:var(--mono)">100%</td>
+          <td class="computed-cell acc">${fmtK(monthly.reduce((a,b)=>a+b,0))}</td>
+          <td style="color:var(--dim);font-family:var(--mono)">${fmtK(monthly.reduce((a,b)=>a+b,0)*1.2)}</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">④ Répartition Clients — Délais de Paiement</div>
+    <div class="grid2">
+      <div>
+        <div class="slider-wrap" style="margin-bottom:10px">
+          <div class="slider-lbl">% B2C (paiement immédiat)</div>
+          <input type="range" min="50" max="95" step="1" value="${S.b2c_pct}" oninput="updateState('b2c_pct',+this.value)">
+          <div class="slider-val" style="color:var(--pos)">${S.b2c_pct}%</div>
+        </div>
+        <div style="display:flex;gap:4px;margin-bottom:10px">
+          <div class="kpi" style="flex:1"><div class="kpi-lbl">B2C</div><div class="kpi-val pos">${S.b2c_pct}%</div></div>
+          <div class="kpi" style="flex:1"><div class="kpi-lbl">B2B</div><div class="kpi-val gold">${(100-S.b2c_pct)}%</div></div>
+        </div>
+        <h4 style="color:var(--dim);font-size:10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Répartition délais B2B (doit totaliser 100%)</h4>
+        <table style="font-size:11px">
+          <thead><tr><th>Délai</th><th>%</th><th>k€ CA</th></tr></thead>
+          <tbody>
+            ${[['30j nets','b2b_30'],['30j fin de mois','b2b_30fm'],['45j fin de mois','b2b_45fm'],['60j nets','b2b_60'],['Mauvais payeurs','b2b_bad']].map(([lbl,key])=>{
+              const pct = S[key]; const ca_b2b = r26.ca * b2b * pct/100;
+              return `<tr>
+                <td>${lbl}</td>
+                <td><input class="editable" type="number" value="${pct}" min="0" max="100" step="1" style="width:55px" oninput="updateState('${key}',+this.value)"></td>
+                <td class="computed-cell acc">${fmtK(ca_b2b)}</td>
+              </tr>`;
+            }).join('')}
+            <tr class="subtotal"><td>Total B2B</td><td style="color:${Math.abs(b2b_sum-100)<0.1?'var(--pos)':'var(--neg)'};">${b2b_sum}%</td>
+              <td class="computed-cell acc">${fmtK(r26.ca*b2b)}</td></tr>
+          </tbody>
+        </table>
+        ${Math.abs(b2b_sum-100)>0.1?`<div style="color:var(--neg);font-size:10px;margin-top:4px">⚠ Vérifier : total B2B = ${b2b_sum}% (doit être 100%)</div>`:''}
+      </div>
+      <div>
+        <div class="info-box">
+          <h4>📊 Analyse Impact DSO</h4>
+          <div style="margin-bottom:10px">
+            <div style="color:var(--dim);font-size:10px;margin-bottom:4px">DSO paramétré (onglet BFR)</div>
+            <div style="font-family:var(--mono);font-size:16px;color:var(--acc)">${S.dso} jours</div>
+          </div>
+          <table style="font-size:11px">
+            <tr><td>AR au bilan 2026 (k€)</td><td style="font-family:var(--mono);color:var(--acc)">${fmtK(r26.ca * S.dso / 365)}</td></tr>
+            <tr><td>AR si DSO = 14j</td><td style="font-family:var(--mono);color:var(--pos)">${fmtK(r26.ca * 14 / 365)}</td></tr>
+            <tr><td>AR si DSO = 25j</td><td style="font-family:var(--mono);color:var(--gold)">${fmtK(r26.ca * 25 / 365)}</td></tr>
+            <tr><td>Cash libéré 14j vs actuel</td><td style="font-family:var(--mono);color:var(--pos)">+${fmtK(r26.ca * (S.dso-14) / 365)}</td></tr>
+          </table>
+          <hr class="sep-line">
+          <div style="font-size:10.5px;color:var(--dim);margin-top:8px">
+            <strong style="color:var(--txt)">Levier collection :</strong> 1 jour de DSO en moins = <strong style="color:var(--acc)">${fmtK(r26.ca/365)}</strong> k€ de trésorerie libérée.
+            Avec CA de ${fmtK(r26.ca)} k€, réduire DSO de 18.8j à 14j = +${fmtK(r26.ca*4.8/365)} k€ de cash.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// TAB 5 — BREAKEVEN
+// ─────────────────────────────────────────────
+function renderBreakeven() {
+  const h25 = computeHistYear(HIST['2025']);
+  const r26 = compute2026().pl;
+  const sal26 = S.etp_mode ? -(S.etp * S.cost_etp/1000) : S.sal;
+  const target = S.be_target;
+  const margin = S.be_margin;
+
+  // Fixed costs for 2026
+  const structAn = r26.struct;
+  const finAn = r26.fin;
+  const daAn = r26.amort;
+  const costFixed = sal26 + structAn + r26.oor; // variable: OOR already in
+  const targetPct = target/100;
+  const marginPct = margin/100;
+  const caBreak = marginPct > targetPct ? costFixed / (marginPct - targetPct) : null;
+  const ebitdaBreak = caBreak ? caBreak * targetPct : 0;
+  const cashBreak = ebitdaBreak - Math.abs(daAn) + finAn;
+  const ratio = caBreak ? caBreak / r26.ca : null;
+  const coutMoyen = Math.abs(sal26) / S.etp;
+
+  const scenarios = [180,200,220,250,270,300].map(eff => {
+    const s = eff * coutMoyen;
+    const costs = s + Math.abs(structAn) - r26.oor;
+    const ca = marginPct > targetPct ? costs / (marginPct - targetPct) : null;
+    const ebitda = ca ? ca * targetPct : null;
+    const fcf = ebitda ? ebitda - Math.abs(daAn) + finAn : null;
+    return {eff, sal:Math.round(s), ca:ca?Math.round(ca):null, ebitda:ebitda?Math.round(ebitda):null, fcf:fcf?Math.round(fcf):null};
+  });
+
+  return `
+  <div class="section">
+    <div class="section-title">🎯 Analyse de Breakeven — Entreprise A 2026</div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="slider-wrap">
+        <div class="slider-lbl">EBITDA cible (%)</div>
+        <input type="range" min="-5" max="8" step="0.5" value="${target}" oninput="updateState('be_target',+this.value)">
+        <div class="slider-val" style="color:var(--acc)">${target}%</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-lbl">Taux de Marge Brute (%)</div>
+        <input type="range" min="10" max="35" step="0.5" value="${margin}" oninput="updateState('be_margin',+this.value)">
+        <div class="slider-val" style="color:var(--gold)">${margin}%</div>
+      </div>
+    </div>
+
+    <div class="section" style="background:var(--card2);margin-bottom:12px">
+      <h4 style="color:var(--gold);font-size:11px;margin-bottom:10px">Base annualisée 2026</h4>
+      <div class="grid4">
+        <div class="kpi"><div class="kpi-lbl">ETP</div><div class="kpi-val acc">${S.etp}<span class="kpi-unit">ETP</span></div></div>
+        <div class="kpi"><div class="kpi-lbl">Masse salariale</div><div class="kpi-val">${fmtK(sal26)}</div></div>
+        <div class="kpi"><div class="kpi-lbl">Coût/salarié</div><div class="kpi-val gold">${fmtK(coutMoyen)}</div></div>
+        <div class="kpi"><div class="kpi-lbl">Structure</div><div class="kpi-val neg">${fmtK(structAn)}</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA actuel budget</div><div class="kpi-val">${fmtK(r26.ca)}</div></div>
+        <div class="kpi"><div class="kpi-lbl">D&A</div><div class="kpi-val">${fmtK(daAn)}</div></div>
+        <div class="kpi"><div class="kpi-lbl">Résultat Fin.</div><div class="kpi-val neg">${fmtK(finAn)}</div></div>
+        <div class="kpi"><div class="kpi-lbl">EBITDA budget</div><div class="kpi-val ${r26.ebitda>=0?'pos':'neg'}">${fmtK(r26.ebitda)}</div></div>
+      </div>
+    </div>
+
+    <div class="flex-row">
+      <div class="kpi"><div class="kpi-lbl">CA requis (EBITDA ${target}%)</div>
+        <div class="kpi-val ${caBreak?'pos':'neg'}" style="font-size:20px">${caBreak?fmtK(caBreak):'Impossible'}</div></div>
+      <div class="kpi"><div class="kpi-lbl">vs CA Budget 2026</div>
+        <div class="kpi-val gold">${ratio?(ratio>1?'+':'')+((ratio-1)*100).toFixed(0)+'% vs budget':ratio===0?'Atteint':'–'}</div></div>
+      <div class="kpi"><div class="kpi-lbl">EBITDA résultant</div>
+        <div class="kpi-val ${ebitdaBreak>=0?'pos':'neg'}">${fmtK(ebitdaBreak)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Cash après D&A + Fin</div>
+        <div class="kpi-val ${cashBreak>=0?'pos':'neg'}">${fmtK(cashBreak)}</div></div>
+      <div class="kpi"><div class="kpi-lbl">Multiple CA requis</div>
+        <div class="kpi-val gold">${ratio?ratio.toFixed(2)+'x':ratio===0?'1.0x':'–'}</div></div>
+    </div>
+
+    <h3 style="color:var(--acc);font-size:12px;margin:16px 0 6px">Sensibilité par effectif — EBITDA ${target}%, Marge ${margin}%</h3>
+    <div class="ovx">
+    <table>
+      <thead><tr><th>Effectifs</th><th>Masse salariale</th><th>CA requis</th><th>Marge brute</th><th>EBITDA</th><th>FCF (EBITDA-D&A-Fin)</th></tr></thead>
+      <tbody>
+        ${scenarios.map(sc => {
+          const isCurr = sc.eff === S.etp;
+          return `<tr class="${isCurr?'subtotal':''}">
+            <td style="color:${isCurr?'var(--gold)':'var(--txt)'};font-weight:${isCurr?700:400}">${sc.eff} ETP ${isCurr?'← actuel':''}</td>
+            <td style="color:var(--neg);font-family:var(--mono)">${fmtK(-sc.sal)}</td>
+            <td style="color:var(--acc);font-family:var(--mono);font-weight:700">${sc.ca?fmtK(sc.ca):'N/A'}</td>
+            <td style="font-family:var(--mono)">${sc.ca?fmtK(sc.ca*margin/100):'N/A'}</td>
+            <td style="color:${sc.ebitda&&sc.ebitda>0?'var(--pos)':'var(--neg)'};font-family:var(--mono)">${sc.ebitda?fmtK(sc.ebitda):'N/A'}</td>
+            <td style="color:${sc.fcf&&sc.fcf>0?'var(--pos)':'var(--neg)'};font-family:var(--mono)">${sc.fcf?fmtK(sc.fcf):'N/A'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+
+    <div class="info-box" style="margin-top:16px">
+      <h4>💡 Lecture du Breakeven — Entreprise A</h4>
+      <p style="margin-bottom:8px">
+        <strong>Situation 2026 :</strong> CA budgété ${fmtK(r26.ca)} k€, taux GM ${(r26.tx_gm_c*100).toFixed(1)}%, EBITDA projeté ${fmtK(r26.ebitda)} k€ 
+        (${(r26.ebitda/r26.ca*100).toFixed(1)}% de CA). Résultat net ${fmtK(r26.net)} k€.
+      </p>
+      <p style="margin-bottom:8px">
+        <strong>Pour atteindre EBITDA = ${target}%</strong> avec marge brute de ${margin}%, le CA doit atteindre 
+        <strong style="color:var(--acc)">${caBreak?fmtK(caBreak):'impossible avec ce taux de marge'}</strong>${ratio?' — soit '+ratio.toFixed(1)+'x le niveau budgété':''}.
+      </p>
+      <p style="margin:0">
+        <strong>Levier effectifs :</strong> coût moyen ${fmtK(coutMoyen)} k€/ETP/an. 
+        Chaque réduction de 10 ETP économise ${fmtK(coutMoyen*10)} k€/an de masse salariale, 
+        ce qui représente ${marginPct>targetPct?fmtK(coutMoyen*10/(marginPct-targetPct))+' k€ de CA en moins à générer pour atteindre l\'équilibre.':'un gain direct sur l\'EBITDA.'}
+      </p>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// TAB 6 — HEATMAP CA × ETP
+// ─────────────────────────────────────────────
+function heatColor(ebitda_pct) {
+  const norm = Math.max(0, Math.min(1, (ebitda_pct + 18) / 26)); // -18%=0 … +8%=1
+  const stops = [[127,29,29],[185,28,28],[234,88,12],[161,98,7],[22,101,52],[6,78,59]];
+  const t = norm * (stops.length - 1), i = Math.floor(t), f = t - i;
+  const a = stops[Math.min(i, stops.length-1)], b = stops[Math.min(i+1, stops.length-1)];
+  return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
+}
+function heatTextColor(ep){ return ep > -5 ? '#f8fafc' : '#fca5a5'; }
+function heatCell(ca, etp, gm_override=null) {
+  const gm = gm_override !== null ? gm_override : S.tx_gm;
+  const cogs = -(ca * (1 - gm/100));
+  const gross = ca + cogs;
+  const sal = -(etp * S.cost_etp / 1000);
+  const ebitda = gross + sal + S.struct + S.oor;
+  const ep = ebitda / ca * 100;
+  const net = ebitda + S.amort + S.fin + S.excep + S.is_;
+  return { ebitda: Math.round(ebitda), ep: ep.toFixed(1), net: Math.round(net) };
+}
+
+function renderHeatmap() {
+  const HM_ETP = [180, 200, 220, 240, 250, 260, 270, 280, 300, 320];
+  const HM_CA  = [70000, 75000, 80000, 85000, 90000, 93548, 95000, 100000, 105000, 110000];
+  const HM_GM  = [12, 13, 14, 14.5, 15, 15.89, 16, 17, 18, 20];
+
+  function hmGrid(rowVals, rowLabel, colLabel, getCell, isCurrRow, isCurrCol) {
+    let html = `<div class="hm-wrap"><table class="hm-table"><thead><tr>
+      <th class="row-hdr">${rowLabel} ↓ / ${colLabel} →</th>
+      ${HM_ETP.map((e,j) => `<th style="${isCurrCol(j)?'color:var(--gold)':''}">${e}<br><span style="font-size:8px">${isCurrCol(j)?'← actuel':''}</span></th>`).join('')}
+    </tr></thead><tbody>`;
+    for(let i=0; i<rowVals.length; i++) {
+      const rv = rowVals[i];
+      const isCR = isCurrRow(i);
+      html += `<tr><th class="row-hdr" style="${isCR?'color:var(--gold);':''}">
+        ${typeof rv === 'number' && rv > 1000 ? Math.round(rv/1000)+'k' : typeof rv === 'number' ? rv+'%' : rv}${isCR?' ←':''}
+      </th>`;
+      for(let j=0; j<HM_ETP.length; j++) {
+        const c = getCell(rv, HM_ETP[j]);
+        const bg = heatColor(parseFloat(c.ep));
+        const tc = heatTextColor(parseFloat(c.ep));
+        const isCurr = isCR && isCurrCol(j);
+        html += `<td class="hm-cell${isCurr?' current':''}" style="background:${bg};color:${tc}" 
+          data-tip="CA: ${typeof rv==='number'&&rv>1000?Math.round(rv/1000)+'k€':rv} | ETP: ${HM_ETP[j]} | EBITDA: ${c.ebitda} k€ | Net: ${c.net} k€">
+          ${c.ep}%<span class="hm-sub">${c.ebitda > 0 ? '+' : ''}${Math.round(c.ebitda/1000*10)/10}M</span>
+        </td>`;
+      }
+      html += '</tr>';
+    }
+    return html + '</tbody></table></div>';
+  }
+
+  const hm1 = hmGrid(HM_CA, 'CA (k€)', 'ETP',
+    (ca, etp) => heatCell(ca, etp),
+    i => HM_CA[i] === 93548 || (HM_CA[i] <= S.ca && (i===HM_CA.length-1||HM_CA[i+1]>S.ca)),
+    j => HM_ETP[j] === S.etp || (HM_ETP[j] <= S.etp && (j===HM_ETP.length-1||HM_ETP[j+1]>S.etp))
+  );
+  const hm2 = hmGrid(HM_GM, 'Taux GM (%)', 'ETP',
+    (gm, etp) => heatCell(S.ca, etp, gm),
+    i => Math.abs(HM_GM[i] - S.tx_gm) < 0.5,
+    j => HM_ETP[j] === S.etp || (HM_ETP[j] <= S.etp && (j===HM_ETP.length-1||HM_ETP[j+1]>S.etp))
+  );
+
+  // Net result heatmap (CA × ETP → Résultat Net)
+  const HM_NET_CA = [70000,75000,80000,85000,90000,93548,95000,100000,105000,110000];
+  function heatColorNet(net_pct) {
+    return heatColor(net_pct * 0.8); // rescale: net is tighter range
+  }
+  let hm3 = `<div class="hm-wrap"><table class="hm-table"><thead><tr>
+    <th class="row-hdr">CA (k€) ↓ / ETP →</th>
+    ${HM_ETP.map((e,j) => `<th style="${e===S.etp?'color:var(--gold)':''}">${e}${e===S.etp?' ←':''}</th>`).join('')}
+  </tr></thead><tbody>`;
+  for(const ca of HM_NET_CA) {
+    hm3 += `<tr><th class="row-hdr" style="${ca>=93000&&ca<=94000?'color:var(--gold)':''}">${Math.round(ca/1000)}k${ca>=93000&&ca<=94000?' ←':''}</th>`;
+    for(const etp of HM_ETP) {
+      const c = heatCell(ca, etp);
+      const bg = heatColorNet(c.net/ca*100);
+      const tc = heatTextColor(c.net/ca*100);
+      const isCurr = (ca>=93000&&ca<=94000) && etp===S.etp;
+      hm3 += `<td class="hm-cell${isCurr?' current':''}" style="background:${bg};color:${tc}"
+        data-tip="CA: ${Math.round(ca/1000)}k€ | ETP: ${etp} | Net: ${c.net} k€ | ${(c.net/ca*100).toFixed(1)}%">
+        ${(c.net/ca*100).toFixed(1)}%<span class="hm-sub">${c.net>0?'+':''}${Math.round(c.net/1000*10)/10}M</span>
+      </td>`;
+    }
+    hm3 += '</tr>';
+  }
+  hm3 += '</tbody></table></div>';
+
+  return `
+  <div class="section">
+    <div class="section-title">🌡️ Heatmap — EBITDA% (CA × ETP, taux GM actuel ${S.tx_gm.toFixed(1)}%)</div>
+    <div style="color:var(--dim);font-size:10.5px;margin-bottom:10px">
+      Lecture : chaque cellule = EBITDA% pour la combinaison CA (ligne) × ETP (colonne). 
+      <strong style="color:var(--gold)">Bordure or</strong> = position actuelle des paramètres.
+      Hover pour détail.
+    </div>
+    <div class="hm-legend">
+      <span>EBITDA :</span>
+      <span style="color:#ef4444">−18%</span>
+      <div class="hm-legend-bar"></div>
+      <span style="color:#10b981">+8%</span>
+    </div>
+    <div style="height:10px"></div>
+    ${hm1}
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌡️ Heatmap — EBITDA% (Taux GM × ETP, CA fixé à ${fmt(S.ca)} k€)</div>
+    <div style="color:var(--dim);font-size:10.5px;margin-bottom:10px">
+      Lecture : variation du taux de marge brute (rows) versus effectifs (cols). Utile pour mesurer l'impact d'un mix produit ou d'une négociation Apple.
+    </div>
+    ${hm2}
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌡️ Heatmap — Résultat Net% (CA × ETP)</div>
+    <div style="color:var(--dim);font-size:10.5px;margin-bottom:10px">
+      Même grille CA × ETP mais colorée par <strong>Résultat Net / CA</strong> (après IS, financier, exceptionnel).
+    </div>
+    ${hm3}
+  </div>
+
+  <div class="section" style="background:var(--card2)">
+    <div class="section-title" style="color:var(--gold)">💡 Lecture des Heatmaps</div>
+    <div style="color:var(--txt);font-size:11.5px;line-height:1.8">
+      <p style="margin-bottom:6px">
+        <strong>Heatmap 1</strong> — Pour un CA de ${fmt(S.ca)} k€ (budget 2026) et ${S.etp} ETP, l'EBITDA est de 
+        <strong style="color:${heatCell(S.ca,S.etp).ep>0?'var(--pos)':'var(--neg)'}">${heatCell(S.ca,S.etp).ep}%</strong> 
+        (${heatCell(S.ca,S.etp).ebitda} k€).
+      </p>
+      <p style="margin-bottom:6px">
+        <strong>Zone verte</strong> : les combinaisons CA/ETP qui permettent un EBITDA positif avec le taux de marge actuel (${S.tx_gm.toFixed(1)}%).
+        <strong>Chaque rangée de 10 ETP</strong> en moins économise ~${fmt(S.cost_etp/100)} k€/an et déplace la frontière de rentabilité 
+        d'environ ${fmt(S.cost_etp/10/(S.tx_gm/100))} k€ de CA requis.
+      </p>
+      <p style="margin:0">
+        <strong>Heatmap 2</strong> — Montre qu'à ${S.etp} ETP, un taux GM de 
+        <strong style="color:var(--acc)">${(((Math.abs(S.sal)+Math.abs(S.struct)-S.oor) / S.ca + S.be_target/100)*100).toFixed(1)}%</strong> 
+        serait nécessaire pour atteindre l'équilibre EBITDA (vs ${S.tx_gm.toFixed(1)}% actuel).
+      </p>
+    </div>
+  </div>
+  <div id="hm-tooltip" class="tooltip"></div>
+  <script>
+  (function(){
+    function showTip(e) {
+      const tip = document.getElementById('hm-tooltip');
+      const d = e.currentTarget.dataset.tip;
+      if(!d) return;
+      tip.innerHTML = d.split('|').map(s=>'<div>'+s.trim()+'</div>').join('');
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX+14)+'px';
+      tip.style.top  = (e.clientY-10)+'px';
+    }
+    function hideTip() { document.getElementById('hm-tooltip').style.display='none'; }
+    function moveTip(e) {
+      const tip = document.getElementById('hm-tooltip');
+      if(tip.style.display==='block'){
+        tip.style.left=(e.clientX+14)+'px';
+        tip.style.top=(e.clientY-10)+'px';
+      }
+    }
+    document.querySelectorAll('.hm-cell').forEach(c => {
+      c.addEventListener('mouseenter', showTip);
+      c.addEventListener('mouseleave', hideTip);
+      c.addEventListener('mousemove', moveTip);
+    });
+  })();
+  <\/script>`;
+}
+
+// ─────────────────────────────────────────────
+// STATE UPDATE & RENDER
+// ─────────────────────────────────────────────
+const TABS = {
+  'pl': () => renderPL(),
+  'bfr': () => renderBFR(),
+  'tresor': () => renderTresor(),
+  'mensuel': () => renderMensuel(),
+  'be': () => renderBreakeven(),
+  'heatmap': () => renderHeatmap(),
+};
+let currentTab = 'pl';
+
+function updateState(key, val) {
+  if(key==='') return;
+  S[key] = val;
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  const el = document.getElementById('tab-'+currentTab);
+  if(el) el.innerHTML = TABS[currentTab]();
+}
+
+function switchTab(id) {
+  document.getElementById('tab-'+currentTab).style.display = 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  currentTab = id;
+  document.getElementById('tab-'+id).style.display = 'block';
+  event.currentTarget.classList.add('active');
+  renderCurrentTab();
+}
+
+// ─────────────────────────────────────────────
+// UTILITIES — SVG→PNG + script loader
+// ─────────────────────────────────────────────
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    if(document.querySelector(`script[src="${src}"]`) && window.ExcelJS) return res();
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function svgToPng(svgEl, bg='#111827') {
+  if(!svgEl) return null;
+  const vb = svgEl.viewBox.baseVal;
+  const W = vb.width || 720, H = vb.height || 340;
+  return new Promise(res => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = W*2; canvas.height = H*2;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bg; ctx.fillRect(0,0,W*2,H*2); ctx.scale(2,2);
+      const clone = svgEl.cloneNode(true);
+      clone.setAttribute('xmlns','http://www.w3.org/2000/svg');
+      clone.setAttribute('width',W); clone.setAttribute('height',H);
+      clone.querySelectorAll('text,tspan').forEach(t=>{
+        t.setAttribute('font-family','Arial,sans-serif');
+        t.style && (t.style.fontFamily='Arial,sans-serif');
+      });
+      const blob = new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => { try{ctx.drawImage(img,0,0,W,H);}catch(e){} URL.revokeObjectURL(url); res({b64:canvas.toDataURL('image/png').split(',')[1],w:W,h:H}); };
+      img.onerror = () => { URL.revokeObjectURL(url); res(null); };
+      img.src = url;
+    } catch(e) { res(null); }
+  });
+}
+
+// ─────────────────────────────────────────────
+// EXCEL EXPORT — ExcelJS full styling + images
+// ─────────────────────────────────────────────
+async function exportToExcel() {
+  const btn = document.querySelector('.export-btn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Chargement bibliothèque...'; btn.disabled = true;
+  try {
+    await loadScript('https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js');
+    // Render all tabs so SVGs exist in DOM
+    const allTabs = ['pl','bfr','tresor','mensuel','be','heatmap'];
+    const prev = currentTab;
+    for(const t of allTabs){ const el=document.getElementById('tab-'+t); el.style.display='block'; el.innerHTML=TABS[t](); }
+    btn.innerHTML = '⏳ Capture graphiques...';
+    await new Promise(r=>setTimeout(r,120)); // let DOM paint
+    // Capture SVG charts
+    const chartWraps = [...document.querySelectorAll('.chart-wrap')];
+    const chartPngs = [];
+    for(const cw of chartWraps){ const svg=cw.querySelector('svg'); chartPngs.push(svg ? await svgToPng(svg) : null); }
+    // Restore tabs
+    for(const t of allTabs) document.getElementById('tab-'+t).style.display = t===prev?'block':'none';
+    btn.innerHTML = '⏳ Génération Excel...';
+    await buildExcelJS(chartPngs);
+    btn.innerHTML = '✅ Téléchargé !';
+    setTimeout(()=>{ btn.innerHTML=orig; btn.disabled=false; },3000);
+  } catch(e) {
+    console.error(e); btn.innerHTML='❌ Erreur — voir console'; btn.disabled=false;
+    setTimeout(()=>{ btn.innerHTML=orig; btn.disabled=false; },4000);
+  }
+}
+
+async function buildExcelJS(chartPngs) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator='Advertuo'; wb.created=new Date();
+
+  const h24=computeHistYear(HIST['2024']), h25=computeHistYear(HIST['2025']), D=compute2026(), r26=D.pl;
+  const sal26 = S.etp_mode ? -(S.etp*S.cost_etp/1000) : S.sal;
+  const bfr24=BFR_HIST['2024'], bfr25=BFR_HIST['2025'];
+
+  // ── Palette ──
+  const P = {
+    bg:'FF0A0F1A', card:'FF111827', card2:'FF0F1929', border:'FF1E293B',
+    acc:'FF38BDF8', gold:'FFF59E0B', pos:'FF10B981', neg:'FFEF4444',
+    sub:'FF3B82F6', tot:'FF6366F1', txt:'FFE2E8F0', dim:'FF64748B',
+    edit:'FFF0F9FF', hdr_bg:'FF0F1929',
+  };
+
+  // ── Style factories ──
+  const font = (opts={}) => ({ name:'Calibri', size:11, color:{argb:P.txt}, ...opts });
+  const fill = (argb) => ({ type:'pattern', pattern:'solid', fgColor:{argb} });
+  const border = (style='thin') => ({
+    top:{style,color:{argb:P.border}}, bottom:{style,color:{argb:P.border}},
+    left:{style,color:{argb:P.border}}, right:{style,color:{argb:P.border}}
+  });
+  const align = (h='left', v='middle', wrap=false) => ({horizontal:h,vertical:v,wrapText:wrap});
+
+  // ── Cell applier helpers ──
+  function styleCell(ws, addr, opts={}) {
+    const c = ws.getCell(addr);
+    if(opts.value !== undefined) c.value = opts.value;
+    if(opts.font) c.font = opts.font;
+    if(opts.fill) c.fill = opts.fill;
+    if(opts.border) c.border = opts.border;
+    if(opts.alignment) c.alignment = opts.alignment;
+    if(opts.numFmt) c.numFmt = opts.numFmt;
+    return c;
+  }
+
+  function setRow(ws, rowNum, values, styles=[]) {
+    values.forEach((v,i) => {
+      const c = ws.getCell(rowNum, i+1);
+      c.value = v;
+      const s = styles[i] || {};
+      if(s.font) c.font = s.font; else c.font = font();
+      if(s.fill) c.fill = s.fill; else c.fill = fill(P.card);
+      if(s.alignment) c.alignment = s.alignment; else c.alignment = align(i===0?'left':'right');
+      if(s.numFmt) c.numFmt = s.numFmt;
+      if(s.border) c.border = s.border;
+    });
+  }
+
+  const HDR_FONT  = (col=P.acc) => font({bold:true,color:{argb:col},size:10});
+  const TITLE_FONT = (col=P.acc) => font({bold:true,color:{argb:col},size:13});
+  const SUB_FONT  = (col=P.sub) => font({bold:true,color:{argb:col},size:11});
+  const TOT_FONT  = (col=P.tot) => font({bold:true,color:{argb:col},size:11});
+  const GOLD_FONT = () => font({bold:true,color:{argb:P.gold},size:11});
+  const DIM_FONT  = () => font({color:{argb:P.dim},size:10});
+  const POS_FONT  = () => font({color:{argb:P.pos},size:11});
+  const NEG_FONT  = () => font({color:{argb:P.neg},size:11});
+  const ACC_FONT  = () => font({color:{argb:P.acc},size:11});
+  const EDIT_FONT = () => font({color:{argb:'FF1E40AF'},size:11});
+  const HDR_FILL  = fill(P.hdr_bg);
+  const CARD_FILL = fill(P.card);
+  const CARD2_FILL= fill(P.card2);
+  const DARK_FILL = fill(P.bg);
+  const NUM_FMT   = '#,##0';
+  const NUM_NEG   = '#,##0;[Red]-#,##0';
+  const PCT_FMT   = '0.0%';
+
+  function valFont(v, proj=true) {
+    const base = proj ? font({color:{argb:P.gold},size:11}) : font({size:11});
+    if(typeof v !== 'number') return base;
+    return v>0 ? font({color:{argb:P.pos},size:11}) : v<0 ? font({color:{argb:P.neg},size:11}) : font({color:{argb:P.dim},size:11});
+  }
+  function addImgToSheet(ws, png, anchorRow, anchorCol=0) {
+    if(!png || !wb.addImage) return;
+    try {
+      const imgId = wb.addImage({base64:png.b64, extension:'png'});
+      ws.addImage(imgId, {
+        tl:{col:anchorCol, row:anchorRow},
+        ext:{width: Math.round(png.w*0.72), height: Math.round(png.h*0.72)}
+      });
+    } catch(e){ console.warn('Image embed failed:', e); }
+  }
+
+  // ─────────────────────────────────
+  // SHEET 0: Paramètres (snapshot)
+  // ─────────────────────────────────
+  const ws0 = wb.addWorksheet('0_Paramètres', {properties:{tabColor:{argb:P.gold}}});
+  ws0.columns = [{width:38},{width:18},{width:24}];
+
+  let row0 = 1;
+  const S0 = (r,c,v,f,fi,al,nf) => {
+    const cell=ws0.getCell(r,c); cell.value=v;
+    if(f) cell.font=f; if(fi) cell.fill=fi;
+    cell.alignment=al||align('left');
+    if(nf) cell.numFmt=nf;
+  };
+  S0(row0,1,'Snapshot Paramètres — Export du '+new Date().toLocaleDateString('fr-FR'),TITLE_FONT(P.acc),DARK_FILL);
+  ws0.mergeCells(row0,1,row0,3); row0++;
+  S0(row0,1,'Tous les paramètres tels que saisis au moment de l\'export',DIM_FONT(),DARK_FILL); ws0.mergeCells(row0,1,row0,3); row0+=2;
+
+  const p0rows = [
+    ['Paramètre','Valeur','Note'],
+    null,
+    ['① P&L 2026','',''],
+    ['CA 2026 (k€)', S.ca, 'Budget'],
+    ['Taux de Marge Brute (%)', S.tx_gm/100, 'Paramétré'],
+    ['ETP 2026', S.etp, 'Effectif moyen'],
+    ['Coût moyen / ETP (€)', S.cost_etp, 'Annuel chargé'],
+    ['Salaires (k€)', sal26, S.etp_mode?'Calculé ETP×coût':'Saisi direct'],
+    ['Frais de Structure (k€)', S.struct, ''],
+    ['Autres Produits/Charges OOR (k€)', S.oor, ''],
+    ['Amortissements (k€)', S.amort, ''],
+    ['Résultat Financier (k€)', S.fin, ''],
+    ['IS (k€)', S.is_, ''],
+    ['Capex (k€)', S.capex, ''],
+    null,
+    ['② BFR','',''],
+    ['DIO (jours)', S.dio, 'Jours de stock'],
+    ['DSO (jours)', S.dso, 'Délai clients'],
+    ['DPO (jours)', S.dpo, 'Délai fournisseurs'],
+    ['Flux Financement (k€)', S.flux_fin, ''],
+    null,
+    ['③ KPIs Calculés','',''],
+    ['Marge Brute (k€)', r26.gm, 'Calculé'],
+    ['EBITDA (k€)', r26.ebitda, 'Calculé'],
+    ['EBIT (k€)', r26.ebit, 'Calculé'],
+    ['Résultat Net (k€)', r26.net, 'Calculé'],
+    ['Δ Trésorerie 2026 (k€)', D.var_treso, 'Calculé'],
+  ];
+  for(const pr of p0rows) {
+    if(!pr){ row0++; continue; }
+    const [lbl,val,note] = pr;
+    const isSection = note==='';
+    const isKPI = note==='Calculé';
+    const isEdit = note&&note!==''&&note!=='Calculé';
+    ws0.getCell(row0,1).value = lbl;
+    ws0.getCell(row0,1).font = isSection ? GOLD_FONT() : font();
+    ws0.getCell(row0,1).fill = isSection ? CARD2_FILL : CARD_FILL;
+    ws0.getCell(row0,1).alignment = align('left');
+    if(val !== '') {
+      const vc = ws0.getCell(row0,2);
+      vc.value = val;
+      vc.fill = CARD_FILL;
+      vc.alignment = align('right');
+      if(typeof val === 'number'){
+        vc.numFmt = (lbl.includes('%') && Math.abs(val)<2) ? '0.00%' : NUM_FMT;
+        vc.font = isKPI ? valFont(val) : isEdit ? EDIT_FONT() : font();
+      }
+    }
+    if(note) { ws0.getCell(row0,3).value=note; ws0.getCell(row0,3).font=DIM_FONT(); ws0.getCell(row0,3).fill=CARD_FILL; }
+    row0++;
+  }
+
+  // ─────────────────────────────────
+  // SHEET 1: P&L
+  // ─────────────────────────────────
+  const ws1 = wb.addWorksheet('1_P&L', {properties:{tabColor:{argb:P.sub}}});
+  ws1.columns = [{width:40},{width:16},{width:16},{width:16},{width:14},{width:10}];
+
+  let r1 = 1;
+  // Title
+  ws1.getCell(r1,1).value = 'Entreprise A — Compte de Résultat 2024–2026';
+  ws1.getCell(r1,1).font = TITLE_FONT(); ws1.getCell(r1,1).fill = DARK_FILL;
+  ws1.mergeCells(r1,1,r1,6); r1+=2;
+
+  // Headers
+  const plHdrs = ['Libellé','2024 Réel','2025 Estimé','2026 Budget ✏','Δ 24→25','Δ%'];
+  plHdrs.forEach((h,i) => {
+    const c=ws1.getCell(r1,i+1); c.value=h;
+    c.font=HDR_FONT(i===3?P.gold:P.acc); c.fill=HDR_FILL;
+    c.alignment=align(i===0?'left':'center'); c.border=border();
+    c.border={bottom:{style:'medium',color:{argb:P.acc}}};
+  }); r1++;
+
+  const plSections = [
+    {title:'① CHIFFRE D\'AFFAIRES'},
+    {l:'Ventes / CA (k€)', h24:h24.ca, h25:h25.ca, v26:r26.ca},
+    {l:'Coût des Ventes / COGS (k€)', h24:h24.cogs, h25:h25.cogs, v26:r26.cogs},
+    {l:'Taux de Marge Brute', h24:h24.tx_gm_c, h25:h25.tx_gm_c, v26:r26.tx_gm_c, pct:true},
+    {l:'Marge Brute (k€)', h24:h24.gm, h25:h25.gm, v26:r26.gm, sub:true},
+    {title:'② CHARGES OPÉRATIONNELLES'},
+    {l:'Salaires / Charges de personnel (k€)', h24:h24.sal, h25:h25.sal, v26:sal26},
+    {l:'Frais de Structure (k€)', h24:h24.struct, h25:h25.struct, v26:r26.struct},
+    {l:'Autres Produits/Charges — OOR (k€)', h24:h24.oor, h25:h25.oor, v26:r26.oor},
+    {l:'EBITDA (k€)', h24:h24.ebitda, h25:h25.ebitda, v26:r26.ebitda, sub:true},
+    {l:'Amortissements & Dépréciations (k€)', h24:h24.amort, h25:h25.amort, v26:r26.amort},
+    {l:'EBIT / Rés. d\'Exploitation (k€)', h24:h24.ebit, h25:h25.ebit, v26:r26.ebit, sub:true},
+    {title:'③ RÉSULTAT FINANCIER & EXCEPTIONNEL'},
+    {l:'Résultat Financier (k€)', h24:h24.fin, h25:h25.fin, v26:r26.fin},
+    {l:'Résultat Exceptionnel (k€)', h24:h24.excep, h25:h25.excep, v26:r26.excep},
+    {l:'Impôt sur les Sociétés (k€)', h24:h24.is_, h25:h25.is_, v26:r26.is_},
+    {l:'Résultat Net Consolidé (k€)', h24:h24.net, h25:h25.net, v26:r26.net, total:true},
+    {title:'④ INVESTISSEMENTS'},
+    {l:'Capex / Immobilisations (k€)', h24:h24.capex, h25:h25.capex, v26:r26.capex},
+  ];
+
+  for(const row of plSections) {
+    if(row.title) {
+      ws1.getCell(r1,1).value = row.title;
+      ws1.getCell(r1,1).font = GOLD_FONT(); ws1.getCell(r1,1).fill = CARD2_FILL;
+      ws1.mergeCells(r1,1,r1,6); r1++; continue;
+    }
+    const fi = row.sub ? CARD2_FILL : row.total ? fill('FF1a1a35') : CARD_FILL;
+    const fn24 = row.sub ? SUB_FONT() : row.total ? TOT_FONT() : DIM_FONT();
+    const fn25 = row.sub ? SUB_FONT() : row.total ? TOT_FONT() : font();
+    const fn26 = row.sub ? SUB_FONT(P.gold) : row.total ? TOT_FONT(P.gold) : valFont(row.v26);
+    const delta = typeof row.h25==='number' && typeof row.h24==='number' ? row.h25-row.h24 : null;
+    const dpct  = delta!==null && row.h24 ? delta/Math.abs(row.h24) : null;
+
+    ws1.getCell(r1,1).value=row.l; ws1.getCell(r1,1).font=font({bold:row.sub||row.total}); ws1.getCell(r1,1).fill=fi; ws1.getCell(r1,1).alignment=align('left');
+    ws1.getCell(r1,2).value=row.h24; ws1.getCell(r1,2).font=fn24; ws1.getCell(r1,2).fill=fi; ws1.getCell(r1,2).alignment=align('right'); ws1.getCell(r1,2).numFmt=row.pct?PCT_FMT:NUM_FMT;
+    ws1.getCell(r1,3).value=row.h25; ws1.getCell(r1,3).font=fn25; ws1.getCell(r1,3).fill=fi; ws1.getCell(r1,3).alignment=align('right'); ws1.getCell(r1,3).numFmt=row.pct?PCT_FMT:NUM_FMT;
+    ws1.getCell(r1,4).value=row.v26; ws1.getCell(r1,4).font=fn26; ws1.getCell(r1,4).fill=fill('FF1A2640'); ws1.getCell(r1,4).alignment=align('right'); ws1.getCell(r1,4).numFmt=row.pct?PCT_FMT:NUM_FMT;
+    ws1.getCell(r1,5).value=delta; ws1.getCell(r1,5).font=delta?valFont(delta,false):DIM_FONT(); ws1.getCell(r1,5).fill=fi; ws1.getCell(r1,5).alignment=align('right'); ws1.getCell(r1,5).numFmt=NUM_FMT;
+    ws1.getCell(r1,6).value=dpct; ws1.getCell(r1,6).font=dpct?valFont(dpct,false):DIM_FONT(); ws1.getCell(r1,6).fill=fi; ws1.getCell(r1,6).alignment=align('right'); ws1.getCell(r1,6).numFmt=PCT_FMT;
+    if(row.sub||row.total) ws1.getRow(r1).eachCell(c=>{c.border={top:{style:'thin',color:{argb:P.border}}};});
+    r1++;
+  }
+
+  // Embed P&L waterfall chart
+  r1++;
+  ws1.getCell(r1,1).value = 'Bridge P&L 2026 (graphique)';
+  ws1.getCell(r1,1).font = HDR_FONT(P.gold); ws1.getCell(r1,1).fill = CARD2_FILL;
+  ws1.mergeCells(r1,1,r1,6); r1++;
+  if(chartPngs[0]) addImgToSheet(ws1, chartPngs[0], r1-1, 0);
+
+  // ─────────────────────────────────
+  // SHEET 2: BFR & Cash Flow
+  // ─────────────────────────────────
+  const ws2 = wb.addWorksheet('2_BFR_CashFlow', {properties:{tabColor:{argb:P.pos}}});
+  ws2.columns = [{width:40},{width:16},{width:16},{width:18}];
+  let r2 = 1;
+  ws2.getCell(r2,1).value='Entreprise A — BFR & Cash Flow'; ws2.getCell(r2,1).font=TITLE_FONT(); ws2.getCell(r2,1).fill=DARK_FILL; ws2.mergeCells(r2,1,r2,4); r2+=2;
+
+  // BFR table
+  ws2.getCell(r2,1).value='② BFR (Jours paramétrés : DIO='+S.dio+'j / DSO='+S.dso+'j / DPO='+S.dpo+'j)';
+  ws2.getCell(r2,1).font=GOLD_FONT(); ws2.getCell(r2,1).fill=CARD2_FILL; ws2.mergeCells(r2,1,r2,4); r2++;
+  const bfrHdrs=['Indicateur','2024 Réel','2025 Estimé','2026 Calculé'];
+  bfrHdrs.forEach((h,i)=>{const c=ws2.getCell(r2,i+1);c.value=h;c.font=HDR_FONT(i===3?P.gold:P.acc);c.fill=HDR_FILL;c.alignment=align(i===0?'left':'right');}); r2++;
+
+  const net24=bfr24.stocks+bfr24.ar+bfr24.ap, net25=bfr25.stocks+bfr25.ar+bfr25.ap;
+  const bfr26=D.bfr;
+  const bfrRows=[
+    ['Stocks (k€)',bfr24.stocks,bfr25.stocks,Math.round(bfr26.stocks),false],
+    ['Créances Clients / AR (k€)',bfr24.ar,bfr25.ar,Math.round(bfr26.ar),false],
+    ['Dettes Fournisseurs / AP (k€)',bfr24.ap,bfr25.ap,Math.round(bfr26.ap),false],
+    ['BFR Net (k€)',net24,net25,Math.round(bfr26.net),true],
+    ['DIO (jours)',bfr24.dio,bfr25.dio,S.dio,false],
+    ['DSO (jours)',bfr24.dso,bfr25.dso,S.dso,false],
+    ['DPO (jours)',bfr24.dpo,bfr25.dpo,S.dpo,false],
+    ['Δ BFR → Impact Cash (k€)','','',Math.round(D.delta_bfr_cash),true],
+  ];
+  for(const [lbl,v24,v25,v26,sub] of bfrRows){
+    const fi=sub?CARD2_FILL:CARD_FILL;
+    [lbl,v24,v25,v26].forEach((v,i)=>{
+      const c=ws2.getCell(r2,i+1); c.value=v; c.fill=fi; c.alignment=align(i===0?'left':'right');
+      c.font=i===0?(sub?SUB_FONT():font()):i===1?DIM_FONT():i===2?font():valFont(typeof v==='number'?v:0);
+      if(typeof v==='number') c.numFmt=NUM_FMT;
+    }); r2++;
+  }
+
+  // Cash flow table
+  r2++;
+  ws2.getCell(r2,1).value='Cash Flow 2026 (EBITDA → Δ Trésorerie)'; ws2.getCell(r2,1).font=GOLD_FONT(); ws2.getCell(r2,1).fill=CARD2_FILL; ws2.mergeCells(r2,1,r2,4); r2++;
+  const cfHdrs=['Élément','2024','2025','2026 Estimé'];
+  cfHdrs.forEach((h,i)=>{const c=ws2.getCell(r2,i+1);c.value=h;c.font=HDR_FONT(i===3?P.gold:P.acc);c.fill=HDR_FILL;c.alignment=align(i===0?'left':'right');}); r2++;
+
+  const cfRows=[
+    ['Flux Opérationnel (k€)',TFT_HIST['2024'].flux_op,TFT_HIST['2025'].flux_op,Math.round(D.flux_op),false],
+    ['Flux Investissement (k€)',TFT_HIST['2024'].flux_inv,TFT_HIST['2025'].flux_inv,Math.round(D.flux_inv),false],
+    ['Flux Financement (k€)',TFT_HIST['2024'].flux_fin,TFT_HIST['2025'].flux_fin,S.flux_fin,false],
+    ['Variation Trésorerie (k€)',TFT_HIST['2024'].var_treso,TFT_HIST['2025'].var_treso,Math.round(D.var_treso),true],
+  ];
+  for(const [lbl,v24,v25,v26,sub] of cfRows){
+    const fi=sub?CARD2_FILL:CARD_FILL;
+    [lbl,v24,v25,v26].forEach((v,i)=>{
+      const c=ws2.getCell(r2,i+1); c.value=v; c.fill=fi; c.alignment=align(i===0?'left':'right');
+      c.font=i===0?(sub?SUB_FONT():font()):i===1?DIM_FONT():i===2?font():valFont(typeof v==='number'?v:0);
+      if(typeof v==='number')c.numFmt=NUM_FMT;
+    }); r2++;
+  }
+
+  // Embed BFR CashFlow chart
+  r2++;
+  ws2.getCell(r2,1).value='Waterfall EBITDA → Δ Trésorerie (graphique)'; ws2.getCell(r2,1).font=HDR_FONT(P.gold); ws2.getCell(r2,1).fill=CARD2_FILL; ws2.mergeCells(r2,1,r2,4); r2++;
+  if(chartPngs[1]) addImgToSheet(ws2, chartPngs[1], r2-1, 0);
+
+  // ─────────────────────────────────
+  // SHEET 3: Trésorerie
+  // ─────────────────────────────────
+  const ws3 = wb.addWorksheet('3_Trésorerie', {properties:{tabColor:{argb:P.tot}}});
+  ws3.columns=[{width:40},{width:16},{width:16},{width:18}];
+  let r3=1;
+  ws3.getCell(r3,1).value='Entreprise A — Trésorerie 2024→2026'; ws3.getCell(r3,1).font=TITLE_FONT(); ws3.getCell(r3,1).fill=DARK_FILL; ws3.mergeCells(r3,1,r3,4); r3+=2;
+
+  const close25=5207, open26=close25, close26=open26+D.var_treso;
+  const tresoRows=[
+    ['Ouverture',4917,5534,open26,false],
+    ['Flux Opérationnel',TFT_HIST['2024'].flux_op,TFT_HIST['2025'].flux_op,Math.round(D.flux_op),false],
+    ['Flux Investissement',TFT_HIST['2024'].flux_inv,TFT_HIST['2025'].flux_inv,Math.round(D.flux_inv),false],
+    ['Flux Financement',TFT_HIST['2024'].flux_fin,TFT_HIST['2025'].flux_fin,S.flux_fin,false],
+    ['Variation totale',TFT_HIST['2024'].var_treso,TFT_HIST['2025'].var_treso,Math.round(D.var_treso),false],
+    ['Clôture',5534,close25,Math.round(close26),true],
+  ];
+  const tresoHdrs=['Flux / Solde (k€)','2024','2025','2026 Projeté'];
+  tresoHdrs.forEach((h,i)=>{const c=ws3.getCell(r3,i+1);c.value=h;c.font=HDR_FONT(i===3?P.gold:P.acc);c.fill=HDR_FILL;c.alignment=align(i===0?'left':'right');}); r3++;
+  for(const [lbl,v24,v25,v26,sub] of tresoRows){
+    const fi=sub?fill('FF1A2640'):CARD_FILL;
+    [lbl,v24,v25,v26].forEach((v,i)=>{
+      const c=ws3.getCell(r3,i+1); c.value=v; c.fill=fi; c.alignment=align(i===0?'left':'right');
+      c.font=i===0?(sub?TOT_FONT():font()):i===1?DIM_FONT():i===2?font():valFont(typeof v==='number'?v:0);
+      if(typeof v==='number')c.numFmt=NUM_FMT;
+    }); r3++;
+  }
+  r3++;
+  if(chartPngs[2]) {
+    ws3.getCell(r3,1).value='Évolution Trésorerie 2024–2026 (graphique)'; ws3.getCell(r3,1).font=HDR_FONT(P.gold); ws3.getCell(r3,1).fill=CARD2_FILL; ws3.mergeCells(r3,1,r3,4); r3++;
+    addImgToSheet(ws3, chartPngs[2], r3-1, 0);
+  }
+
+  // ─────────────────────────────────
+  // SHEET 4: CA Mensuel
+  // ─────────────────────────────────
+  const ws4 = wb.addWorksheet('4_CA_Mensuel', {properties:{tabColor:{argb:P.acc}}});
+  ws4.columns=[{width:14},{width:14},{width:18},{width:18},{width:22}];
+  let r4=1;
+  ws4.getCell(r4,1).value='CA Mensuel 2026 — Saisonnalité'; ws4.getCell(r4,1).font=TITLE_FONT(); ws4.getCell(r4,1).fill=DARK_FILL; ws4.mergeCells(r4,1,r4,5); r4+=2;
+  const monthly=MONTHLY_SEASONALITY.map(p=>r26.ca*p);
+  const mxM=Math.max(...monthly);
+  ['Mois','% Saison.','CA HT 2026 (k€)','CA TTC (k€)','Barre'].forEach((h,i)=>{
+    const c=ws4.getCell(r4,i+1);c.value=h;c.font=HDR_FONT();c.fill=HDR_FILL;c.alignment=align(i===0?'left':'right');
+  }); r4++;
+  MONTHS.forEach((m,i)=>{
+    const v=monthly[i];
+    const bar='█'.repeat(Math.round(v/mxM*25));
+    [m, MONTHLY_SEASONALITY[i], Math.round(v), Math.round(v*1.2), bar].forEach((v,ci)=>{
+      const c=ws4.getCell(r4,ci+1); c.value=v; c.fill=CARD_FILL; c.alignment=align(ci===0?'left':'right');
+      if(ci===1){c.numFmt=PCT_FMT; c.font=font();}
+      else if(ci===2){c.numFmt=NUM_FMT; c.font=ACC_FONT();}
+      else if(ci===3){c.numFmt=NUM_FMT; c.font=DIM_FONT();}
+      else if(ci===4){c.font=font({color:{argb:P.sub},size:8});}
+      else c.font=font();
+    }); r4++;
+  });
+  const totM=monthly.reduce((a,b)=>a+b,0);
+  [  'TOTAL', 1, Math.round(totM), Math.round(totM*1.2), '' ].forEach((v,i)=>{
+    const c=ws4.getCell(r4,i+1);c.value=v;c.fill=CARD2_FILL;c.alignment=align(i===0?'left':'right');
+    c.font=TOT_FONT(P.gold); if(i===1)c.numFmt=PCT_FMT; if(i===2||i===3)c.numFmt=NUM_FMT;
+    c.border={top:{style:'medium',color:{argb:P.acc}}};
+  }); r4+=2;
+
+  // Répartition clients
+  ws4.getCell(r4,1).value='Répartition Clients'; ws4.getCell(r4,1).font=GOLD_FONT(); ws4.getCell(r4,1).fill=CARD2_FILL; ws4.mergeCells(r4,1,r4,5); r4++;
+  [['B2C (paiement immédiat)',S.b2c_pct/100,Math.round(r26.ca*S.b2c_pct/100)],
+   ['B2B (paiement différé)',(100-S.b2c_pct)/100,Math.round(r26.ca*(100-S.b2c_pct)/100)],
+   ['DSO moyen paramétré (jours)',S.dso,'']].forEach(([lbl,val,ca])=>{
+    ws4.getCell(r4,1).value=lbl; ws4.getCell(r4,1).font=font(); ws4.getCell(r4,1).fill=CARD_FILL;
+    ws4.getCell(r4,2).value=val; ws4.getCell(r4,2).font=EDIT_FONT(); ws4.getCell(r4,2).fill=CARD_FILL; ws4.getCell(r4,2).alignment=align('right');
+    if(typeof val==='number'&&val<2) ws4.getCell(r4,2).numFmt=PCT_FMT; else ws4.getCell(r4,2).numFmt=NUM_FMT;
+    if(ca!==''){ws4.getCell(r4,3).value=ca; ws4.getCell(r4,3).font=POS_FONT(); ws4.getCell(r4,3).fill=CARD_FILL; ws4.getCell(r4,3).numFmt=NUM_FMT;}
+    r4++;
+  });
+
+  // ─────────────────────────────────
+  // SHEET 5: Breakeven
+  // ─────────────────────────────────
+  const ws5 = wb.addWorksheet('5_Breakeven', {properties:{tabColor:{argb:P.neg}}});
+  ws5.columns=[{width:38},{width:18},{width:18},{width:18},{width:16},{width:16}];
+  let r5=1;
+  ws5.getCell(r5,1).value='Analyse de Breakeven — Entreprise A 2026'; ws5.getCell(r5,1).font=TITLE_FONT(P.acc); ws5.getCell(r5,1).fill=DARK_FILL; ws5.mergeCells(r5,1,r5,6); r5+=2;
+
+  const target=S.be_target, margin=S.be_margin;
+  const marginPct=margin/100, targetPct=target/100;
+  const costFixed=sal26+r26.struct+r26.oor;
+  const caBreak=marginPct>targetPct?costFixed/(marginPct-targetPct):null;
+  const ebitdaBreak=caBreak?caBreak*targetPct:0;
+  const cashBreak=ebitdaBreak-Math.abs(r26.amort)+r26.fin;
+  const coutMoyen=Math.abs(sal26)/S.etp;
+
+  // Params
+  ws5.getCell(r5,1).value='Paramètres Breakeven'; ws5.getCell(r5,1).font=GOLD_FONT(); ws5.getCell(r5,1).fill=CARD2_FILL; ws5.mergeCells(r5,1,r5,6); r5++;
+  [['EBITDA Cible (%)',target/100,PCT_FMT],['Taux de Marge Brute (%)',margin/100,PCT_FMT],['ETP',S.etp,NUM_FMT],['Coût moyen ETP (€)',S.cost_etp,NUM_FMT]].forEach(([lbl,v,nf])=>{
+    ws5.getCell(r5,1).value=lbl; ws5.getCell(r5,1).font=font(); ws5.getCell(r5,1).fill=CARD_FILL;
+    ws5.getCell(r5,2).value=v; ws5.getCell(r5,2).font=EDIT_FONT(); ws5.getCell(r5,2).fill=CARD_FILL; ws5.getCell(r5,2).numFmt=nf; ws5.getCell(r5,2).alignment=align('right');
+    r5++;
+  });
+  r5++;
+  ws5.getCell(r5,1).value='Résultats Breakeven'; ws5.getCell(r5,1).font=GOLD_FONT(); ws5.getCell(r5,1).fill=CARD2_FILL; ws5.mergeCells(r5,1,r5,6); r5++;
+  [[`CA requis (EBITDA=${target}%)`,caBreak?Math.round(caBreak):null,POS_FONT()],
+   ['EBITDA résultant (k€)',Math.round(ebitdaBreak),ebitdaBreak>=0?POS_FONT():NEG_FONT()],
+   ['Cash après D&A+Fin (k€)',Math.round(cashBreak),cashBreak>=0?POS_FONT():NEG_FONT()],
+   ['Multiple vs CA Budget 2026',caBreak?caBreak/r26.ca:null,GOLD_FONT()],
+  ].forEach(([lbl,v,fn])=>{
+    ws5.getCell(r5,1).value=lbl; ws5.getCell(r5,1).font=font(); ws5.getCell(r5,1).fill=CARD_FILL;
+    ws5.getCell(r5,2).value=v||'N/A'; ws5.getCell(r5,2).font=fn||font(); ws5.getCell(r5,2).fill=CARD_FILL; ws5.getCell(r5,2).alignment=align('right');
+    if(typeof v==='number') ws5.getCell(r5,2).numFmt=lbl.includes('Multiple')? '0.00"x"':NUM_FMT;
+    r5++;
+  });
+  r5++;
+
+  // Sensitivity table
+  ws5.getCell(r5,1).value='Sensibilité par Effectif'; ws5.getCell(r5,1).font=GOLD_FONT(); ws5.getCell(r5,1).fill=CARD2_FILL; ws5.mergeCells(r5,1,r5,6); r5++;
+  ['ETP','Masse salariale (k€)','CA requis (k€)','Marge Brute (k€)','EBITDA (k€)','FCF (k€)'].forEach((h,i)=>{
+    const c=ws5.getCell(r5,i+1); c.value=h; c.font=HDR_FONT(); c.fill=HDR_FILL; c.alignment=align(i===0?'left':'right');
+  }); r5++;
+  [180,200,220,250,270,300].forEach(eff=>{
+    const s=eff*coutMoyen;
+    const costs=s+Math.abs(r26.struct)-r26.oor;
+    const ca=marginPct>targetPct?costs/(marginPct-targetPct):null;
+    const ebitda=ca?ca*targetPct:null;
+    const fcf=ebitda?ebitda-Math.abs(r26.amort)+r26.fin:null;
+    const isCurr=eff===S.etp;
+    const fi=isCurr?CARD2_FILL:CARD_FILL;
+    [eff+' ETP'+(isCurr?' ←':''), Math.round(-s), ca?Math.round(ca):null, ca?Math.round(ca*margin/100):null, ebitda?Math.round(ebitda):null, fcf?Math.round(fcf):null].forEach((v,i)=>{
+      const c=ws5.getCell(r5,i+1); c.value=v||'N/A'; c.fill=fi; c.alignment=align(i===0?'left':'right');
+      c.font=i===0?font({bold:isCurr,color:{argb:isCurr?P.gold:P.txt}}):valFont(typeof v==='number'?v:0);
+      if(typeof v==='number') c.numFmt=NUM_FMT;
+    }); r5++;
+  });
+
+  // Breakeven chart (3rd chart = from tresor tab, 4th = sensitivity if available)
+  r5++;
+  if(chartPngs[3]) {
+    ws5.getCell(r5,1).value='Graphique Sensibilité'; ws5.getCell(r5,1).font=HDR_FONT(P.gold); ws5.getCell(r5,1).fill=CARD2_FILL; ws5.mergeCells(r5,1,r5,6); r5++;
+    addImgToSheet(ws5, chartPngs[3], r5-1, 0);
+  }
+
+  // ─────────────────────────────────
+  // SHEET 6: Heatmap (couleurs cellules)
+  // ─────────────────────────────────
+  const ws6 = wb.addWorksheet('6_Heatmap', {properties:{tabColor:{argb:'FFEC4899'}}});
+  const HM_ETP=[180,200,220,240,250,260,270,280,300,320];
+  const HM_CA=[70000,75000,80000,85000,90000,93548,95000,100000,105000,110000];
+  const HM_GM=[12,13,14,14.5,15,15.89,16,17,18,20];
+
+  function hexColor(ebitda_pct) {
+    const norm=Math.max(0,Math.min(1,(ebitda_pct+18)/26));
+    const stops=[[127,29,29],[185,28,28],[234,88,12],[161,98,7],[22,101,52],[6,78,59]];
+    const t=norm*(stops.length-1), i=Math.floor(t), f=t-i;
+    const a=stops[Math.min(i,stops.length-1)], b=stops[Math.min(i+1,stops.length-1)];
+    const r2h=v=>v.toString(16).padStart(2,'0').toUpperCase();
+    return 'FF'+r2h(Math.round(a[0]+(b[0]-a[0])*f))+r2h(Math.round(a[1]+(b[1]-a[1])*f))+r2h(Math.round(a[2]+(b[2]-a[2])*f));
+  }
+
+  let r6=1;
+  ws6.getCell(r6,1).value='Heatmap EBITDA% — CA × ETP'; ws6.getCell(r6,1).font=TITLE_FONT(P.acc); ws6.getCell(r6,1).fill=DARK_FILL; ws6.mergeCells(r6,1,r6,HM_ETP.length+1); r6+=2;
+  ws6.getCell(r6,1).value='CA (k€) \\ ETP →'; ws6.getCell(r6,1).font=GOLD_FONT(); ws6.getCell(r6,1).fill=CARD2_FILL; ws6.getCell(r6,1).alignment=align('right');
+  HM_ETP.forEach((e,j)=>{
+    const c=ws6.getCell(r6,j+2); c.value=e+' ETP'; c.font=font({bold:true,color:{argb:P.acc}}); c.fill=CARD2_FILL; c.alignment=align('center');
+  }); r6++;
+  for(const ca of HM_CA){
+    const c0=ws6.getCell(r6,1); c0.value=Math.round(ca/1000)+'k€'; c0.font=GOLD_FONT(); c0.fill=CARD2_FILL; c0.alignment=align('right');
+    HM_ETP.forEach((etp,j)=>{
+      const cell=heatCell(ca,etp);
+      const argb=hexColor(parseFloat(cell.ep));
+      const isCurr=(ca>=93000&&ca<=94000)&&etp===S.etp;
+      const c=ws6.getCell(r6,j+2);
+      c.value=parseFloat(cell.ep)/100;
+      c.numFmt='0.0%';
+      c.fill=fill(argb);
+      c.font=font({bold:isCurr,color:{argb:parseFloat(cell.ep)>-5?'FFF8FAFC':'FFFCA5A5'},size:10});
+      c.alignment=align('center');
+      if(isCurr) c.border={top:{style:'medium',color:{argb:'FFF59E0B'}},bottom:{style:'medium',color:{argb:'FFF59E0B'}},left:{style:'medium',color:{argb:'FFF59E0B'}},right:{style:'medium',color:{argb:'FFF59E0B'}}};
+    }); r6++;
+  }
+  ws6.columns=[{width:12},...HM_ETP.map(()=>({width:10}))];
+
+  // Heatmap 2: GM% × ETP
+  r6+=2;
+  ws6.getCell(r6,1).value='Heatmap EBITDA% — Taux GM × ETP (CA fixé à '+Math.round(S.ca/1000)+'k€)';
+  ws6.getCell(r6,1).font=GOLD_FONT(); ws6.getCell(r6,1).fill=CARD2_FILL; ws6.mergeCells(r6,1,r6,HM_ETP.length+1); r6++;
+  ws6.getCell(r6,1).value='GM% \\ ETP →'; ws6.getCell(r6,1).font=GOLD_FONT(); ws6.getCell(r6,1).fill=CARD2_FILL; ws6.getCell(r6,1).alignment=align('right');
+  HM_ETP.forEach((e,j)=>{const c=ws6.getCell(r6,j+2);c.value=e+' ETP';c.font=font({bold:true,color:{argb:P.acc}});c.fill=CARD2_FILL;c.alignment=align('center');}); r6++;
+  for(const gm of HM_GM){
+    ws6.getCell(r6,1).value=gm+'%'; ws6.getCell(r6,1).font=GOLD_FONT(); ws6.getCell(r6,1).fill=CARD2_FILL; ws6.getCell(r6,1).alignment=align('right');
+    HM_ETP.forEach((etp,j)=>{
+      const cell=heatCell(S.ca,etp,gm);
+      const argb=hexColor(parseFloat(cell.ep));
+      const isCurr=Math.abs(gm-S.tx_gm)<0.5&&etp===S.etp;
+      const c=ws6.getCell(r6,j+2);
+      c.value=parseFloat(cell.ep)/100; c.numFmt='0.0%';
+      c.fill=fill(argb);
+      c.font=font({bold:isCurr,color:{argb:parseFloat(cell.ep)>-5?'FFF8FAFC':'FFFCA5A5'},size:10});
+      c.alignment=align('center');
+      if(isCurr) c.border={top:{style:'medium',color:{argb:'FFF59E0B'}},bottom:{style:'medium',color:{argb:'FFF59E0B'}},left:{style:'medium',color:{argb:'FFF59E0B'}},right:{style:'medium',color:{argb:'FFF59E0B'}}};
+    }); r6++;
+  }
+
+  // ── Reorder sheets: 0_Param first ──
+  const names = wb.worksheets.map(w=>w.name);
+  const idx = names.indexOf('0_Paramètres');
+  if(idx>0) {
+    const tmp = wb.worksheets.splice(idx,1)[0];
+    wb.worksheets.unshift(tmp);
+    wb._worksheets.splice(idx+1,1);
+    wb._worksheets.splice(1,0,tmp);
+  }
+
+  const buffer = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`EntrepriseA_Prevision_${new Date().toISOString().slice(0,10)}.xlsx`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+
+// Initial render
+renderCurrentTab();
+</script>
+</body>
+</html>
