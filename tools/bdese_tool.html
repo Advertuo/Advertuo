@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BDESE Tool — Advertuo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --g:#16c87a; --g2:#0ea56a; --g-light:rgba(22,200,122,.12);
+  --b:#2352a0; --bg:#0d1117; --s1:#161b27; --s2:#1e253a;
+  --bd:#2a3350; --t:#e2e8f0; --mt:#6b7a99; --r:10px;
+  --red:#f56565; --amber:#f6c000; --cyan:#38bdf8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+.hd{background:linear-gradient(135deg,#0d2b3e,#1a3a2a);border-bottom:1px solid var(--bd);padding:14px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.hd-logo{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.hd-logo span{color:var(--g)}
+.hd-tag{background:rgba(22,200,122,.15);border:1px solid rgba(22,200,122,.3);color:var(--g);padding:3px 10px;border-radius:20px;font-size:10px;font-family:'Space Mono',monospace}
+.hd-sub{color:var(--mt);font-size:11px;margin-left:4px}
+.hd-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{padding:7px 16px;border-radius:7px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;font-family:'DM Sans',sans-serif}
+.btn-g{background:var(--g);color:#0d1117}.btn-g:hover{background:var(--g2);transform:translateY(-1px)}
+.btn-o{background:var(--s2);color:var(--t);border:1px solid var(--bd)}.btn-o:hover{border-color:var(--g);color:var(--g)}
+.btn-sm{padding:5px 12px;font-size:11px}
+.btn-danger{background:rgba(245,101,101,.15);color:var(--red);border:1px solid rgba(245,101,101,.3)}.btn-danger:hover{background:rgba(245,101,101,.25)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+
+/* ── NAV TABS ────────────────────────────────────────────── */
+.nav{display:flex;padding:0 28px;border-bottom:1px solid var(--bd);background:var(--s1)}
+.nav-tab{padding:12px 18px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--mt);transition:.2s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-tab:hover{color:var(--t)}.nav-tab.active{color:var(--g);border-bottom-color:var(--g)}
+.nav-badge{background:var(--g);color:#0d1117;border-radius:10px;font-size:9px;font-family:'Space Mono',monospace;padding:1px 6px;font-weight:700}
+
+/* ── VIEWS ───────────────────────────────────────────────── */
+.view{display:none;animation:fi .25s}.view.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+
+/* ── WIZARD (Nouvelle analyse) ───────────────────────────── */
+.wizard{max-width:820px;margin:24px auto;padding:0 28px}
+.stepper{display:flex;gap:0;margin-bottom:24px;background:var(--s1);border-radius:var(--r);padding:4px}
+.step{flex:1;display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:.2s}
+.step:hover{background:var(--s2)}.step.active{background:var(--s2)}
+.step-n{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:.2s}
+.step.active .step-n{border-color:var(--g);background:var(--g);color:#0d1117}
+.step.done .step-n{background:var(--g);border-color:var(--g);color:#0d1117}
+.step-label{font-size:11px;font-weight:500;white-space:nowrap}.step-sub{font-size:9px;color:var(--mt)}
+
+.panel{display:none;animation:fi .2s}.panel.active{display:block}
+.panel h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.panel .desc{color:var(--mt);font-size:12px;margin-bottom:16px;line-height:1.5}
+
+/* Drop zones */
+.dz{border:2px dashed var(--bd);border-radius:var(--r);padding:30px 20px;text-align:center;cursor:pointer;transition:.3s;background:var(--s1);margin-bottom:10px}
+.dz:hover,.dz.drag{border-color:var(--g);background:var(--g-light)}.dz-icon{font-size:30px;margin-bottom:8px}
+.dz p{font-size:12px;color:var(--mt)}.dz .ext{font-size:10px;font-family:'Space Mono',monospace;color:var(--g);margin-top:4px}
+
+/* File list */
+.flist{display:flex;flex-direction:column;gap:3px;margin-top:8px;max-height:160px;overflow-y:auto}
+.fitem{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--s2);border-radius:6px;font-size:11px}
+.fitem-name{font-family:'Space Mono',monospace;color:var(--g);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.fitem-size{color:var(--mt);font-size:10px;white-space:nowrap}
+.fitem-rm{color:var(--red);cursor:pointer;padding:0 4px;font-size:15px;line-height:1}
+
+/* Form */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:11px;font-weight:500;color:var(--mt)}
+.form-group input,.form-group select{padding:8px 10px;background:var(--s1);border:1px solid var(--bd);border-radius:6px;color:var(--t);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--g)}
+
+/* Options grid */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.opt-card{background:var(--s1);border:2px solid var(--bd);border-radius:var(--r);padding:12px;cursor:pointer;transition:.2s;user-select:none}
+.opt-card:hover{border-color:var(--mt)}.opt-card.on{border-color:var(--g);background:var(--g-light)}
+.opt-card .oi{font-size:20px;margin-bottom:4px}.opt-card h4{font-size:12px;margin-bottom:2px}
+.opt-card p{font-size:10px;color:var(--mt);line-height:1.3}
+
+/* Navigation buttons */
+.nav-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+/* Counter chips */
+.counters{display:flex;gap:16px;padding:10px 0}
+.counter{text-align:center}
+.counter .val{font-size:22px;font-weight:700;color:var(--g);font-family:'Space Mono',monospace;line-height:1}
+.counter .lbl{font-size:9px;color:var(--mt);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* Progress */
+.progress-wrap{display:none;margin-top:14px}
+.progress-pct{text-align:right;font-family:'Space Mono',monospace;font-size:11px;color:var(--g);margin-bottom:3px}
+.progress-bar{height:5px;background:var(--s2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));width:0%;transition:width .4s}
+.logbox{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:10px;max-height:220px;overflow-y:auto;font-family:'Space Mono',monospace;font-size:10px;line-height:1.7;margin-top:8px}
+.log-ok{color:var(--g)}.log-warn{color:var(--amber)}.log-err{color:var(--red)}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--mt);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── RÉSULTATS ───────────────────────────────────────────── */
+.results-wrap{max-width:900px;margin:0 auto;padding:0 28px 40px}
+
+/* KPI cards */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.kpi{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:14px 12px;text-align:center}
+.kpi-val{font-size:26px;font-weight:700;color:var(--g);font-family:'Space Mono',monospace;line-height:1}
+.kpi-label{font-size:10px;color:var(--mt);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.kpi-sub{font-size:10px;color:var(--mt);margin-top:2px}
+.kpi.blue .kpi-val{color:var(--cyan)}
+.kpi.amber .kpi-val{color:var(--amber)}
+
+/* Year selector */
+.year-tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.ytab{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bd);color:var(--mt);background:var(--s1);transition:.2s;font-family:'Space Mono',monospace}
+.ytab:hover{border-color:var(--g);color:var(--g)}.ytab.active{background:var(--g);color:#0d1117;border-color:var(--g)}
+
+/* Charts grid */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.chart-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:16px}
+.chart-card.full{grid-column:1/-1}
+.chart-title{font-size:12px;font-weight:600;color:var(--t);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.chart-title span{font-size:9px;color:var(--mt);font-family:'Space Mono',monospace}
+.chart-wrap{position:relative;height:200px}
+.chart-wrap.tall{height:260px}
+
+/* Stats table */
+.stats-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.stats-table th{padding:8px 10px;text-align:left;color:var(--mt);font-weight:500;border-bottom:1px solid var(--bd);white-space:nowrap}
+.stats-table td{padding:8px 10px;border-bottom:1px solid rgba(42,51,80,.5)}
+.stats-table tr:last-child td{border-bottom:none}
+.stats-table .num{font-family:'Space Mono',monospace;color:var(--g)}
+.stats-table .pct{font-family:'Space Mono',monospace;color:var(--mt);font-size:10px}
+
+/* Results actions */
+.result-actions{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.result-actions .save-note{font-size:11px;color:var(--g);margin-left:auto;display:flex;align-items:center;gap:4px}
+
+/* ── HISTORIQUE ──────────────────────────────────────────── */
+.history-wrap{max-width:860px;margin:24px auto;padding:0 28px}
+.history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.history-header h2{font-size:16px;font-weight:700}
+.history-empty{text-align:center;padding:60px 20px;color:var(--mt)}
+.history-empty .icon{font-size:40px;margin-bottom:12px}
+.history-empty p{font-size:13px}
+.history-empty .hint{font-size:11px;margin-top:6px}
+
+.session-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:10px;transition:.2s;cursor:pointer}
+.session-card:hover{border-color:var(--g);background:rgba(22,200,122,.04)}
+.session-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.session-company{font-size:14px;font-weight:700}
+.session-meta{font-size:10px;color:var(--mt);font-family:'Space Mono',monospace;margin-top:2px}
+.session-actions{display:flex;gap:6px;flex-shrink:0;margin-left:12px}
+.session-kpis{display:flex;gap:16px;flex-wrap:wrap}
+.session-kpi{text-align:center;min-width:55px}
+.session-kpi .v{font-size:18px;font-weight:700;color:var(--g);font-family:'Space Mono',monospace}
+.session-kpi .l{font-size:9px;color:var(--mt);text-transform:uppercase}
+.session-years{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+.session-year-tag{padding:2px 8px;background:rgba(22,200,122,.1);border:1px solid rgba(22,200,122,.2);border-radius:10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--g)}
+.session-files{font-size:10px;color:var(--mt);margin-top:6px}
+
+/* Detail view overlay */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;overflow-y:auto}
+.detail-overlay.active{display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.detail-box{background:var(--bg);border:1px solid var(--bd);border-radius:14px;width:100%;max-width:900px;margin:auto}
+.detail-header{padding:18px 24px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.detail-header h3{font-size:16px;font-weight:700}
+.detail-close{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:5px 12px;color:var(--mt);cursor:pointer;font-size:12px;transition:.2s}
+.detail-close:hover{color:var(--t)}
+.detail-body{padding:20px 24px}
+
+/* ── EXPORT TOAST ────────────────────────────────────────── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--s2);border:1px solid var(--g);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--g);z-index:300;animation:fi .3s;display:none}
+.toast.active{display:block}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:700px){
+  .kpi-row{grid-template-columns:repeat(3,1fr)}
+  .charts-grid{grid-template-columns:1fr}
+  .form-row,.opt-grid{grid-template-columns:1fr}
+  .stepper{flex-wrap:wrap}
+  .step-sub{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hd">
+  <div class="hd-logo">adver<span>tuo</span></div>
+  <span class="hd-tag">BDESE v3.0</span>
+  <span class="hd-sub">Analyse DSN · Historisation</span>
+  <div class="hd-right">
+    <button class="btn btn-o btn-sm" onclick="showView('history')">📋 Historique <span class="nav-badge" id="hist-count">0</span></button>
+    <button class="btn btn-g btn-sm" onclick="showView('wizard');resetWizard()">+ Nouvelle analyse</button>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav">
+  <div class="nav-tab active" id="tab-history" onclick="showView('history')">📋 Historique</div>
+  <div class="nav-tab" id="tab-wizard" onclick="showView('wizard')">🔬 Nouvelle analyse</div>
+  <div class="nav-tab" id="tab-results" style="display:none" onclick="showView('results')">📊 Résultats courants</div>
+</nav>
+
+<!-- ═══════════════ VIEW: HISTORIQUE ═══════════════ -->
+<div class="view active" id="view-history">
+  <div class="history-wrap">
+    <div class="history-header">
+      <h2>Historique des analyses</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportAllHistory()">⬇ Export JSON</button>
+        <button class="btn btn-danger btn-sm" onclick="clearHistory()">🗑 Tout effacer</button>
+      </div>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ VIEW: WIZARD ═══════════════ -->
+<div class="view" id="view-wizard">
+  <div class="wizard">
+    <!-- Stepper -->
+    <div class="stepper">
+      <div class="step active" id="st0" onclick="goStep(0)"><div class="step-n">1</div><div><div class="step-label">DSN</div><div class="step-sub">.edi .zip</div></div></div>
+      <div class="step" id="st1" onclick="goStep(1)"><div class="step-n">2</div><div><div class="step-label">Options</div><div class="step-sub">Société</div></div></div>
+      <div class="step" id="st2" onclick="goStep(2)"><div class="step-n">3</div><div><div class="step-label">Analyse</div><div class="step-sub">Traitement</div></div></div>
+    </div>
+
+    <!-- Panel 0: DSN -->
+    <div class="panel active" id="p0">
+      <h2>📂 Fichiers DSN</h2>
+      <p class="desc">Glissez vos fichiers EDI (format NEODeS). Multiples fichiers OK — chaque fichier = un établissement et/ou une période. Les ZIP sont acceptés.</p>
+      <div class="dz" id="dz-dsn" onclick="document.getElementById('inp-dsn').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="dropFiles(event,'dsn')">
+        <div class="dz-icon">📂</div>
+        <p><b>Cliquer</b> ou glisser les fichiers ici</p>
+        <div class="ext">.edi &nbsp;·&nbsp; .zip</div>
+      </div>
+      <input type="file" id="inp-dsn" multiple accept=".edi,.zip" style="display:none" onchange="addFiles(this.files,'dsn')">
+      <div class="flist" id="flist-dsn"></div>
+      <div class="nav-btns" style="margin-top:16px">
+        <button class="btn btn-g" onclick="goStep(1)">Suivant ➜</button>
+      </div>
+    </div>
+
+    <!-- Panel 1: Options -->
+    <div class="panel" id="p1">
+      <h2>⚙️ Options</h2>
+      <p class="desc">Identifiez la société et sélectionnez les informations à afficher dans le tableau de bord.</p>
+      <div class="form-row">
+        <div class="form-group"><label>Nom de la société</label><input id="f-company" value="C&C FRANCE" placeholder="Nom société"></div>
+        <div class="form-group"><label>SIREN (optionnel)</label><input id="f-siren" value="404276776" placeholder="9 chiffres"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Exercice principal (BDESE)</label>
+          <select id="f-year"><option value="">Auto (dernière année)</option></select>
+        </div>
+        <div class="form-group"><label>Note / commentaire (optionnel)</label><input id="f-note" placeholder="ex: version préliminaire, client test..."></div>
+      </div>
+      <div class="counters">
+        <div class="counter"><div class="val" id="cnt-dsn">0</div><div class="lbl">DSN</div></div>
+        <div class="counter"><div class="val" id="cnt-etab">—</div><div class="lbl">Étab. estimés</div></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-o" onclick="goStep(0)">⬅ Retour</button>
+        <button class="btn btn-g" id="btn-run" onclick="runAnalysis()">🚀 Analyser</button>
+      </div>
+    </div>
+
+    <!-- Panel 2: Analyse en cours -->
+    <div class="panel" id="p2">
+      <h2>🔬 Analyse en cours...</h2>
+      <p class="desc">Parsing DSN, calcul des statistiques BDESE.</p>
+      <div class="progress-wrap active" style="display:block">
+        <div class="progress-pct" id="pct">0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+        <div class="logbox" id="logbox"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ VIEW: RÉSULTATS ═══════════════ -->
+<div class="view" id="view-results">
+  <div class="results-wrap">
+    <div class="result-actions">
+      <button class="btn btn-o btn-sm" onclick="showView('wizard')">⬅ Nouvelle analyse</button>
+      <button class="btn btn-o btn-sm" onclick="exportSessionJSON()">⬇ Export JSON</button>
+      <button class="btn btn-o btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      <div class="save-note" id="save-note" style="display:none">✅ Sauvegardé dans l'historique</div>
+    </div>
+
+    <!-- Year tabs -->
+    <div class="year-tabs" id="year-tabs"></div>
+
+    <!-- KPI row -->
+    <div class="kpi-row" id="kpi-row"></div>
+
+    <!-- Charts -->
+    <div class="charts-grid" id="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Effectifs par année <span>snapshot décembre</span></div>
+        <div class="chart-wrap"><canvas id="chart-eff"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">CDI / CDD <span>année sélectionnée</span></div>
+        <div class="chart-wrap"><canvas id="chart-cdi"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Statuts conventionnels <span>Cadres · TAM · Employés</span></div>
+        <div class="chart-wrap"><canvas id="chart-statut"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Répartition H/F <span>année sélectionnée</span></div>
+        <div class="chart-wrap"><canvas id="chart-hf"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title">Pyramide des âges <span>Hommes ← · → Femmes</span></div>
+        <div class="chart-wrap tall"><canvas id="chart-pyramid"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Stats comparison table -->
+    <div class="chart-card" id="stats-table-wrap" style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:16px">
+      <div class="chart-title">Tableau de synthèse multi-années</div>
+      <div id="stats-table-content"></div>
+    </div>
+
+    <!-- Etablissements table (if multiple) -->
+    <div class="chart-card" id="etab-wrap" style="display:none;background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-top:14px">
+      <div class="chart-title">Effectifs par établissement</div>
+      <div id="etab-table-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL OVERLAY (history session) -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-box">
+    <div class="detail-header">
+      <h3 id="detail-title">Détail session</h3>
+      <button class="detail-close" onclick="closeDetail()">✕ Fermer</button>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONSTANTES DSN
+// ═══════════════════════════════════════════════════════════
+const STATUT_CONV_DSN = {
+  '01':'Employés','02':'Employés','03':'Cadres','04':'Cadres',
+  '05':'Techniciens et agents de maîtrise','06':'Employés','07':'Employés'
+};
+const CDI_CODES = new Set(['01','03','07','08','09','50','91']);
+const CDD_CODES = new Set(['02','04','05','06','10','11','12','20','21','33','60','92','93']);
+const IDCC = {
+  '1539':'Commerce détail - Papeterie/Informatique','2098':'Syntec',
+  '0016':'Transports routiers','1486':'Bureaux études techniques',
+  '1517':'Commerce détail non alimentaire','2216':'Grande distribution',
+  '0573':'Commerces de gros','1996':'Pharmacie officine',
+  '9999':'Sans CCN','0000':'Sans CCN'
+};
+const AGE_BRACKETS = [
+  [0,18,'<18 ans'],[18,25,'18-24'],[25,30,'25-29'],[30,35,'30-34'],
+  [35,40,'35-39'],[40,45,'40-44'],[45,50,'45-49'],[50,55,'50-54'],
+  [55,60,'55-59'],[60,65,'60-64'],[65,200,'65+']
+];
+const HISTORY_KEY = 'bdese_history_v2';
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let State = {
+  dsn: [],          // File objects
+  currentSession: null,
+  charts: {}
+};
+
+// ═══════════════════════════════════════════════════════════
+//  UI NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+  if (name === 'history') renderHistory();
+}
+
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i === n));
+  document.querySelectorAll('.step').forEach((s,i) => {
+    s.classList.toggle('active', i === n);
+    s.classList.toggle('done', i < n);
+  });
+  if (n === 1) {
+    document.getElementById('cnt-dsn').textContent = State.dsn.length;
+    document.getElementById('cnt-etab').textContent = State.dsn.length || '—';
+  }
+}
+
+function resetWizard() {
+  State.dsn = [];
+  renderFileList('dsn');
+  goStep(0);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FILE HANDLING
+// ═══════════════════════════════════════════════════════════
+function addFiles(fileList, type) {
+  for (const f of fileList) {
+    if (!State[type].find(e => e.name === f.name)) State[type].push(f);
+  }
+  renderFileList(type);
+}
+function dropFiles(e, type) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag');
+  addFiles(e.dataTransfer.files, type);
+}
+function removeFile(type, idx) {
+  State[type].splice(idx, 1);
+  renderFileList(type);
+}
+function renderFileList(type) {
+  const el = document.getElementById('flist-' + type);
+  el.innerHTML = State[type].map((f, i) =>
+    `<div class="fitem"><span class="fitem-name">${f.name}</span><span class="fitem-size">${fmtSize(f.size)}</span><span class="fitem-rm" onclick="removeFile('${type}',${i})">✕</span></div>`
+  ).join('');
+}
+const fmtSize = b => b < 1024 ? b + ' B' : b < 1048576 ? (b/1024).toFixed(1) + ' KB' : (b/1048576).toFixed(1) + ' MB';
+const fmtNum = n => n === undefined || n === null ? '—' : n.toLocaleString('fr-FR');
+const fmtEur = n => (!n || n === 0) ? '—' : n.toLocaleString('fr-FR', {style:'currency',currency:'EUR',maximumFractionDigits:0});
+const pct = (a, b) => b > 0 ? Math.round(a / b * 100) + '%' : '—';
+
+// ═══════════════════════════════════════════════════════════
+//  DSN PARSER (JavaScript)
+// ═══════════════════════════════════════════════════════════
+function parseDSNContent(content, filename) {
+  // Normalize line endings
+  content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  // Generic value extractor
+  const gv = (pat, text) => {
+    // Try with quotes first: FIELD,'value'
+    let m = text.match(new RegExp(pat.replace(/\./g,'\\.' ) + ",'([^']*)'"));
+    if (m) return m[1].trim();
+    // Without quotes: FIELD,value
+    m = text.match(new RegExp(pat.replace(/\./g,'\\.') + ',([^\\n,;\']+)'));
+    if (m) return m[1].trim();
+    return '';
+  };
+
+  // ── PÉRIODE ──────────────────────────────────────────────
+  let periode = 'unknown';
+  // Format AAAAMMJJ (S20.G00.05.005)
+  const p005 = gv('S20.G00.05.005', content);
+  if (p005 && p005.length >= 6 && parseInt(p005.slice(0,4)) > 2000) {
+    periode = p005.slice(0,6);
+  } else {
+    // Format MM/AAAA (S20.G00.05.001)
+    const p001 = gv('S20.G00.05.001', content);
+    if (p001 && p001.includes('/')) {
+      const parts = p001.split('/');
+      if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+        periode = parts[1].trim() + parts[0].trim().padStart(2,'0');
+      }
+    } else {
+      // Extract from filename
+      const mf = filename.match(/(\d{6})/);
+      if (mf) periode = mf[1];
+    }
+  }
+
+  const year = (periode !== 'unknown' && !isNaN(parseInt(periode.slice(0,4)))) ? parseInt(periode.slice(0,4)) : new Date().getFullYear();
+  const month = (periode !== 'unknown' && periode.length >= 6) ? parseInt(periode.slice(4,6)) : 12;
+
+  // ── ETABLISSEMENTS ────────────────────────────────────────
+  const etablissements = {};
+  const etabBlocks = content.split(/(?=S21\.G00\.11\.001[,'"])/);
+  for (const blk of etabBlocks.slice(1)) {
+    const d = {};
+    for (const line of blk.split('\n')) {
+      let m = line.match(/S21\.G00\.11\.(\d{3}),'([^']*)'/);
+      if (!m) m = line.match(/S21\.G00\.11\.(\d{3}),([^\n,;']+)/);
+      if (m) d[m[1]] = m[2].trim();
+      if (/S21\.G00\.(30|20|06)\./.test(line)) break;
+    }
+    const nic = d['001'] || '';
+    if (nic) etablissements[nic] = {
+      nic, apet: d['002']||'',
+      adresse: d['003']||'', cp: d['006']||d['020']||'',
+      ville: d['007']||d['019']||'',
+      enseigne: d['011']||d['015']||''
+    };
+  }
+
+  // File-level NIC (etablissement principal du fichier)
+  const fileNic = gv('S21.G00.11.001', content);
+
+  // ── INDIVIDUS ─────────────────────────────────────────────
+  const individus = [];
+  const indBlocks = content.split(/(?=S21\.G00\.30\.001[,'"])/);
+
+  for (const block of indBlocks.slice(1)) {
+    const v = (pat) => gv(pat, block);
+
+    const nir       = v('S21.G00.30.001');
+    const nom       = v('S21.G00.30.002');
+    const prenom    = v('S21.G00.30.004') || v('S21.G00.30.003'); // Prenom usually 004
+
+    // Sexe: .003 (in many formats) or .005 (older), fallback to NIR first char
+    let sexeCode = v('S21.G00.30.005') || v('S21.G00.30.003');
+    // Distinguish sexe code from prénom in .003: must be '01' or '02'
+    if (sexeCode !== '01' && sexeCode !== '02') sexeCode = '';
+    let sexe = sexeCode === '02' ? 'Femme' : sexeCode === '01' ? 'Homme' : (nir && nir[0] === '2') ? 'Femme' : 'Homme';
+
+    const dateNaissance = v('S21.G00.30.006');
+
+    // Contrat
+    const dateDebut     = v('S21.G00.40.001');
+    const categorie     = v('S21.G00.40.002');
+    const statutCadre   = v('S21.G00.40.003');
+    const libelleEmploi = v('S21.G00.40.006');
+    const natureContrat = v('S21.G00.40.007');
+    const dispositif    = v('S21.G00.40.008');
+    const quotiteRaw    = v('S21.G00.40.013');
+    const modaliteCode  = v('S21.G00.40.014');
+    const pcsEse        = v('S21.G00.40.004');
+    const nicEtabRaw    = v('S21.G00.40.019');
+    const codeCCN       = v('S21.G00.40.017');
+    const positionCCN   = v('S21.G00.40.041');
+    const niveau        = v('S21.G00.40.069');
+    const echelon       = v('S21.G00.40.070');
+    const coefficient   = v('S21.G00.40.071');
+    const boeth         = v('S21.G00.40.072');
+
+    // NIC établissement
+    let nicEtab = fileNic;
+    if (!nicEtab && nicEtabRaw) {
+      if (/^\d+$/.test(nicEtabRaw) && nicEtabRaw.length >= 14) nicEtab = nicEtabRaw.slice(-5);
+      else if (/^\d{5}$/.test(nicEtabRaw)) nicEtab = nicEtabRaw;
+      else nicEtab = nicEtabRaw.slice(0,10);
+    }
+
+    // Statut conventionnel
+    const statutConv = STATUT_CONV_DSN[categorie] ||
+      (statutCadre === '01' || statutCadre === '02' ? 'Cadres' :
+       statutCadre === '03' ? 'Techniciens et agents de maîtrise' : 'Employés');
+
+    // Type contrat
+    const typeContrat = CDI_CODES.has(natureContrat) ? 'CDI' : CDD_CODES.has(natureContrat) ? 'CDD' : 'Autre';
+
+    // Modalité temps: quotite '10' = TP in many DSN, or modaliteCode
+    // quotiteRaw '10','100' = temps plein; '20','80','75' = temps partiel
+    const quotiteNum = parseFloat((quotiteRaw || '').replace(',','.')) || 0;
+    let isTP;
+    if (modaliteCode) {
+      isTP = modaliteCode === '10';
+    } else if (quotiteRaw === '10' || quotiteRaw === '100') {
+      isTP = true;
+    } else if (quotiteNum >= 90) {
+      isTP = true;
+    } else if (quotiteRaw === '20' || (quotiteNum > 0 && quotiteNum < 90)) {
+      isTP = false;
+    } else {
+      isTP = true;
+    }
+    const modalite = isTP ? 'Temps plein' : 'Temps partiel';
+
+    // ETP: if quotiteRaw is hours (151.67), use directly; if percentage (80, 75), convert
+    let quotiteH = 151.67;
+    if (quotiteNum > 0) {
+      if (quotiteNum > 50) quotiteH = quotiteNum; // likely hours/month
+      else if (quotiteNum <= 1) quotiteH = quotiteNum * 151.67; // ratio
+      else quotiteH = (quotiteNum / 100) * 151.67; // percentage
+    }
+    if (isTP) quotiteH = 151.67;
+
+    // Rémunérations
+    let brutTotal = 0, netFiscal = 0;
+    const remuByType = {};
+    // Try .001/.002 format (sample) and .011/.013 format (NEODeS standard)
+    const remuChunks = block.split(/(?=S21\.G00\.51\.(?:001|011)[,'])/);
+    for (const chunk of remuChunks.slice(1)) {
+      const mt = chunk.match(/S21\.G00\.51\.(?:001|011),'?(\d+)'?/);
+      const mm = chunk.match(/S21\.G00\.51\.(?:002|013),'?([^'\n,]+)'?/);
+      if (mt && mm) {
+        const code = mt[1];
+        const val = parseFloat(mm[1].replace(',','.')) || 0;
+        remuByType[code] = val;
+      }
+    }
+    if ('002' in remuByType) brutTotal = remuByType['002'];
+    else if ('001' in remuByType) brutTotal = remuByType['001'];
+    else if ('010' in remuByType) brutTotal = remuByType['010'];
+    if ('018' in remuByType) netFiscal = remuByType['018'];
+    else if ('027' in remuByType) netFiscal = remuByType['027'];
+
+    // Age & ancienneté
+    const getAge = (dob) => {
+      if (!dob) return null;
+      try {
+        let d;
+        // DD/MM/YYYY
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) {
+          const [dd,mm,yyyy] = dob.split('/');
+          d = new Date(parseInt(yyyy), parseInt(mm)-1, parseInt(dd));
+        }
+        // DDMMYYYY (8 digits)
+        else if (/^\d{8}$/.test(dob)) {
+          d = new Date(parseInt(dob.slice(4)), parseInt(dob.slice(2,4))-1, parseInt(dob.slice(0,2)));
+        }
+        // YYYY-MM-DD
+        else { d = new Date(dob); }
+        const ref = new Date(year, month-1, 28);
+        const diff = (ref - d) / (365.25 * 24 * 3600 * 1000);
+        return Math.max(0, Math.floor(diff));
+      } catch { return null; }
+    };
+
+    const age = getAge(dateNaissance);
+    const anciennete = getAge(dateDebut); // same logic
+
+    const getAgeBracket = (a) => {
+      if (a === null) return 'Non défini';
+      for (const [lo, hi, lbl] of AGE_BRACKETS) if (a >= lo && a < hi) return lbl;
+      return '65+';
+    };
+
+    if (!nir) continue; // skip malformed blocks
+
+    individus.push({
+      nir, nom, prenom, sexe, dateNaissance, age, ageBracket: getAgeBracket(age),
+      dateDebut, anciennete, natureContrat, typeContrat, dispositif,
+      statutConv, categorie, statutCadre, codeCCN, positionCCN,
+      niveau, coefficient, echelon, libelleEmploi, pcsEse,
+      nicEtab, quotiteH, modalite, boeth, brutTotal, netFiscal,
+      periode, year, month
+    });
+  }
+
+  return { periode, year, month, fileNic, etablissements, individus, filename };
+}
+
+// Read File as text (try latin-1 then utf-8)
+function readFileText(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => {
+      // Fallback latin-1
+      const r2 = new FileReader();
+      r2.onload = e2 => resolve(e2.target.result);
+      r2.readAsText(file, 'ISO-8859-1');
+    };
+    reader.readAsText(file, 'ISO-8859-1'); // DSN usually latin-1
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATS COMPUTATION
+// ═══════════════════════════════════════════════════════════
+function computeStats(records, etablissements) {
+  const annees = [...new Set(records.map(r => r.year))].filter(y => y > 2000).sort();
+  const stats = { annees, etablissements: etablissements || {} };
+
+  for (const year of annees) {
+    const yearRecs = records.filter(r => r.year === year);
+
+    // December snapshot (or latest month available)
+    const months = [...new Set(yearRecs.map(r => r.month))];
+    const refMonth = months.includes(12) ? 12 : Math.max(...months);
+    const snapRecs = yearRecs.filter(r => r.month === refMonth);
+
+    // Deduplicate by NIR (keep record with highest brut)
+    const uniq = {};
+    for (const r of snapRecs) {
+      if (!uniq[r.nir] || r.brutTotal > (uniq[r.nir].brutTotal || 0)) uniq[r.nir] = r;
+    }
+    const snapshot = Object.values(uniq);
+    const n = snapshot.length;
+
+    const bruts = snapshot.filter(r => r.brutTotal > 0).map(r => r.brutTotal);
+    const brutsAnn = bruts.map(b => b * 12);
+
+    // Pyramide
+    const pyramide = {};
+    for (const [lo, hi, lbl] of AGE_BRACKETS) {
+      pyramide[lbl] = {
+        Homme: snapshot.filter(r => r.sexe === 'Homme' && r.age !== null && r.age >= lo && r.age < hi).length,
+        Femme: snapshot.filter(r => r.sexe === 'Femme' && r.age !== null && r.age >= lo && r.age < hi).length,
+      };
+    }
+
+    // Effectifs par étab
+    const parEtab = {};
+    for (const r of snapshot) {
+      const nic = r.nicEtab || '?';
+      if (!parEtab[nic]) parEtab[nic] = { nic, hommes:0, femmes:0, cdi:0, cdd:0 };
+      parEtab[nic].hommes += r.sexe === 'Homme' ? 1 : 0;
+      parEtab[nic].femmes += r.sexe === 'Femme' ? 1 : 0;
+      parEtab[nic].cdi += r.typeContrat === 'CDI' ? 1 : 0;
+      parEtab[nic].cdd += r.typeContrat === 'CDD' ? 1 : 0;
+    }
+
+    // Monthly effectifs
+    const effMensuels = {};
+    for (let m = 1; m <= 12; m++) {
+      const mUniq = {};
+      for (const r of yearRecs.filter(r => r.month === m)) {
+        if (!mUniq[r.nir]) mUniq[r.nir] = r;
+      }
+      effMensuels[m] = Object.keys(mUniq).length;
+    }
+
+    const s = {
+      annee: year, refMonth, n_total_recs: yearRecs.length,
+      effectif_total: n,
+      hommes: snapshot.filter(r => r.sexe === 'Homme').length,
+      femmes: snapshot.filter(r => r.sexe === 'Femme').length,
+      cdi: snapshot.filter(r => r.typeContrat === 'CDI').length,
+      cdd: snapshot.filter(r => r.typeContrat === 'CDD').length,
+      cadres: snapshot.filter(r => r.statutConv === 'Cadres').length,
+      tam: snapshot.filter(r => r.statutConv === 'Techniciens et agents de maîtrise').length,
+      employes: snapshot.filter(r => r.statutConv === 'Employés').length,
+      temps_plein: snapshot.filter(r => r.modalite === 'Temps plein').length,
+      temps_partiel: snapshot.filter(r => r.modalite === 'Temps partiel').length,
+      temps_partiel_f: snapshot.filter(r => r.modalite === 'Temps partiel' && r.sexe === 'Femme').length,
+      temps_partiel_h: snapshot.filter(r => r.modalite === 'Temps partiel' && r.sexe === 'Homme').length,
+      boeth: snapshot.filter(r => r.boeth && !['','00'].includes(r.boeth)).length,
+      alternants: snapshot.filter(r => ['81','82','64'].includes(r.dispositif)).length,
+      etp: parseFloat(snapshot.reduce((a, r) => a + Math.min(r.quotiteH / 151.67, 1.0), 0).toFixed(1)),
+      age_moyen: snapshot.filter(r => r.age !== null).length
+        ? Math.round(snapshot.filter(r => r.age !== null).reduce((a, r) => a + r.age, 0) / snapshot.filter(r => r.age !== null).length * 10) / 10
+        : null,
+      anciennete_moyenne: snapshot.filter(r => r.anciennete !== null).length
+        ? Math.round(snapshot.filter(r => r.anciennete !== null).reduce((a, r) => a + r.anciennete, 0) / snapshot.filter(r => r.anciennete !== null).length * 10) / 10
+        : null,
+      salaire_moyen_mensuel: bruts.length ? Math.round(bruts.reduce((a,b)=>a+b,0)/bruts.length) : 0,
+      salaire_median_mensuel: bruts.length ? Math.round([...bruts].sort((a,b)=>a-b)[Math.floor(bruts.length/2)]) : 0,
+      masse_salariale_annuelle: Math.round(bruts.reduce((a,b)=>a+b,0) * 12),
+      pyramide, parEtab, effMensuels,
+    };
+
+    stats[`Y${year}`] = s;
+  }
+
+  return stats;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RUN ANALYSIS
+// ═══════════════════════════════════════════════════════════
+async function runAnalysis() {
+  if (!State.dsn.length) {
+    alert('Veuillez sélectionner au moins un fichier DSN (.edi)');
+    goStep(0);
+    return;
+  }
+  goStep(2);
+  const logbox = document.getElementById('logbox');
+  logbox.innerHTML = '';
+  const log = (msg, cls='') => {
+    logbox.innerHTML += `<div class="log-${cls}">${msg}</div>`;
+    logbox.scrollTop = logbox.scrollHeight;
+  };
+  const progress = (p) => {
+    document.getElementById('pfill').style.width = p + '%';
+    document.getElementById('pct').textContent = p + '%';
+  };
+
+  log('🚀 Démarrage de l\'analyse...', 'ok');
+  progress(5);
+
+  try {
+    let allRecords = [];
+    let allEtab = {};
+    const fileNames = [];
+
+    for (let i = 0; i < State.dsn.length; i++) {
+      const file = State.dsn[i];
+      fileNames.push(file.name);
+      progress(Math.round(5 + (i / State.dsn.length) * 60));
+      log(`📄 Parsing: ${file.name}`);
+      await new Promise(r => setTimeout(r, 10)); // let UI update
+
+      const text = await readFileText(file);
+      const result = parseDSNContent(text, file.name);
+
+      if (result.individus.length > 0) {
+        log(`  ✅ ${result.individus.length} individus · période ${result.periode} · étab ${result.fileNic || '?'}`, 'ok');
+      } else {
+        log(`  ⚠ Aucun individu trouvé dans ${file.name}`, 'warn');
+      }
+
+      allRecords = allRecords.concat(result.individus);
+      Object.assign(allEtab, result.etablissements);
+    }
+
+    progress(70);
+    log(`📊 Total: ${allRecords.length} enregistrements`, 'ok');
+
+    if (!allRecords.length) {
+      log('❌ Aucun individu parsé. Vérifiez le format des fichiers EDI.', 'err');
+      return;
+    }
+
+    log('🔢 Calcul des statistiques BDESE...');
+    await new Promise(r => setTimeout(r, 50));
+    const stats = computeStats(allRecords, allEtab);
+    progress(85);
+
+    const company = document.getElementById('f-company').value || 'Société';
+    const siren   = document.getElementById('f-siren').value || '';
+    const note    = document.getElementById('f-note').value || '';
+
+    const session = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+      date: new Date().toLocaleString('fr-FR'),
+      company, siren, note,
+      nbFiles: State.dsn.length,
+      fileNames,
+      annees: stats.annees,
+      stats
+    };
+
+    State.currentSession = session;
+    saveToHistory(session);
+    progress(100);
+
+    const lastYear = stats.annees[stats.annees.length - 1];
+    const sy = stats[`Y${lastYear}`];
+    log(`✅ Analyse terminée — ${sy.effectif_total} salariés · ${stats.annees.join(', ')}`, 'ok');
+    log(`💾 Session sauvegardée dans l'historique`, 'ok');
+
+    await new Promise(r => setTimeout(r, 600));
+    renderResults(session, lastYear);
+    document.getElementById('tab-results').style.display = '';
+    showView('results');
+
+  } catch (e) {
+    log(`❌ Erreur: ${e.message}`, 'err');
+    console.error(e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER RESULTS
+// ═══════════════════════════════════════════════════════════
+let currentYear = null;
+
+function renderResults(session, selectedYear) {
+  const { stats } = session;
+  currentYear = selectedYear || stats.annees[stats.annees.length - 1];
+
+  // Year tabs
+  const ytabs = document.getElementById('year-tabs');
+  ytabs.innerHTML = stats.annees.map(y =>
+    `<div class="ytab${y === currentYear ? ' active' : ''}" onclick="switchYear(${y})">${y}</div>`
+  ).join('');
+
+  document.getElementById('save-note').style.display = 'flex';
+  renderYearData(session, currentYear);
+}
+
+function switchYear(y) {
+  currentYear = y;
+  document.querySelectorAll('.ytab').forEach(t => t.classList.toggle('active', parseInt(t.textContent) === y));
+  renderYearData(State.currentSession, y);
+}
+
+function renderYearData(session, year) {
+  const { stats } = session;
+  const s = stats[`Y${year}`];
+  if (!s) return;
+  const n = s.effectif_total;
+
+  // KPIs
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi"><div class="kpi-val">${n}</div><div class="kpi-label">Effectif total</div><div class="kpi-sub">ETP: ${s.etp}</div></div>
+    <div class="kpi"><div class="kpi-val">${pct(s.femmes,n)}</div><div class="kpi-label">Femmes</div><div class="kpi-sub">${s.hommes}H · ${s.femmes}F</div></div>
+    <div class="kpi blue"><div class="kpi-val">${pct(s.cdi,n)}</div><div class="kpi-label">CDI</div><div class="kpi-sub">${s.cdi} CDI · ${s.cdd} CDD</div></div>
+    <div class="kpi amber"><div class="kpi-val">${s.age_moyen !== null ? s.age_moyen + ' ans' : '—'}</div><div class="kpi-label">Âge moyen</div><div class="kpi-sub">Anc. ${s.anciennete_moyenne !== null ? s.anciennete_moyenne + ' ans' : '—'}</div></div>
+    <div class="kpi"><div class="kpi-val">${s.salaire_moyen_mensuel ? fmtEur(s.salaire_moyen_mensuel) : '—'}</div><div class="kpi-label">Salaire brut moy.</div><div class="kpi-sub">méd. ${s.salaire_median_mensuel ? fmtEur(s.salaire_median_mensuel) : '—'}</div></div>
+  `;
+
+  // Détruire les anciens charts
+  Object.values(State.charts).forEach(c => { if (c) c.destroy(); });
+  State.charts = {};
+
+  // Chart 1: Effectifs par année (H/F stacked bar)
+  {
+    const ctx = document.getElementById('chart-eff').getContext('2d');
+    State.charts.eff = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: stats.annees,
+        datasets: [
+          {
+            label: 'Hommes',
+            data: stats.annees.map(y => stats[`Y${y}`]?.hommes || 0),
+            backgroundColor: 'rgba(35,130,220,.7)',
+          },
+          {
+            label: 'Femmes',
+            data: stats.annees.map(y => stats[`Y${y}`]?.femmes || 0),
+            backgroundColor: 'rgba(22,200,122,.7)',
+          }
+        ]
+      },
+      options: { ...chartOpts(), scales: { x: xAxis(), y: { ...yAxis(), stacked: false } }, plugins: { ...plugins() } }
+    });
+  }
+
+  // Chart 2: CDI/CDD donut
+  {
+    const ctx = document.getElementById('chart-cdi').getContext('2d');
+    State.charts.cdi = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['CDI', 'CDD', 'Autre'],
+        datasets: [{
+          data: [s.cdi, s.cdd, Math.max(0, n - s.cdi - s.cdd)],
+          backgroundColor: ['rgba(22,200,122,.8)','rgba(246,192,0,.8)','rgba(107,122,153,.5)'],
+          borderColor: '#161b27', borderWidth: 3
+        }]
+      },
+      options: { ...chartOpts(), cutout: '65%', plugins: { legend: { labels: { color:'#e2e8f0', font:{family:'DM Sans',size:11}, boxWidth:14 } }, tooltip: tooltipOpts() } }
+    });
+  }
+
+  // Chart 3: Statuts conventionnels donut
+  {
+    const ctx = document.getElementById('chart-statut').getContext('2d');
+    State.charts.statut = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Cadres', 'TAM', 'Employés'],
+        datasets: [{
+          data: [s.cadres, s.tam, s.employes],
+          backgroundColor: ['rgba(56,189,248,.8)','rgba(167,139,250,.8)','rgba(22,200,122,.8)'],
+          borderColor: '#161b27', borderWidth: 3
+        }]
+      },
+      options: { ...chartOpts(), cutout: '65%', plugins: { legend: { labels: { color:'#e2e8f0', font:{family:'DM Sans',size:11}, boxWidth:14 } }, tooltip: tooltipOpts() } }
+    });
+  }
+
+  // Chart 4: H/F bar
+  {
+    const ctx = document.getElementById('chart-hf').getContext('2d');
+    State.charts.hf = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Hommes', 'Femmes'],
+        datasets: [{
+          data: [s.hommes, s.femmes],
+          backgroundColor: ['rgba(35,130,220,.8)','rgba(22,200,122,.8)'],
+          borderRadius: 6
+        }]
+      },
+      options: { ...chartOpts(), indexAxis:'x', scales: { x: xAxis(), y: yAxis() }, plugins: { ...plugins(), legend:{display:false} } }
+    });
+  }
+
+  // Chart 5: Pyramide des âges (horizontal bars)
+  {
+    const ctx = document.getElementById('chart-pyramid').getContext('2d');
+    const labels = AGE_BRACKETS.map(b => b[2]).reverse();
+    const hData = labels.map(lbl => -(s.pyramide[lbl]?.Homme || 0));
+    const fData = labels.map(lbl => s.pyramide[lbl]?.Femme || 0);
+    State.charts.pyramid = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Hommes', data: hData, backgroundColor: 'rgba(35,130,220,.7)', borderRadius:4 },
+          { label: 'Femmes', data: fData, backgroundColor: 'rgba(22,200,122,.7)', borderRadius:4 }
+        ]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: false,
+            ticks: { color: '#6b7a99', font:{family:'DM Sans',size:10}, callback: v => Math.abs(v) },
+            grid: { color: 'rgba(255,255,255,.05)' }
+          },
+          y: { stacked: false, ticks: { color: '#6b7a99', font:{family:'DM Sans',size:10} }, grid:{display:false} }
+        },
+        plugins: { legend: { labels: { color:'#e2e8f0', font:{family:'DM Sans',size:11}, boxWidth:14 } }, tooltip: tooltipOpts() }
+      }
+    });
+  }
+
+  // Stats comparison table
+  renderStatsTable(stats);
+
+  // Etablissements table
+  const etabKeys = Object.keys(s.parEtab || {});
+  if (etabKeys.length > 1) {
+    document.getElementById('etab-wrap').style.display = 'block';
+    document.getElementById('etab-table-content').innerHTML = `
+      <table class="stats-table">
+        <thead><tr><th>NIC</th><th>Établissement</th><th>Effectif</th><th>Hommes</th><th>Femmes</th><th>CDI</th><th>CDD</th></tr></thead>
+        <tbody>
+          ${etabKeys.map(nic => {
+            const e = s.parEtab[nic];
+            const etabInfo = stats.etablissements[nic] || {};
+            const label = etabInfo.enseigne || etabInfo.ville || nic;
+            const total = e.hommes + e.femmes;
+            return `<tr>
+              <td class="num">${nic}</td><td>${label}</td>
+              <td class="num">${total}</td>
+              <td class="num">${e.hommes} <span class="pct">${pct(e.hommes,total)}</span></td>
+              <td class="num">${e.femmes} <span class="pct">${pct(e.femmes,total)}</span></td>
+              <td class="num">${e.cdi}</td><td class="num">${e.cdd}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  } else {
+    document.getElementById('etab-wrap').style.display = 'none';
+  }
+}
+
+function renderStatsTable(stats) {
+  const rows = [
+    ['Effectif total', y => stats[`Y${y}`]?.effectif_total],
+    ['dont Hommes', y => stats[`Y${y}`]?.hommes + ' (' + pct(stats[`Y${y}`]?.hommes, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['dont Femmes', y => stats[`Y${y}`]?.femmes + ' (' + pct(stats[`Y${y}`]?.femmes, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['CDI', y => stats[`Y${y}`]?.cdi + ' (' + pct(stats[`Y${y}`]?.cdi, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['CDD', y => stats[`Y${y}`]?.cdd],
+    ['ETP', y => stats[`Y${y}`]?.etp],
+    ['Cadres', y => stats[`Y${y}`]?.cadres + ' (' + pct(stats[`Y${y}`]?.cadres, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['TAM', y => stats[`Y${y}`]?.tam],
+    ['Employés', y => stats[`Y${y}`]?.employes],
+    ['Temps partiel', y => stats[`Y${y}`]?.temps_partiel + ' dont ' + stats[`Y${y}`]?.temps_partiel_f + 'F'],
+    ['BOETH (Handicap)', y => stats[`Y${y}`]?.boeth],
+    ['Alternants', y => stats[`Y${y}`]?.alternants],
+    ['Âge moyen', y => stats[`Y${y}`]?.age_moyen !== null ? stats[`Y${y}`]?.age_moyen + ' ans' : '—'],
+    ['Ancienneté moyenne', y => stats[`Y${y}`]?.anciennete_moyenne !== null ? stats[`Y${y}`]?.anciennete_moyenne + ' ans' : '—'],
+    ['Salaire brut moy./mois', y => fmtEur(stats[`Y${y}`]?.salaire_moyen_mensuel)],
+    ['Salaire médian/mois', y => fmtEur(stats[`Y${y}`]?.salaire_median_mensuel)],
+    ['Masse salariale ann.', y => fmtEur(stats[`Y${y}`]?.masse_salariale_annuelle)],
+  ];
+
+  document.getElementById('stats-table-content').innerHTML = `
+    <table class="stats-table">
+      <thead><tr><th>Indicateur</th>${stats.annees.map(y => `<th>${y}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${rows.map(([label, fn]) =>
+          `<tr><td>${label}</td>${stats.annees.map(y => `<td class="num">${fn(y) ?? '—'}</td>`).join('')}</tr>`
+        ).join('')}
+      </tbody>
+    </table>`;
+}
+
+// Chart.js helpers
+const chartOpts = () => ({ responsive: true, maintainAspectRatio: false });
+const xAxis = () => ({ ticks: { color:'#6b7a99', font:{family:'DM Sans',size:10} }, grid:{ color:'rgba(255,255,255,.05)' } });
+const yAxis = () => ({ ticks: { color:'#6b7a99', font:{family:'DM Sans',size:10} }, grid:{ color:'rgba(255,255,255,.05)' } });
+const plugins = () => ({ legend:{ labels:{ color:'#e2e8f0', font:{family:'DM Sans',size:11}, boxWidth:14 } }, tooltip: tooltipOpts() });
+const tooltipOpts = () => ({ backgroundColor:'#1e253a', titleColor:'#e2e8f0', bodyColor:'#6b7a99', borderColor:'#2a3350', borderWidth:1 });
+
+// ═══════════════════════════════════════════════════════════
+//  HISTORISATION
+// ═══════════════════════════════════════════════════════════
+function saveToHistory(session) {
+  const history = getHistory();
+  // Replace if same id
+  const idx = history.findIndex(s => s.id === session.id);
+  if (idx >= 0) history[idx] = session;
+  else history.unshift(session);
+  if (history.length > 50) history.pop();
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  updateHistBadge();
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+
+function deleteSession(id, e) {
+  e.stopPropagation();
+  if (!confirm('Supprimer cette session ?')) return;
+  const history = getHistory().filter(s => s.id !== id);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  updateHistBadge();
+  renderHistory();
+}
+
+function clearHistory() {
+  if (!confirm('Effacer tout l\'historique BDESE ?')) return;
+  localStorage.removeItem(HISTORY_KEY);
+  updateHistBadge();
+  renderHistory();
+}
+
+function updateHistBadge() {
+  const n = getHistory().length;
+  document.getElementById('hist-count').textContent = n;
+}
+
+function renderHistory() {
+  const history = getHistory();
+  const el = document.getElementById('history-list');
+
+  if (!history.length) {
+    el.innerHTML = `
+      <div class="history-empty">
+        <div class="icon">📋</div>
+        <p>Aucune analyse sauvegardée</p>
+        <div class="hint">Lancez une nouvelle analyse DSN pour la retrouver ici</div>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = history.map(s => {
+    const lastYear = s.annees[s.annees.length - 1];
+    const sy = s.stats?.[`Y${lastYear}`];
+    return `
+      <div class="session-card" onclick="openSessionDetail('${s.id}')">
+        <div class="session-header">
+          <div>
+            <div class="session-company">${s.company || 'Société'}</div>
+            <div class="session-meta">${s.siren ? s.siren + ' · ' : ''}${s.date} · ${s.nbFiles} fichier${s.nbFiles > 1 ? 's' : ''} DSN</div>
+          </div>
+          <div class="session-actions">
+            <button class="btn btn-g btn-sm" onclick="reloadSession('${s.id}', event)">📊 Voir</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSession('${s.id}',event)">🗑</button>
+          </div>
+        </div>
+        <div class="session-kpis">
+          <div class="session-kpi"><div class="v">${sy?.effectif_total ?? '—'}</div><div class="l">Salariés</div></div>
+          <div class="session-kpi"><div class="v">${sy ? pct(sy.femmes, sy.effectif_total) : '—'}</div><div class="l">Femmes</div></div>
+          <div class="session-kpi"><div class="v">${sy ? pct(sy.cdi, sy.effectif_total) : '—'}</div><div class="l">CDI</div></div>
+          <div class="session-kpi"><div class="v">${sy?.cadres ?? '—'}</div><div class="l">Cadres</div></div>
+          <div class="session-kpi"><div class="v">${sy?.salaire_moyen_mensuel ? fmtEur(sy.salaire_moyen_mensuel) : '—'}</div><div class="l">Brut moy.</div></div>
+        </div>
+        <div class="session-years">
+          ${s.annees.map(y => `<span class="session-year-tag">${y}</span>`).join('')}
+        </div>
+        <div class="session-files">
+          📄 ${s.fileNames.slice(0,4).join(' · ')}${s.fileNames.length > 4 ? ` +${s.fileNames.length-4}` : ''}
+          ${s.note ? `<span style="margin-left:8px;color:var(--amber)">💬 ${s.note}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function reloadSession(id, e) {
+  e.stopPropagation();
+  const s = getHistory().find(h => h.id === id);
+  if (!s) return;
+  State.currentSession = s;
+  const lastYear = s.annees[s.annees.length - 1];
+  document.getElementById('tab-results').style.display = '';
+  renderResults(s, lastYear);
+  showView('results');
+}
+
+function openSessionDetail(id) {
+  const s = getHistory().find(h => h.id === id);
+  if (!s) return;
+  document.getElementById('detail-title').textContent = s.company + ' — ' + s.date;
+  const lastYear = s.annees[s.annees.length - 1];
+  const sy = s.stats?.[`Y${lastYear}`];
+  document.getElementById('detail-body').innerHTML = `
+    <p style="color:var(--mt);font-size:11px;margin-bottom:16px">
+      SIREN: ${s.siren || '—'} · ${s.nbFiles} fichier(s) · Années: ${s.annees.join(', ')}
+      ${s.note ? `<br>💬 ${s.note}` : ''}
+    </p>
+    ${renderStatsTableHTML(s.stats)}
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-g btn-sm" onclick="reloadSessionFromDetail('${s.id}')">📊 Ouvrir tableau de bord</button>
+      <button class="btn btn-o btn-sm" onclick="exportSessionJSONById('${s.id}')">⬇ Export JSON</button>
+    </div>`;
+  document.getElementById('detail-overlay').classList.add('active');
+}
+
+function renderStatsTableHTML(stats) {
+  const rows = [
+    ['Effectif total', y => stats[`Y${y}`]?.effectif_total],
+    ['Hommes', y => stats[`Y${y}`]?.hommes + ' (' + pct(stats[`Y${y}`]?.hommes, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['Femmes', y => stats[`Y${y}`]?.femmes + ' (' + pct(stats[`Y${y}`]?.femmes, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['CDI', y => stats[`Y${y}`]?.cdi + ' (' + pct(stats[`Y${y}`]?.cdi, stats[`Y${y}`]?.effectif_total) + ')'],
+    ['CDD', y => stats[`Y${y}`]?.cdd],
+    ['Cadres', y => stats[`Y${y}`]?.cadres],
+    ['TAM', y => stats[`Y${y}`]?.tam],
+    ['Employés', y => stats[`Y${y}`]?.employes],
+    ['BOETH', y => stats[`Y${y}`]?.boeth],
+    ['Salaire moyen/mois', y => fmtEur(stats[`Y${y}`]?.salaire_moyen_mensuel)],
+  ];
+  return `
+    <table class="stats-table">
+      <thead><tr><th>Indicateur</th>${stats.annees.map(y=>`<th>${y}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${rows.map(([lbl,fn])=>`<tr><td>${lbl}</td>${stats.annees.map(y=>`<td class="num">${fn(y)??'—'}</td>`).join('')}</tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function reloadSessionFromDetail(id) {
+  closeDetail();
+  const s = getHistory().find(h => h.id === id);
+  if (!s) return;
+  State.currentSession = s;
+  const lastYear = s.annees[s.annees.length - 1];
+  document.getElementById('tab-results').style.display = '';
+  renderResults(s, lastYear);
+  showView('results');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  EXPORTS
+// ═══════════════════════════════════════════════════════════
+function exportSessionJSON() {
+  if (!State.currentSession) return showToast('Aucune session courante', true);
+  downloadJSON(State.currentSession, `BDESE_${State.currentSession.company}_${State.currentSession.annees.join('-')}.json`);
+}
+
+function exportSessionJSONById(id) {
+  const s = getHistory().find(h => h.id === id);
+  if (s) downloadJSON(s, `BDESE_${s.company}_${s.annees.join('-')}.json`);
+}
+
+function exportAllHistory() {
+  const h = getHistory();
+  if (!h.length) return showToast('Historique vide', true);
+  downloadJSON({ exported: new Date().toISOString(), sessions: h }, `BDESE_historique_${new Date().toLocaleDateString('fr-FR').replace(/\//g,'-')}.json`);
+}
+
+function exportCSV() {
+  if (!State.currentSession) return showToast('Aucune session courante', true);
+  const { stats, company, siren } = State.currentSession;
+  const rows = [['Société','SIREN','Année','Effectif','Hommes','Femmes','%Femmes','CDI','CDD','%CDI','Cadres','TAM','Employés','ETP','TP','T.Partiel','BOETH','Alternants','Âge moyen','Anc. moy.','Salaire moy/mois','Salaire méd/mois','Masse sal. ann.']];
+  for (const y of stats.annees) {
+    const s = stats[`Y${y}`];
+    if (!s) continue;
+    rows.push([
+      company, siren, y,
+      s.effectif_total, s.hommes, s.femmes,
+      s.effectif_total ? Math.round(s.femmes/s.effectif_total*100)+'%' : '',
+      s.cdi, s.cdd, s.effectif_total ? Math.round(s.cdi/s.effectif_total*100)+'%' : '',
+      s.cadres, s.tam, s.employes, s.etp,
+      s.temps_plein, s.temps_partiel, s.boeth, s.alternants,
+      s.age_moyen ?? '', s.anciennete_moyenne ?? '',
+      s.salaire_moyen_mensuel || '', s.salaire_median_mensuel || '',
+      s.masse_salariale_annuelle || ''
+    ]);
+  }
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `BDESE_${company}_${stats.annees.join('-')}.csv`;
+  a.click();
+  showToast('CSV exporté ✅');
+}
+
+function downloadJSON(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  showToast('JSON exporté ✅');
+}
+
+function showToast(msg, isErr) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.borderColor = isErr ? 'var(--red)' : 'var(--g)';
+  el.style.color = isErr ? 'var(--red)' : 'var(--g)';
+  el.classList.add('active');
+  setTimeout(() => el.classList.remove('active'), 3000);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  updateHistBadge();
+  renderHistory();
+  // Prevent default drag on body
+  document.body.addEventListener('dragover', e => e.preventDefault());
+  document.body.addEventListener('drop', e => e.preventDefault());
+});
+</script>
+</body>
+</html>
