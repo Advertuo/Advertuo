@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="fr" id="html-root">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advertuo – DAF de Transition & Conseil en Finance</title>
+  <meta name="description" content="Advertuo – Conseil DAF de transition, digitalisation finance, trésorerie, M&A. Claude Weiss, +20 ans d'expérience."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:#0f1f3d;--navy-mid:#1a3260;--navy-light:#243e7a;
+      --accent:#c8a96e;--accent-light:#e8d5aa;
+      --cream:#f5f0e8;--off-white:#faf8f5;
+      --text-dark:#0f1f3d;--text-mid:#3a4a6b;--text-light:#6b7a9a;
+      --white:#ffffff;--border:rgba(15,31,61,0.1);
+      --shadow:0 8px 40px rgba(15,31,61,0.12);
+      --shadow-lg:0 24px 80px rgba(15,31,61,0.18);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text-dark);line-height:1.6;overflow-x:hidden}
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle{display:flex;align-items:center;gap:4px;background:rgba(15,31,61,0.06);border-radius:6px;padding:3px;border:1px solid var(--border)}
+    .lang-btn{background:none;border:none;cursor:pointer;padding:4px 9px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;letter-spacing:0.04em;color:var(--text-mid);transition:all 0.2s;display:flex;align-items:center;gap:5px}
+    .lang-btn.active{background:var(--navy);color:white}
+    .lang-btn:hover:not(.active){background:rgba(15,31,61,0.08)}
+    [data-en]{display:none}
+    html.en [data-fr]{display:none}
+    html.en [data-en]{display:revert}
+
+    /* ── NAV ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:72px;background:rgba(245,240,232,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:all 0.3s ease}
+    nav.scrolled{height:60px;background:rgba(245,240,232,0.97);box-shadow:0 4px 24px rgba(15,31,61,0.08)}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo-icon{width:36px;height:36px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-logo-icon svg{width:22px;height:22px}
+    .nav-logo-text{font-family:'DM Sans',sans-serif;font-weight:600;font-size:1.15rem;letter-spacing:0.08em;color:var(--navy);text-transform:uppercase}
+    .nav-right{display:flex;align-items:center;gap:1.5rem}
+    .nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+    .nav-links a{text-decoration:none;color:var(--text-mid);font-size:0.85rem;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;position:relative}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--accent);transform:scaleX(0);transition:transform 0.3s ease;transform-origin:left}
+    .nav-links a:hover{color:var(--navy)}
+    .nav-links a:hover::after{transform:scaleX(1)}
+    .nav-cta{background:var(--navy);color:var(--white)!important;padding:8px 20px;border-radius:4px;transition:background 0.2s,transform 0.2s!important}
+    .nav-cta::after{display:none!important}
+    .nav-cta:hover{background:var(--navy-light)!important;transform:translateY(-1px)}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .nav-hamburger span{display:block;width:24px;height:2px;background:var(--navy);transition:all 0.3s}
+    .mobile-menu{position:fixed;top:72px;left:0;right:0;z-index:99;background:var(--cream);padding:20px 5%;border-bottom:1px solid var(--border);flex-direction:column;gap:12px;box-shadow:var(--shadow);transform:translateY(-110%);transition:transform 0.3s ease;display:flex}
+    .mobile-menu.open{transform:translateY(0)}
+    .mobile-menu a{color:var(--navy);text-decoration:none;font-weight:500;font-size:0.95rem;padding:8px 0;border-bottom:1px solid var(--border)}
+    .mobile-menu a:last-child{border-bottom:none}
+
+    /* ── HERO ── */
+    #hero{min-height:100vh;background:var(--navy);position:relative;overflow:hidden;display:flex;align-items:center}
+    .hero-bg-pattern{position:absolute;inset:0;background-image:radial-gradient(ellipse 60% 50% at 70% 40%,rgba(200,169,110,0.08) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 10% 80%,rgba(26,50,96,0.6) 0%,transparent 50%)}
+    .hero-grid{position:absolute;inset:0;opacity:0.04;background-image:linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px);background-size:60px 60px}
+    .hero-content{position:relative;z-index:1;padding:120px 5% 80px;max-width:1200px;margin:0 auto;width:100%}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:28px}
+    .hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--accent)}
+    .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,6rem);font-weight:300;line-height:1.05;color:var(--white);margin-bottom:12px;letter-spacing:-0.01em}
+    .hero-title em{font-style:italic;color:var(--accent-light)}
+    .hero-title strong{font-weight:500;display:block}
+    .hero-subtitle{font-size:1.05rem;font-weight:300;color:rgba(255,255,255,0.65);max-width:540px;margin-bottom:48px;line-height:1.7}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:80px}
+    .btn-primary{background:var(--accent);color:var(--navy);padding:14px 32px;border-radius:4px;text-decoration:none;font-weight:600;font-size:0.88rem;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.25s ease;display:inline-block}
+    .btn-primary:hover{background:var(--accent-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,169,110,0.35)}
+    .btn-outline{border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.85);padding:14px 32px;border-radius:4px;text-decoration:none;font-weight:400;font-size:0.88rem;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.25s ease;display:inline-block}
+    .btn-outline:hover{border-color:rgba(255,255,255,0.7);color:white;background:rgba(255,255,255,0.06)}
+    .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;max-width:700px}
+    .stat-item{padding:24px 28px;background:rgba(255,255,255,0.02)}
+    .stat-number{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:500;color:var(--accent);line-height:1;margin-bottom:6px}
+    .stat-label{font-size:0.75rem;color:rgba(255,255,255,0.45);letter-spacing:0.05em;line-height:1.3;text-transform:uppercase}
+    .hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.35);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;animation:bounce 2.5s infinite}
+    .hero-scroll svg{width:18px;height:18px}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+    /* ── SECTIONS ── */
+    section{padding:100px 5%}
+    .container{max-width:1200px;margin:0 auto}
+    .section-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+    .section-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--accent)}
+    .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:400;line-height:1.15;color:var(--navy);margin-bottom:16px}
+    .section-title em{font-style:italic;color:var(--navy-light)}
+    .section-lead{font-size:1rem;color:var(--text-light);max-width:560px;line-height:1.75}
+
+    /* ── ABOUT ── */
+    #about{background:var(--cream)}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+    .about-text p{font-size:1rem;color:var(--text-mid);line-height:1.8;margin-bottom:20px}
+    .about-values{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+    .value-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:20px;position:relative;overflow:hidden;transition:transform 0.25s,box-shadow 0.25s}
+    .value-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.25s}
+    .value-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+    .value-card:hover::before{opacity:1}
+    .value-icon{font-size:1.4rem;margin-bottom:10px}
+    .value-title{font-weight:600;font-size:0.88rem;color:var(--navy);margin-bottom:6px}
+    .value-desc{font-size:0.82rem;color:var(--text-light);line-height:1.5}
+    .about-profile{background:var(--navy);border-radius:8px;padding:36px;color:white;position:sticky;top:90px;overflow:hidden}
+    .profile-photo-wrap{width:90px;height:90px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);margin-bottom:18px;flex-shrink:0}
+    .profile-photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(100%) contrast(1.05)}
+    .profile-header{display:flex;align-items:center;gap:16px;margin-bottom:4px}
+    .profile-name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;color:white}
+    .profile-title{font-size:0.82rem;color:var(--accent-light);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:24px}
+    .profile-items{list-style:none;margin-bottom:28px}
+    .profile-items li{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.4}
+    .profile-items li:last-child{border-bottom:none}
+    .profile-items li span:first-child{color:var(--accent);flex-shrink:0;font-size:1rem}
+    .profile-tags{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.65);padding:4px 10px;border-radius:3px;font-size:0.72rem;letter-spacing:0.04em}
+
+    /* ── SERVICES ── */
+    #services{background:var(--off-white)}
+    .services-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;flex-wrap:wrap;gap:24px}
+    .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .service-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:36px 32px;position:relative;overflow:hidden;transition:all 0.3s ease;cursor:default}
+    .service-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--accent));transform:scaleX(0);transition:transform 0.35s ease;transform-origin:left}
+    .service-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+    .service-card:hover::after{transform:scaleX(1)}
+    .service-card.featured{background:var(--navy);border-color:var(--navy)}
+    .service-card.featured .service-num,.service-card.featured .service-desc,.service-card.featured .service-list li{color:rgba(255,255,255,0.6)}
+    .service-card.featured .service-title{color:white}
+    .service-card.featured .service-list li::before{background:var(--accent)}
+    .service-num{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-light);letter-spacing:0.1em;margin-bottom:20px}
+    .service-icon{font-size:1.6rem;margin-bottom:16px;display:block}
+    .service-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:500;color:var(--navy);margin-bottom:12px;line-height:1.2}
+    .service-desc{font-size:0.85rem;color:var(--text-light);line-height:1.65;margin-bottom:20px}
+    .service-list{list-style:none}
+    .service-list li{font-size:0.82rem;color:var(--text-light);padding:4px 0 4px 16px;position:relative;line-height:1.4}
+    .service-list li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent)}
+
+    /* ── TIMELINE ── */
+    #parcours{background:var(--cream)}
+    .timeline{position:relative;max-width:900px;margin:60px auto 0}
+    .timeline::before{content:'';position:absolute;left:160px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--navy-light) 10%,var(--navy-light) 90%,transparent)}
+    .timeline-item{display:grid;grid-template-columns:160px 1fr;gap:48px;margin-bottom:48px;position:relative}
+    .timeline-item::before{content:'';position:absolute;left:156px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--cream);z-index:1}
+    .timeline-date{text-align:right;padding-top:4px}
+    .timeline-date .year{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;color:var(--navy);line-height:1.2}
+    .timeline-date .period{font-size:0.72rem;color:var(--text-light);letter-spacing:0.04em}
+    .timeline-body{padding-left:24px}
+    .timeline-company{font-weight:600;font-size:0.95rem;color:var(--navy);margin-bottom:2px}
+    .timeline-role{font-style:italic;font-size:0.85rem;color:var(--accent);margin-bottom:10px}
+    .timeline-desc{font-size:0.85rem;color:var(--text-light);line-height:1.65}
+    .timeline-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .tl-tag{background:var(--white);border:1px solid var(--border);color:var(--text-mid);padding:3px 9px;border-radius:3px;font-size:0.7rem;letter-spacing:0.03em}
+
+    /* ── INNOVATION ── */
+    #innovation{background:var(--navy);padding:100px 5%}
+    #innovation .section-title{color:var(--white)}
+    #innovation .section-title em{color:var(--accent)}
+    #innovation .section-lead{color:rgba(255,255,255,0.55)}
+    #innovation .section-eyebrow{color:var(--accent)}
+    #innovation .section-eyebrow::before{background:var(--accent)}
+    .innovation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+    .innov-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:28px 24px;transition:all 0.3s ease;position:relative;overflow:hidden}
+    .innov-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
+    .innov-card:hover{background:rgba(255,255,255,0.07);transform:translateY(-3px)}
+    .innov-card:hover::before{opacity:1}
+    .innov-icon{font-size:1.8rem;margin-bottom:16px;display:block}
+    .innov-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;color:white;margin-bottom:10px;line-height:1.2}
+    .innov-desc{font-size:0.83rem;color:rgba(255,255,255,0.55);line-height:1.65}
+    .innov-tech{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+    .innov-tech span{background:rgba(200,169,110,0.12);border:1px solid rgba(200,169,110,0.2);color:var(--accent);padding:2px 8px;border-radius:3px;font-size:0.68rem;font-family:'DM Mono',monospace;letter-spacing:0.04em}
+    .innov-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);color:var(--accent);padding:4px 10px;border-radius:3px;font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase;margin-top:14px}
+    .innov-note{margin-top:48px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:24px 28px}
+    .innov-note p{font-size:0.92rem;color:rgba(255,255,255,0.65);line-height:1.75;font-style:italic}
+    .innov-note strong{color:var(--accent-light);font-style:normal}
+
+    /* ── EXPERTISE ── */
+    #expertise{background:var(--off-white)}
+    .expertise-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:56px}
+    .exp-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:28px 24px;text-align:center;transition:all 0.25s}
+    .exp-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--accent)}
+    .exp-icon{font-size:2rem;display:block;margin-bottom:14px}
+    .exp-label{font-weight:600;font-size:0.88rem;color:var(--navy);margin-bottom:8px}
+    .exp-detail{font-size:0.78rem;color:var(--text-light);line-height:1.55}
+    .expertise-tools{margin-top:48px;background:var(--cream);border-radius:8px;padding:36px 40px}
+    .tools-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy);margin-bottom:20px;font-weight:500}
+    .tools-list{display:flex;flex-wrap:wrap;gap:10px}
+    .tool-pill{background:var(--white);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:0.8rem;color:var(--text-mid);font-family:'DM Mono',monospace;letter-spacing:0.03em;transition:all 0.2s;cursor:default}
+    .tool-pill:hover{border-color:var(--navy);color:var(--navy);background:var(--cream)}
+
+    /* ── INTERNATIONAL ── */
+    #international{background:var(--cream)}
+    .intl-content{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:48px}
+    .intl-zones{list-style:none}
+    .intl-zone{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+    .intl-zone:last-child{border-bottom:none}
+    .zone-flag{font-size:1.4rem}
+    .zone-info .zone-label{font-weight:600;font-size:0.9rem;color:var(--navy)}
+    .zone-info .zone-desc{font-size:0.8rem;color:var(--text-light)}
+    .intl-highlight{background:var(--navy);border-radius:8px;padding:40px;color:white}
+    .intl-stat-big{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:var(--accent);line-height:1;margin-bottom:8px}
+    .intl-stat-label{font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:28px;text-transform:uppercase;letter-spacing:0.06em}
+    .intl-competences{list-style:none}
+    .intl-competences li{display:flex;align-items:flex-start;gap:10px;font-size:0.85rem;color:rgba(255,255,255,0.7);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);line-height:1.4}
+    .intl-competences li:last-child{border-bottom:none}
+    .intl-competences li::before{content:'→';color:var(--accent);flex-shrink:0}
+
+    /* ── CONTACT ── */
+    #contact{background:var(--navy);padding:100px 5%}
+    .contact-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+    .contact-left .section-title{color:white}
+    .contact-left .section-lead{color:rgba(255,255,255,0.55);margin-bottom:40px}
+    .contact-items{list-style:none}
+    .contact-item{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+    .contact-item:last-child{border-bottom:none}
+    .ci-icon{color:var(--accent);font-size:1.1rem;flex-shrink:0;margin-top:2px}
+    .ci-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.35);margin-bottom:3px}
+    .ci-value{font-size:0.92rem;color:rgba(255,255,255,0.8)}
+    .ci-value a{color:var(--accent);text-decoration:none}
+    .ci-value a:hover{text-decoration:underline}
+    /* Canvas-rendered contact info (anti-spam) */
+    .contact-canvas-wrap{cursor:pointer;display:inline-block}
+    .contact-canvas-wrap canvas{display:block}
+    .contact-form{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:40px}
+    .form-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:white;margin-bottom:28px;font-weight:400}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:0.75rem;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px}
+    .form-group input,.form-group textarea,.form-group select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:white;padding:12px 16px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:0.88rem;transition:border-color 0.2s;outline:none;-webkit-appearance:none}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,0.25)}
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);background:rgba(255,255,255,0.08)}
+    .form-group textarea{min-height:110px;resize:vertical}
+    .form-group select option{background:var(--navy)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .btn-submit{width:100%;background:var(--accent);color:var(--navy);border:none;padding:14px 24px;border-radius:4px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.88rem;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;transition:all 0.25s;margin-top:8px}
+    .btn-submit:hover{background:var(--accent-light);transform:translateY(-1px)}
+    .form-note{font-size:0.72rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:12px;line-height:1.5}
+    .form-success{display:none;text-align:center;padding:20px;color:var(--accent);font-size:0.9rem}
+
+    /* ── FOOTER ── */
+    footer{background:#080f1e;padding:32px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .footer-left{display:flex;align-items:center;gap:12px}
+    .footer-logo-icon{width:28px;height:28px;background:rgba(255,255,255,0.08);border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .footer-logo-icon svg{width:16px;height:16px}
+    .footer-brand{font-size:0.82rem;color:rgba(255,255,255,0.4);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+    .footer-right{font-size:0.75rem;color:rgba(255,255,255,0.25)}
+
+    /* ── REVEAL ── */
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal-delay-1{transition-delay:0.1s}.reveal-delay-2{transition-delay:0.2s}
+    .reveal-delay-3{transition-delay:0.3s}.reveal-delay-4{transition-delay:0.4s}
+    .reveal-delay-5{transition-delay:0.5s}
+
+    /* ── RESPONSIVE ── */
+
+    /* ── OUTILS ── */
+    #outils{background:var(--navy);padding:100px 5%}
+    #outils .section-title{color:white}
+    #outils .section-title em{color:var(--accent)}
+    #outils .section-lead{color:rgba(255,255,255,0.5)}
+    #outils .section-eyebrow{color:var(--accent)}
+    #outils .section-eyebrow::before{background:var(--accent)}
+    .tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:52px}
+    .tool-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;transition:all 0.3s ease;display:flex;flex-direction:column}
+    .tool-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4);border-color:rgba(200,169,110,0.35)}
+    .tool-preview{position:relative;height:220px;overflow:hidden;background:#0a0f1a;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0}
+    .tool-preview iframe{width:160%;height:160%;transform:scale(0.625);transform-origin:top left;border:none;pointer-events:none}
+    .tool-preview-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#0f172a,#1e293b)}
+    .tool-preview-icon{font-size:3rem}
+    .tool-preview-label{font-family:'DM Mono',monospace;font-size:0.7rem;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase}
+    .tool-preview-badge{position:absolute;top:12px;right:12px;background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);color:var(--accent);padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.06em}
+    .tool-info{padding:22px 24px;flex:1;display:flex;flex-direction:column}
+    .tool-name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:500;color:white;margin-bottom:8px;line-height:1.2}
+    .tool-desc{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.65;margin-bottom:18px;flex:1}
+    .tool-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+    .tool-tag{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);padding:2px 8px;border-radius:3px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.03em}
+    .tool-actions{display:flex;gap:10px;align-items:center}
+    .btn-launch{background:var(--accent);color:var(--navy);padding:9px 20px;border-radius:4px;text-decoration:none;font-weight:700;font-size:0.8rem;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+    .btn-launch:hover{background:var(--accent-light);transform:translateY(-1px)}
+    .tool-status{font-family:'DM Mono',monospace;font-size:0.68rem;color:rgba(255,255,255,0.3);letter-spacing:0.06em}
+    .tool-status.soon{color:rgba(200,169,110,0.5)}
+
+    /* ── PUBLICATIONS ── */
+    #publications{background:var(--cream);padding:100px 5%}
+    .pub-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:52px}
+    .pub-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform 0.25s,box-shadow 0.25s}
+    .pub-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+    .pub-header{padding:22px 24px 0}
+    .pub-category{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .pub-category::before{content:'';display:block;width:20px;height:1px;background:var(--accent)}
+    .pub-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:500;color:var(--navy);margin-bottom:10px;line-height:1.25}
+    .pub-lead{font-size:0.83rem;color:var(--text-light);line-height:1.65;margin-bottom:18px}
+    .pub-linkedin{margin:0 24px 20px;border-radius:8px;overflow:hidden;background:#f3f2ef}
+    .pub-linkedin iframe{display:block;width:100%;border:none}
+    .pub-analysis{margin:0 24px 24px;background:var(--cream);border-radius:8px;overflow:hidden}
+    .pub-analysis-toggle{width:100%;background:none;border:none;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.82rem;color:var(--navy);border-top:1px solid var(--border);transition:background 0.2s}
+    .pub-analysis-toggle:hover{background:rgba(200,169,110,0.08)}
+    .pub-analysis-toggle .arr{transition:transform 0.3s;font-size:0.7rem;color:var(--accent)}
+    .pub-analysis-toggle.open .arr{transform:rotate(180deg)}
+    .pub-analysis-body{max-height:0;overflow:hidden;transition:max-height 0.5s ease}
+    .pub-analysis-body.open{max-height:2000px}
+    .pub-analysis-inner{padding:16px}
+    @media(max-width:900px){.tools-grid{grid-template-columns:1fr}.pub-grid{grid-template-columns:1fr}}
+
+    @media(max-width:900px){
+      .services-grid{grid-template-columns:1fr 1fr}
+      .about-grid{grid-template-columns:1fr}
+      .about-profile{position:static}
+      .innovation-grid{grid-template-columns:1fr 1fr}
+      .expertise-grid{grid-template-columns:1fr 1fr}
+      .intl-content{grid-template-columns:1fr}
+      .contact-inner{grid-template-columns:1fr}
+      .hero-stats{grid-template-columns:1fr 1fr}
+      .timeline::before{left:0}
+      .timeline-item{grid-template-columns:1fr;gap:8px}
+      .timeline-item::before{left:-4px}
+      .timeline-date{text-align:left}
+      .timeline-body{padding-left:0;padding-top:0}
+    }
+    @media(max-width:640px){
+      .nav-links,.lang-toggle{display:none}
+      .nav-hamburger{display:flex}
+      .services-grid{grid-template-columns:1fr}
+      .innovation-grid{grid-template-columns:1fr}
+      .about-values{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      section{padding:72px 5%}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="4" cy="18" r="2.5" fill="#c8a96e"/><circle cx="10" cy="10" r="2.5" fill="#c8a96e"/>
+        <circle cx="17" cy="14" r="2.5" fill="#c8a96e"/><circle cx="22" cy="5" r="2.5" fill="#c8a96e"/>
+        <polyline points="4,18 10,10 17,14 22,5" stroke="#c8a96e" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Advertuo</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#about"><span data-fr>Profil</span><span data-en>Profile</span></a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#parcours"><span data-fr>Parcours</span><span data-en>Career</span></a></li>
+      <li><a href="#innovation">IA &amp; Innovation</a></li>
+      <li><a href="#expertise">Expertise</a></li>
+      <li><a href="#outils"><span data-fr>Outils</span><span data-en>Tools</span></a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#contact" class="nav-cta">Contact</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">🇫🇷 FR</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 EN</button>
+    </div>
+  </div>
+  <button class="nav-hamburger" aria-label="Menu" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="toggleMenu()"><span data-fr>Profil</span><span data-en>Profile</span></a>
+  <a href="#services" onclick="toggleMenu()">Services</a>
+  <a href="#parcours" onclick="toggleMenu()"><span data-fr>Parcours</span><span data-en>Career</span></a>
+  <a href="#innovation" onclick="toggleMenu()">IA &amp; Innovation</a>
+  <a href="#expertise" onclick="toggleMenu()">Expertise</a>
+  <a href="#outils" onclick="toggleMenu()"><span data-fr>Outils</span><span data-en>Tools</span></a>
+  <a href="#publications" onclick="toggleMenu()">Publications</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+  <div style="display:flex;gap:8px;padding-top:8px">
+    <button class="lang-btn active" id="mob-btn-fr" onclick="setLang('fr')" style="background:var(--navy);color:white;padding:6px 14px;border-radius:4px;border:none;cursor:pointer;font-size:0.82rem">🇫🇷 FR</button>
+    <button class="lang-btn" id="mob-btn-en" onclick="setLang('en')" style="padding:6px 14px;border-radius:4px;border:1px solid var(--border);cursor:pointer;font-size:0.82rem;background:none;color:var(--navy)">🇬🇧 EN</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span data-fr>Conseil financier &amp; transformation</span>
+      <span data-en>Financial advisory &amp; transformation</span>
+    </div>
+    <h1 class="hero-title">
+      <em data-fr>Direction Financière</em><em data-en>Financial Leadership</em>
+      <strong data-fr>de Transition &amp;<br>Digitalisation</strong>
+      <strong data-en>Interim CFO &amp;<br>Digitalization</strong>
+    </h1>
+    <p class="hero-subtitle">
+      <span data-fr>Accompagnement des entreprises dans leurs moments critiques : restructuration, post-merger, transformation digitale et pilotage financier stratégique.</span>
+      <span data-en>Supporting companies through critical moments: restructuring, post-merger, digital transformation and strategic financial management.</span>
+    </p>
+    <div class="hero-actions">
+      <a href="#services" class="btn-primary"><span data-fr>Découvrir les services</span><span data-en>Discover services</span></a>
+      <a href="#contact" class="btn-outline"><span data-fr>Prendre contact</span><span data-en>Get in touch</span></a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">+20</div>
+        <div class="stat-label"><span data-fr>Ans d'expérience DAF</span><span data-en>Years CFO experience</span></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">+15</div>
+        <div class="stat-label"><span data-fr>Pays couverts</span><span data-en>Countries covered</span></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">200M€</div>
+        <div class="stat-label"><span data-fr>CA géré en Comex</span><span data-en>Revenue managed</span></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">7+</div>
+        <div class="stat-label"><span data-fr>Outils IA déployés</span><span data-en>AI tools deployed</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="section-eyebrow reveal"><span data-fr>Qui suis-je</span><span data-en>About me</span></div>
+        <h2 class="section-title reveal reveal-delay-1">
+          <span data-fr>Une vision <em>stratégique</em><br>au service de votre performance</span>
+          <span data-en>A <em>strategic vision</em><br>at the service of your performance</span>
+        </h2>
+        <p class="reveal reveal-delay-2">
+          <span data-fr>Fort de plus de 20 ans d'expérience en tant que Directeur Administratif et Financier — dans des grands groupes cotés, des ETI et des PME sous LBO — j'interviens là où les enjeux financiers, organisationnels et humains se rencontrent.</span>
+          <span data-en>With over 20 years of experience as a Chief Financial Officer — in listed groups, mid-caps and LBO-backed SMEs — I intervene where financial, organisational and human challenges converge.</span>
+        </p>
+        <p class="reveal reveal-delay-2">
+          <span data-fr>Mon approche allie la rigueur d'un parcours en industrie internationale (Alstom, ArcelorMittal, FM Logistic) à l'agilité acquise dans des environnements en forte transformation ou en rupture. Je suis convaincu que la digitalisation et l'intelligence artificielle constituent aujourd'hui des leviers de valeur incontournables pour la fonction finance.</span>
+          <span data-en>My approach combines the rigour of an international industrial career (Alstom, ArcelorMittal, FM Logistic) with agility acquired in high-transformation or turnaround environments. I firmly believe that digitalisation and artificial intelligence are now indispensable value levers for the finance function.</span>
+        </p>
+        <p class="reveal reveal-delay-3">
+          <span data-fr>Diplômé d'un BSc Business à l'Université de Coventry (mention bien), bilingue anglais, je combine sens des résultats, diplomatie et bienveillance managériale pour construire des solutions durables avec vos équipes.</span>
+          <span data-en>Holding a BSc Business from the University of Coventry (with merit), fully bilingual in English, I combine a results-driven mindset, diplomacy and managerial empathy to build lasting solutions with your teams.</span>
+        </p>
+        <div class="about-values reveal reveal-delay-3">
+          <div class="value-card">
+            <div class="value-icon">⚖️</div>
+            <div class="value-title"><span data-fr>Éthique &amp; Responsabilité</span><span data-en>Ethics &amp; Responsibility</span></div>
+            <div class="value-desc"><span data-fr>Des recommandations honnêtes, orientées vers l'intérêt durable de l'entreprise.</span><span data-en>Honest recommendations, oriented towards the company's long-term interest.</span></div>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🏗️</div>
+            <div class="value-title"><span data-fr>Construction &amp; Amélioration</span><span data-en>Building &amp; Continuous Improvement</span></div>
+            <div class="value-desc"><span data-fr>Chaque mission est l'occasion de bâtir des fondations solides pour la suite.</span><span data-en>Every assignment is an opportunity to build solid foundations for the future.</span></div>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">💡</div>
+            <div class="value-title"><span data-fr>Innovation pragmatique</span><span data-en>Pragmatic Innovation</span></div>
+            <div class="value-desc"><span data-fr>Pionnier de la signature électronique dès 2004, convaincu que l'IA ouvre une nouvelle ère.</span><span data-en>Pioneer of electronic signature since 2004, convinced that AI is opening a new era.</span></div>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🤝</div>
+            <div class="value-title"><span data-fr>Diplomatie &amp; Conviction</span><span data-en>Diplomacy &amp; Conviction</span></div>
+            <div class="value-desc"><span data-fr>Force de conviction dans les négociations, bienveillance dans le management.</span><span data-en>Persuasive in negotiations, empathetic in management.</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="about-profile reveal reveal-delay-2">
+          <div class="profile-header">
+            <div class="profile-photo-wrap">
+              <img src="data:image/jpeg;base64,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" alt="Claude Weiss" loading="lazy"/>
+            </div>
+            <div>
+              <div class="profile-name">Claude Weiss</div>
+              <div class="profile-title" style="margin-bottom:0">DAF de Transition · Innovation</div>
+            </div>
+          </div>
+          <div style="height:20px"></div>
+          <ul class="profile-items">
+            <li><span>🎓</span><span>BSc Business, Université de Coventry (mention bien) · Bilingue anglais · Allemand intermédiaire</span></li>
+            <li><span>🏭</span><span>Industrie · Ingénierie · Énergies renouvelables · Distribution Apple · Vins &amp; Spiritueux · Immobilier</span></li>
+            <li><span>🌍</span><span>International : France, USA, Australie, Europe Est, Russie, Ukraine, Chine, Brésil</span></li>
+            <li><span>👥</span><span>Manager d'équipes jusqu'à 20 personnes · Membre Comex · Business Partner</span></li>
+            <li><span>⚡</span><span>Spécialiste LBO, post-merger, restructuring &amp; financement en situation de tension</span></li>
+          </ul>
+          <div class="profile-tags">
+            <span class="tag">SAP</span><span class="tag">Power BI</span><span class="tag">Oracle</span>
+            <span class="tag">Python</span><span class="tag">Access / SQL</span><span class="tag">IFRS</span>
+            <span class="tag">M&amp;A</span><span class="tag">LBO</span><span class="tag">CNIL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="services-header">
+      <div>
+        <div class="section-eyebrow reveal"><span data-fr>Domaines d'intervention</span><span data-en>Areas of expertise</span></div>
+        <h2 class="section-title reveal reveal-delay-1"><span data-fr>Des missions <em>sur-mesure</em><br>à chaque étape critique</span><span data-en><em>Tailored assignments</em><br>at every critical stage</span></h2>
+      </div>
+      <p class="section-lead reveal reveal-delay-2"><span data-fr>De la gestion de crise à la transformation durable, j'interviens sur l'ensemble des dimensions de la fonction Finance &amp; Direction Générale.</span><span data-en>From crisis management to sustainable transformation, I cover all dimensions of the Finance &amp; General Management function.</span></p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01</div><span class="service-icon">🏦</span>
+        <h3 class="service-title"><span data-fr>DAF de Transition &amp; M&amp;A</span><span data-en>Interim CFO &amp; M&amp;A</span></h3>
+        <p class="service-desc"><span data-fr>Prise en charge opérationnelle de la fonction Finance dans les moments de rupture, de croissance ou de transformation.</span><span data-en>Operational takeover of the Finance function during turnaround, growth or transformation phases.</span></p>
+        <ul class="service-list">
+          <li><span data-fr>Post-merger integration &amp; carve-out</span><span data-en>Post-merger integration &amp; carve-out</span></li>
+          <li><span data-fr>Structuration financière &amp; LBO</span><span data-en>Financial structuring &amp; LBO</span></li>
+          <li><span data-fr>Pilotage en situation de crise</span><span data-en>Management in crisis situations</span></li>
+          <li><span data-fr>Négociations bancaires &amp; actionnaires</span><span data-en>Bank &amp; shareholder negotiations</span></li>
+          <li><span data-fr>Due diligence &amp; garanties d'actif-passif</span><span data-en>Due diligence &amp; asset/liability warranties</span></li>
+        </ul>
+      </div>
+      <div class="service-card featured reveal reveal-delay-1">
+        <div class="service-num">02</div><span class="service-icon">🤖</span>
+        <h3 class="service-title"><span data-fr>Digitalisation Finance &amp; IA</span><span data-en>Finance Digitalisation &amp; AI</span></h3>
+        <p class="service-desc"><span data-fr>Accélérer la transformation numérique de la fonction Finance avec des outils concrets et immédiatement opérationnels.</span><span data-en>Accelerating the digital transformation of the Finance function with concrete, immediately operational tools.</span></p>
+        <ul class="service-list">
+          <li><span data-fr>Déploiement ERP (SAP, Sage, Oracle…)</span><span data-en>ERP deployment (SAP, Sage, Oracle…)</span></li>
+          <li><span data-fr>GED &amp; dématérialisation des flux</span><span data-en>Document management &amp; flow digitalisation</span></li>
+          <li><span data-fr>Outils IA : cash collection, forecasts, BDESE</span><span data-en>AI tools: cash collection, forecasts, reporting</span></li>
+          <li><span data-fr>Power BI, Python, tableaux de bord</span><span data-en>Power BI, Python, dashboards</span></li>
+          <li><span data-fr>Audit IT &amp; charte informatique</span><span data-en>IT audit &amp; IT governance</span></li>
+        </ul>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">03</div><span class="service-icon">💰</span>
+        <h3 class="service-title"><span data-fr>Trésorerie &amp; Financement</span><span data-en>Treasury &amp; Financing</span></h3>
+        <p class="service-desc"><span data-fr>Optimisation des flux, sécurisation de la liquidité et accès aux financements adaptés à chaque phase.</span><span data-en>Cash flow optimisation, liquidity security and access to tailored financing at every stage.</span></p>
+        <ul class="service-list">
+          <li><span data-fr>Cash flow forecasting journalier</span><span data-en>Daily cash flow forecasting</span></li>
+          <li><span data-fr>Affacturage, Dailly, reverse factoring</span><span data-en>Factoring, Dailly, reverse factoring</span></li>
+          <li><span data-fr>Financement court &amp; moyen terme</span><span data-en>Short &amp; medium-term financing</span></li>
+          <li><span data-fr>Renégociation de covenants</span><span data-en>Covenant renegotiation</span></li>
+          <li><span data-fr>Restructuration de la dette</span><span data-en>Debt restructuring</span></li>
+        </ul>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">04</div><span class="service-icon">🎯</span>
+        <h3 class="service-title"><span data-fr>Contrôle de Gestion &amp; Décisionnel</span><span data-en>Management Control &amp; Reporting</span></h3>
+        <p class="service-desc"><span data-fr>Mise en place d'un pilotage financier fiable, des reportings actionnaires aux KPI opérationnels.</span><span data-en>Establishing reliable financial steering, from shareholder reporting to operational KPIs.</span></p>
+        <ul class="service-list">
+          <li><span data-fr>Tableaux de bord &amp; heatmaps d'analyse</span><span data-en>Dashboards &amp; analytical heatmaps</span></li>
+          <li><span data-fr>Business plan &amp; budgets pluriannuels</span><span data-en>Business plans &amp; multi-year budgets</span></li>
+          <li>Analyse des marges par activité</li>
+          <li>Reporting IFRS &amp; consolidation</li>
+          <li><span data-fr>Simulation de seuil de rentabilité</span><span data-en>Break-even simulation &amp; scenario modelling</span></li>
+        </ul>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">05</div><span class="service-icon">⚖️</span>
+        <h3 class="service-title"><span data-fr>Compliance &amp; RH</span><span data-en>Compliance &amp; HR</span></h3>
+        <p class="service-desc"><span data-fr>Sécurisation juridique, sociale et informatique de l'entreprise dans un environnement réglementaire exigeant.</span><span data-en>Legal, social and IT risk mitigation in a demanding regulatory environment.</span></p>
+        <ul class="service-list">
+          <li><span data-fr>BDESE &amp; Index Égalité H/F</span><span data-en>Mandatory workforce reporting (BDESE / gender index)</span></li>
+          <li>CNIL &amp; <span data-fr>protection des données</span><span data-en>data protection (GDPR)</span></li>
+          <li><span data-fr>Audit IT &amp; charte informatique</span><span data-en>IT audit &amp; IT charter</span></li>
+          <li><span data-fr>Droit social &amp; conventions collectives</span><span data-en>Labour law &amp; collective agreements</span></li>
+          <li><span data-fr>Restructurations RH &amp; organisation</span><span data-en>HR restructuring &amp; organisation</span></li>
+        </ul>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-num">06</div><span class="service-icon">🌐</span>
+        <h3 class="service-title"><span data-fr>Commerce International</span><span data-en>International Trade</span></h3>
+        <p class="service-desc"><span data-fr>Structuration et sécurisation des opérations internationales pour les entreprises à rayonnement global.</span><span data-en>Structuring and securing international operations for globally active companies.</span></p>
+        <ul class="service-list">
+          <li>Incoterms &amp; <span data-fr>contrats export</span><span data-en>export contracts</span></li>
+          <li><span data-fr>Gestion du risque Forex</span><span data-en>Forex risk management</span></li>
+          <li><span data-fr>Lettres de crédit &amp; garanties</span><span data-en>Letters of credit &amp; guarantees</span></li>
+          <li><span data-fr>Création de filiales à l'étranger</span><span data-en>Foreign subsidiary creation</span></li>
+          <li><span data-fr>Transferts de prix &amp; fiscalité internationale</span><span data-en>Transfer pricing &amp; international tax</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARCOURS -->
+<section id="parcours">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span data-fr>Expérience</span><span data-en>Experience</span></div>
+    <h2 class="section-title reveal reveal-delay-1"><span data-fr>Un parcours <em>de terrain</em><br>dans des environnements exigeants</span><span data-en>A <em>hands-on career</em><br>in demanding environments</span></h2>
+    <p class="section-lead reveal reveal-delay-2"><span data-fr>Des grands groupes internationaux cotés aux PME en LBO, une trajectoire construite sur la diversité des contextes et la complexité des enjeux.</span><span data-en>From listed international groups to LBO-backed SMEs, a career built on diverse contexts and complex challenges.</span></p>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-date"><div class="year">2024 →</div><div class="period"><span data-fr>Depuis jan. 2024</span><span data-en>Since Jan. 2024</span></div></div>
+        <div class="timeline-body">
+          <div class="timeline-company">C&amp;C France SAS — Apple Premium Reseller</div>
+          <div class="timeline-role"><span data-fr>Directeur Administratif &amp; Financier</span><span data-en>Chief Financial Officer</span></div>
+          <p class="timeline-desc"><span data-fr>Pilotage financier en situation de forte tension : restructuration de la dette, gestion de la liquidité, M&amp;A (acquisitions Symbiose Informatique, IDC/MCS/Andromac), mise en place d'outils IA pour la finance, négociations banques et actionnaires. 3 sociétés · 250 pers. · 106 M€ CA · LBO.</span><span data-en>Financial management under severe pressure: debt restructuring, liquidity management, M&amp;A (acquisitions of Symbiose Informatique, IDC/MCS/Andromac), AI tools deployment, bank and shareholder negotiations. 3 entities · 250 staff · €106M revenue · LBO.</span></p>
+          <div class="timeline-tags"><span class="tl-tag">Restructuring</span><span class="tl-tag">M&amp;A</span><span class="tl-tag">LBO</span><span class="tl-tag">IA Finance</span><span class="tl-tag">Trésorerie</span></div>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-delay-1">
+        <div class="timeline-date"><div class="year">2018–2024</div><div class="period">6 <span data-fr>ans</span><span data-en>years</span></div></div>
+        <div class="timeline-body">
+          <div class="timeline-company">WTS / Groupe C&amp;C</div>
+          <div class="timeline-role">DAF / RH / IT</div>
+          <p class="timeline-desc">ERP, <span data-fr>contrôle de gestion, achats, RH, juridique, trésorerie, budget, M&amp;A, financement, négociations. 12 sociétés · 278 pers. · 37 M€ CA · équipe de 11 pers.</span><span data-en>management control, purchasing, HR, legal, treasury, budget, M&amp;A, financing, negotiations. 12 entities · 278 staff · €37M revenue · team of 11.</span></p>
+          <div class="timeline-tags"><span class="tl-tag">ERP</span><span class="tl-tag">Contrôle de Gestion</span><span class="tl-tag">M&amp;A</span><span class="tl-tag">RH</span></div>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-delay-2">
+        <div class="timeline-date"><div class="year">2016–2017</div><div class="period">18 <span data-fr>mois</span><span data-en>months</span></div></div>
+        <div class="timeline-body">
+          <div class="timeline-company">ArcelorMittal Projects — Exosun</div>
+          <div class="timeline-role">DAF — <span data-fr>Industrie, Énergies Renouvelables</span><span data-en>CFO — Industry, Renewable Energy</span></div>
+          <p class="timeline-desc"><span data-fr>Post-M&amp;A, budget/BP, consolidation IFRS, cession, legal, réorganisation, ERP SAP, dématérialisation. 4 sociétés (France, USA, Australie) · 50 pers. · 37 M€ CA.</span><span data-en>Post-M&amp;A, budget/BP, IFRS consolidation, disposal, legal, reorganisation, SAP ERP, digitalisation. 4 entities (France, USA, Australia) · 50 staff · €37M revenue.</span></p>
+          <div class="timeline-tags"><span class="tl-tag">Post M&amp;A</span><span class="tl-tag">IFRS</span><span class="tl-tag">SAP</span><span class="tl-tag">International</span></div>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-delay-3">
+        <div class="timeline-date"><div class="year">2006–2016</div><div class="period">10 <span data-fr>ans</span><span data-en>years</span></div></div>
+        <div class="timeline-body">
+          <div class="timeline-company">Groupe FM Logistic / NG Concept</div>
+          <div class="timeline-role"><span data-fr>RAF Groupe — Immobilier &amp; Construction</span><span data-en>Group CFO — Real Estate &amp; Construction</span></div>
+          <p class="timeline-desc"><span data-fr>Création société, ERP 6 pays, amélioration contrôle de gestion, rentabilités, achats, trésorerie, reporting actionnaires. Europe Ouest, Est, Russie, Ukraine, Chine, Brésil. 120 M€ CA · 800 M€ actifs · équipe 20 pers. Pionnier signature électronique (Appligent, 2004) — 19 ans avant la généralisation post-Covid.</span><span data-en>Company creation, 6-country ERP, management control improvement, purchasing, treasury, shareholder reporting. Western &amp; Eastern Europe, Russia, Ukraine, China, Brazil. €120M revenue · €800M assets · team of 20. Electronic signature pioneer (Appligent, 2004) — 19 years before post-Covid mainstream adoption.</span></p>
+          <div class="timeline-tags"><span class="tl-tag">ERP International</span><span class="tl-tag">Europe/Asie</span><span class="tl-tag">GED</span><span class="tl-tag">Signature électronique</span></div>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-delay-4">
+        <div class="timeline-date"><div class="year">2005–2006</div></div>
+        <div class="timeline-body">
+          <div class="timeline-company">Altice (groupe télécoms)</div>
+          <div class="timeline-role">Finance / IT</div>
+          <p class="timeline-desc"><span data-fr>Développement d'outils Access sur de gros volumes de données. Maquettes et expression de besoins en interface graphique.</span><span data-en>Development of Access tools on large data volumes. Mockups and requirements expression for graphical interfaces.</span></p>
+          <div class="timeline-tags"><span class="tl-tag">Access / SQL</span><span class="tl-tag">Bases de données</span></div>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-delay-5">
+        <div class="timeline-date"><div class="year">2002–2005</div></div>
+        <div class="timeline-body">
+          <div class="timeline-company">Alstom — Industrie Ferroviaire</div>
+          <div class="timeline-role"><span data-fr>Contrôleur Interne</span><span data-en>Internal Controller</span></div>
+          <p class="timeline-desc"><span data-fr>Coordination règles contrôle de gestion, amélioration fiabilités reportings. 8 sites, France, Italie, Espagne, Allemagne, Suisse.</span><span data-en>Coordination of management control rules, reporting reliability improvement. 8 sites across France, Italy, Spain, Germany, Switzerland.</span></p>
+          <div class="timeline-tags"><span class="tl-tag">Contrôle Interne</span><span class="tl-tag">Multi-sites</span><span class="tl-tag">Europe</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IA & INNOVATION -->
+<section id="innovation">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span data-fr>Intelligence artificielle &amp; automatisation</span><span data-en>Artificial intelligence &amp; automation</span></div>
+    <h2 class="section-title reveal reveal-delay-1"><span data-fr><em>L'IA au service</em><br>de la performance financière</span><span data-en><em>AI at the service</em><br>of financial performance</span></h2>
+    <p class="section-lead reveal reveal-delay-2"><span data-fr>Suite d'outils financiers conçus et déployés depuis 2023 — associant expertise métier, maîtrise des données et modèles de langage (Claude, Anthropic). Ces réalisations illustrent une capacité d'analyse et de raffinement itératif qui dépasse le simple usage de l'IA.</span><span data-en>A suite of financial tools designed and deployed since 2023 — combining domain expertise, data mastery and language models (Claude, Anthropic). These achievements illustrate an analytical and iterative refinement capability that goes beyond mere AI usage.</span></p>
+
+    <div class="innovation-grid">
+
+      <div class="innov-card reveal">
+        <span class="innov-icon">📊</span>
+        <h3 class="innov-title"><span data-fr>Analyse P&amp;L &amp; Trésorerie — Entreprise en Restructuration</span><span data-en>P&amp;L &amp; Cash Flow Analysis — Restructuring Entity</span></h3>
+        <p class="innov-desc"><span data-fr>Dashboard financier interactif avec bridge de P&amp;L (waterfall), analyse du free cash flow, suivi de la trésorerie historique et tableau de bord de KPIs décisionnels pour accompagner un plan de retournement. Données multi-périodes, comparatifs S1 N-1 vs N.</span><span data-en>Interactive financial dashboard with P&amp;L bridge (waterfall), free cash flow analysis, historical cash tracking and decision-making KPI dashboard to support a turnaround plan. Multi-period data, half-year comparatives.</span></p>
+        <div class="innov-tech"><span>Python</span><span>React/JSX</span><span>SVG Charts</span><span>FEC</span></div>
+        <div class="innov-badge">✓ <span data-fr>Déployé</span><span data-en>Deployed</span></div>
+      </div>
+
+      <a href="https://advertuo.com/tools/requalification-base-client-v2.html" target="_blank" rel="noopener" class="innov-card reveal reveal-delay-1" style="text-decoration:none;display:block">
+        <span class="innov-icon">🔍</span>
+        <h3 class="innov-title"><span data-fr>Qualification &amp; Scoring Clients — API SIREN &amp; Infogreffe</span><span data-en>Customer Scoring &amp; Qualification — SIREN &amp; Infogreffe APIs</span></h3>
+        <p class="innov-desc"><span data-fr>Suite d'outils de qualification de bases clients : (1) matching fuzzy des noms d'entreprises sur l'API Recherche-Entreprises avec score de similarité, (2) enrichissement financier via l'API Infogreffe (chiffres clés, ratios, notation), (3) validation TVA intracommunautaire via VIES / VATcomply — dans le cadre de la préparation à la facturation électronique 2026.</span><span data-en>Customer base qualification toolkit: (1) fuzzy matching of company names against the SIREN search API with similarity scoring, (2) financial enrichment via Infogreffe API (key figures, ratios, scoring), (3) EU VAT number validation via VIES / VATcomply — in preparation for 2026 e-invoicing reform.</span></p>
+        <div class="innov-tech"><span>Python</span><span>API SIREN</span><span>Infogreffe</span><span>VIES</span><span>Facture électronique</span></div>
+        <div class="innov-badge">✓ <span data-fr>En production</span><span data-en>In production</span></div>
+        <div style="margin-top:14px;font-size:0.72rem;color:rgba(200,169,110,0.7);font-family:'DM Mono',monospace;letter-spacing:0.06em">↗ <span data-fr>Voir l'outil interactif</span><span data-en>View interactive tool</span></div>
+      </a>
+
+      <div class="innov-card reveal reveal-delay-2">
+        <span class="innov-icon">📬</span>
+        <h3 class="innov-title"><span data-fr>Cash Collection Suite — Relances Automatiques</span><span data-en>Cash Collection Suite — Automated Dunning</span></h3>
+        <p class="innov-desc"><span data-fr>Outil complet de relance clients : 7 niveaux d'escalade par e-mail (Gmail API), construction automatique de la balance âgée, réconciliation avec le FEC, vérification des écarts comptables, et mise à jour de l'historique des relances. Synchronisation Google Sheets multi-sites. Développé en Python (macOS).</span><span data-en>Complete accounts receivable tool: 7 e-mail escalation levels (Gmail API), automated aged balance construction, FEC reconciliation, accounting discrepancy checks, and dunning history updates. Multi-site Google Sheets sync. Built in Python (macOS).</span></p>
+        <div class="innov-tech"><span>Python</span><span>Gmail API</span><span>Google Sheets</span><span>FEC</span></div>
+        <div class="innov-badge">✓ <span data-fr>En production</span><span data-en>In production</span></div>
+      </div>
+
+      <div class="innov-card reveal reveal-delay-1">
+        <span class="innov-icon">🔥</span>
+        <h3 class="innov-title"><span data-fr>Analyse des Ventes — Heatmaps &amp; Masse Salariale</span><span data-en>Sales Analysis — Heatmaps &amp; Payroll Cross-reference</span></h3>
+        <p class="innov-desc"><span data-fr>Production d'indicateurs visuels avancés à partir des exports Danea/ERP : heatmap calendaire des ventes, analyse par site, par heures d'ouverture, distribution gaussienne des marges, waterfall par période commerciale (Noël, Soldes, Black Friday) — et rapprochement avec les données de masse salariale pour identifier 37 situations de sous-performance commerciale.</span><span data-en>Advanced visual analytics from Danea/ERP exports: calendar sales heatmap, site-level and opening-hours analysis, margin Gaussian distribution, waterfall by trading period (Christmas, Sales, Black Friday) — cross-referenced against payroll data to identify 37 underperformance situations.</span></p>
+        <div class="innov-tech"><span>Python</span><span>Pandas</span><span>Matplotlib</span><span>PowerPoint</span><span>FEC</span></div>
+        <div class="innov-badge">✓ <span data-fr>En production</span><span data-en>In production</span></div>
+      </div>
+
+      <div class="innov-card reveal reveal-delay-2">
+        <span class="innov-icon">📋</span>
+        <h3 class="innov-title"><span data-fr>Balance Âgée Clients &amp; Fournisseurs sur FEC</span><span data-en>Aged Balance (A/R &amp; A/P) from FEC Data</span></h3>
+        <p class="innov-desc"><span data-fr>Construction d'une balance âgée clients et fournisseurs depuis un FEC volumineux (313 825 lignes) : reconstitution du solde nettinglorsque le lettrage est partiel (ordre d'imputation chronologique ancien→récent), tranches d'ancienneté réglementaires, export Excel formaté. Outil en amélioration continue — intégration trésorerie en cours.</span><span data-en>Aged balance construction for A/R and A/P from a large FEC (313,825 lines): net balance reconstruction when partial matching exists (oldest-to-newest allocation logic), statutory aging tranches, formatted Excel export. Continuously improving — treasury integration in progress.</span></p>
+        <div class="innov-tech"><span>Python</span><span>openpyxl</span><span>FEC</span><span>PCG</span></div>
+        <div class="innov-badge">⚙️ <span data-fr>En cours</span><span data-en>Ongoing</span></div>
+      </div>
+
+      <div class="innov-card reveal reveal-delay-3">
+        <span class="innov-icon">👥</span>
+        <h3 class="innov-title"><span data-fr>Générateur BDESE &amp; Analyse DSN</span><span data-en>BDESE Generator &amp; DSN Analysis</span></h3>
+        <p class="innov-desc"><span data-fr>Script Python (~2 300 lignes) analysant les DSN, FEC et liasses fiscales pour générer automatiquement le rapport BDESE (IDCC 1539) : rapport Word structuré, export Excel détaillé 30 colonnes, camemberts, effectifs par catégorie — avec cartographie des champs DSN exploitables en comptabilité analytique pour les multi-établissements.</span><span data-en>Python script (~2,300 lines) parsing DSN payroll files, FEC and tax returns to automatically generate the BDESE workforce report: structured Word report, 30-column Excel detail export, charts, headcount by category — with DSN field mapping usable in management accounting across multi-site organisations.</span></p>
+        <div class="innov-tech"><span>Python</span><span>DSN</span><span>Word</span><span>Excel</span><span>FEC</span></div>
+        <div class="innov-badge">✓ <span data-fr>En production</span><span data-en>In production</span></div>
+      </div>
+
+      <div class="innov-card reveal">
+        <span class="innov-icon">📈</span>
+        <h3 class="innov-title"><span data-fr>Forecast Trésorerie Hebdomadaire &amp; Mensuel</span><span data-en>Weekly &amp; Monthly Cash Flow Forecasting</span></h3>
+        <p class="innov-desc"><span data-fr>Modélisation du cash flow prévisionnel à court et moyen terme à partir des données budgétaires : scénarios de stress test, suivi des encaissements/décaissements, alertes de rupture. En cours : intégration directe avec le FEC et la balance âgée (outil 5.5) pour un forecast en temps réel.</span><span data-en>Short and medium-term cash flow modelling from budget data: stress test scenarios, receipts/payments tracking, liquidity break alerts. In progress: direct integration with FEC data and the aged balance tool for real-time forecasting.</span></p>
+        <div class="innov-tech"><span>Python</span><span>Excel</span><span>FEC</span><span>Budget</span></div>
+        <div class="innov-badge">⚙️ <span data-fr>En développement</span><span data-en>In development</span></div>
+      </div>
+
+      <div class="innov-card reveal reveal-delay-1">
+        <span class="innov-icon">⚖️</span>
+        <h3 class="innov-title"><span data-fr>Simulation de Seuil de Rentabilité</span><span data-en>Break-even Simulation</span></h3>
+        <p class="innov-desc"><span data-fr>Modèle de simulation breakeven multi-scénarios permettant d'analyser l'impact de plans de restructuration sur la viabilité économique : sensibilités croisées sur le volume, les prix et les charges fixes, visualisations dynamiques.</span><span data-en>Multi-scenario break-even simulation model to analyse the impact of restructuring plans on economic viability: cross-sensitivities on volume, pricing and fixed costs, dynamic visualisations.</span></p>
+        <div class="innov-tech"><span>Python</span><span>Scenario modeling</span><span>Matplotlib</span></div>
+        <div class="innov-badge">✓ <span data-fr>Déployé</span><span data-en>Deployed</span></div>
+      </div>
+
+      <div class="innov-card reveal reveal-delay-2">
+        <span class="innov-icon">🔮</span>
+        <h3 class="innov-title"><span data-fr>Signature Électronique — Pionnier 2004</span><span data-en>Electronic Signature — Pioneer 2004</span></h3>
+        <p class="innov-desc"><span data-fr>Implémentation d'un système de GED avec signature électronique (Appligent.com) pour NG Concept dès 2004 — soit 19 ans avant la généralisation post-Covid. DocuSign a été fondé en 2003. Un exemple de conviction technologique bien avant le consensus du marché.</span><span data-en>Implementation of a document management system with electronic signature (Appligent.com) for NG Concept in 2004 — 19 years before post-Covid mainstream adoption. DocuSign was founded in 2003. A testament to early technological conviction.</span></p>
+        <div class="innov-tech"><span>Appligent</span><span>GED</span><span>e-signature</span></div>
+        <div class="innov-badge">⭐ <span data-fr>Pionnier</span><span data-en>Pioneer</span></div>
+      </div>
+
+    </div>
+
+    <div class="innov-note reveal reveal-delay-2">
+      <p>
+        <span data-fr>Ces réalisations ont été construites grâce à un usage intelligent de l'<strong>intelligence artificielle (Claude, Anthropic)</strong>, combiné à <strong>ma capacité d'analyse, de prise de recul et de raffinement itératif</strong>. L'IA n'est pas une boîte noire : elle est un levier de productivité et d'innovation qui nécessite une expertise métier pour produire des outils vraiment opérationnels. C'est exactement ce que j'apporte à mes clients.</span>
+        <span data-en>These achievements were built through intelligent use of <strong>AI (Claude, Anthropic)</strong>, combined with <strong>my capacity for analysis, perspective-taking and iterative refinement</strong>. AI is not a black box: it is a productivity and innovation lever that requires domain expertise to produce truly operational tools. That is exactly what I bring to my clients.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD FINANCIER -->
+<section id="dashboard" style="background:#0a0f1a;padding:80px 5%">
+  <div class="container">
+    <div class="section-eyebrow reveal" style="color:#c8a96e"><span data-fr>Dashboard interactif — Cas d'illustration</span><span data-en>Interactive dashboard — Illustration case</span></div>
+    <h2 class="section-title reveal reveal-delay-1" style="color:white">
+      <span data-fr><em style="color:var(--accent)">Analyse financière</em><br>d'une société en développement</span>
+      <span data-en><em style="color:var(--accent)">Financial analysis</em><br>of a growth-stage company</span>
+    </h2>
+    <p class="section-lead reveal reveal-delay-2" style="color:rgba(255,255,255,0.5);margin-bottom:40px">
+      <span data-fr>Outil d'analyse développé avec Claude (Anthropic) dans le cadre d'une mission DAF — Bridge P&amp;L, Free Cash Flow, suivi de trésorerie et simulation de breakeven. Données anonymisées à titre d'illustration.</span>
+      <span data-en>Analysis tool developed with Claude (Anthropic) as part of a CFO assignment — P&amp;L bridge, Free Cash Flow, cash tracking and break-even simulation. Data anonymised for illustration purposes.</span>
+    </p>
+    <div class="reveal reveal-delay-3" style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);box-shadow:0 20px 60px rgba(0,0,0,0.4)">
+      <iframe src="https://advertuo.com/tools/forecast_breakeven.html"
+        style="width:100%;height:780px;border:none;display:block;background:#0a0f1a"
+        title="Forecast &amp; Breakeven — Advertuo" loading="lazy"></iframe>
+    </div>
+    <p style="text-align:center;margin-top:16px">
+      <a href="https://advertuo.com/tools/forecast_breakeven.html" target="_blank" rel="noopener"
+         style="color:var(--accent);font-size:0.82rem;font-family:'DM Mono',monospace;letter-spacing:0.06em;text-decoration:none;border-bottom:1px solid rgba(200,169,110,0.35);padding-bottom:2px">
+        &#8599; <span data-fr>Ouvrir en plein &#233;cran</span><span data-en>Open full screen</span>
+      </a>
+    </p>
+  </div>
+</section>
+
+
+<!-- EXPERTISE SECTORIELLE -->
+<section id="expertise">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span data-fr>Secteurs &amp; outils</span><span data-en>Sectors &amp; tools</span></div>
+    <h2 class="section-title reveal reveal-delay-1"><span data-fr>Une expertise <em>multi-sectorielle</em></span><span data-en>A <em>multi-sector</em> expertise</span></h2>
+    <p class="section-lead reveal reveal-delay-2"><span data-fr>Industrie lourde, distribution, énergie, immobilier : une connaissance opérationnelle des enjeux spécifiques à chaque secteur.</span><span data-en>Heavy industry, distribution, energy, real estate: operational knowledge of sector-specific challenges.</span></p>
+    <div class="expertise-grid">
+      <div class="exp-card reveal"><span class="exp-icon">🚂</span><div class="exp-label"><span data-fr>Industrie &amp; Ingénierie</span><span data-en>Industry &amp; Engineering</span></div><div class="exp-detail">Alstom, ArcelorMittal/Exosun — <span data-fr>Ferroviaire, énergies renouvelables, construction</span><span data-en>Railway, renewable energy, construction</span></div></div>
+      <div class="exp-card reveal reveal-delay-1"><span class="exp-icon">📱</span><div class="exp-label"><span data-fr>Distribution IT</span><span data-en>IT Distribution</span></div><div class="exp-detail">C&amp;C France — Apple Premium Reseller, 26 <span data-fr>boutiques</span><span data-en>stores</span>, LBO, M&amp;A</div></div>
+      <div class="exp-card reveal reveal-delay-2"><span class="exp-icon">🏗️</span><div class="exp-label"><span data-fr>Immobilier &amp; Construction</span><span data-en>Real Estate &amp; Construction</span></div><div class="exp-detail">FM Logistic / NG Concept — 800 M€ <span data-fr>actifs</span><span data-en>assets</span>, <span data-fr>Europe, Russie, Chine, Brésil</span><span data-en>Europe, Russia, China, Brazil</span></div></div>
+      <div class="exp-card reveal reveal-delay-3"><span class="exp-icon">📡</span><div class="exp-label">Télécoms &amp; Tech</div><div class="exp-detail">Altice — <span data-fr>Grands volumes de données, outils Access, développement IT interne</span><span data-en>Large data volumes, Access tools, internal IT development</span></div></div>
+    </div>
+    <div class="expertise-tools reveal reveal-delay-2">
+      <div class="tools-title"><span data-fr>Outils &amp; technologies maîtrisés</span><span data-en>Tools &amp; technologies mastered</span></div>
+      <div class="tools-list">
+        <span class="tool-pill">SAP</span><span class="tool-pill">Oracle / Hyperion</span><span class="tool-pill">Sage / Navision</span>
+        <span class="tool-pill">Power BI</span><span class="tool-pill">Python</span><span class="tool-pill">Access / SQL</span>
+        <span class="tool-pill">Google Sheets API</span><span class="tool-pill">Gmail API</span><span class="tool-pill">VBA / Excel</span>
+        <span class="tool-pill">BPM / BO</span><span class="tool-pill">Opéra</span><span class="tool-pill">Claude (Anthropic)</span>
+        <span class="tool-pill">API SIREN / Infogreffe</span><span class="tool-pill">VIES / TVA</span>
+        <span class="tool-pill">FEC / PCG</span><span class="tool-pill">IFRS</span><span class="tool-pill">Consolidation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERNATIONAL -->
+<section id="international">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span data-fr>Dimension internationale</span><span data-en>International dimension</span></div>
+    <h2 class="section-title reveal reveal-delay-1"><span data-fr>+15 pays,<br>une culture <em>véritablement</em> internationale</span><span data-en>+15 countries,<br>a <em>genuinely</em> international culture</span></h2>
+    <div class="intl-content">
+      <ul class="intl-zones reveal">
+        <li class="intl-zone"><span class="zone-flag">🇫🇷</span><div class="zone-info"><div class="zone-label">France</div><div class="zone-desc"><span data-fr>Base principale · toutes activités</span><span data-en>Primary base · all activities</span></div></div></li>
+        <li class="intl-zone"><span class="zone-flag">🇬🇧</span><div class="zone-info"><div class="zone-label">Royaume-Uni / UK</div><div class="zone-desc"><span data-fr>Formation (Coventry) · Bilingue anglais</span><span data-en>Education (Coventry) · Fully bilingual</span></div></div></li>
+        <li class="intl-zone"><span class="zone-flag">🇩🇪 🇮🇹 🇪🇸 🇨🇭</span><div class="zone-info"><div class="zone-label"><span data-fr>Europe Centrale &amp; du Sud</span><span data-en>Central &amp; Southern Europe</span></div><div class="zone-desc">Alstom (8 sites) · C&amp;C Italie (C&amp;C S.p.A.)</div></div></li>
+        <li class="intl-zone"><span class="zone-flag">🇵🇱 🇷🇺 🇺🇦</span><div class="zone-info"><div class="zone-label"><span data-fr>Europe de l'Est &amp; Russie</span><span data-en>Eastern Europe &amp; Russia</span></div><div class="zone-desc">FM Logistic / NG Concept · ERP 6 pays</div></div></li>
+        <li class="intl-zone"><span class="zone-flag">🇺🇸 🇦🇺</span><div class="zone-info"><div class="zone-label"><span data-fr>Amérique du Nord &amp; Pacifique</span><span data-en>North America &amp; Pacific</span></div><div class="zone-desc">ArcelorMittal/Exosun · <span data-fr>Cession internationale</span><span data-en>International disposal</span></div></div></li>
+        <li class="intl-zone"><span class="zone-flag">🇨🇳 🇧🇷</span><div class="zone-info"><div class="zone-label"><span data-fr>Asie &amp; Amérique du Sud</span><span data-en>Asia &amp; South America</span></div><div class="zone-desc">FM Logistic / NG Concept · <span data-fr>Suivi actifs</span><span data-en>Asset management</span></div></div></li>
+      </ul>
+      <div class="intl-highlight reveal reveal-delay-2">
+        <div class="intl-stat-big">15+</div>
+        <div class="intl-stat-label"><span data-fr>Pays couverts dans ma carrière</span><span data-en>Countries covered in my career</span></div>
+        <ul class="intl-competences">
+          <li><span data-fr>Gestion des risques de change (Forex)</span><span data-en>Forex risk management</span></li>
+          <li><span data-fr>Incoterms &amp; contrats internationaux</span><span data-en>Incoterms &amp; international contracts</span></li>
+          <li><span data-fr>Lettres de crédit &amp; garanties bancaires</span><span data-en>Letters of credit &amp; bank guarantees</span></li>
+          <li><span data-fr>Création &amp; structuration de filiales</span><span data-en>Subsidiary creation &amp; structuring</span></li>
+          <li><span data-fr>Consolidation IFRS multi-entités</span><span data-en>Multi-entity IFRS consolidation</span></li>
+          <li><span data-fr>Transferts de prix &amp; fiscalité internationale</span><span data-en>Transfer pricing &amp; international tax</span></li>
+          <li><span data-fr>Management d'équipes multiculturelles</span><span data-en>Multicultural team management</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTILS -->
+<section id="outils">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span data-fr>Suite d'outils IA Finance</span><span data-en>AI Finance toolsuite</span></div>
+    <h2 class="section-title reveal reveal-delay-1"><span data-fr>Des outils <em>immédiatement</em> opérationnels</span><span data-en>Tools that are <em>immediately</em> operational</span></h2>
+    <p class="section-lead reveal reveal-delay-2"><span data-fr>Développés avec Claude (Anthropic) dans le cadre de missions réelles — chaque outil répond à un besoin métier précis, testé en production.</span><span data-en>Developed with Claude (Anthropic) during real assignments — each tool addresses a specific business need, tested in production.</span></p>
+    <div class="tools-grid">
+
+      <!-- Tool 1: Forecast Breakeven -->
+      <div class="tool-card reveal">
+        <div class="tool-preview">
+          <iframe src="https://advertuo.com/tools/forecast_breakeven.html" title="Forecast Breakeven preview" tabindex="-1" aria-hidden="true"></iframe>
+          <span class="tool-preview-badge">✓ Live</span>
+        </div>
+        <div class="tool-info">
+          <div class="tool-name"><span data-fr>Analyse P&amp;L, Trésorerie &amp; Breakeven</span><span data-en>P&amp;L, Cash &amp; Break-even Analysis</span></div>
+          <p class="tool-desc"><span data-fr>Dashboard interactif : bridge P&amp;L waterfall, analyse du Free Cash Flow, suivi historique de la trésorerie et simulation de seuil de rentabilité avec sliders paramétrables. Données multi-périodes, scénarios sensibilité.</span><span data-en>Interactive dashboard: P&amp;L waterfall bridge, Free Cash Flow analysis, historical cash tracking and break-even simulation with adjustable sliders. Multi-period data, sensitivity scenarios.</span></p>
+          <div class="tool-tags"><span class="tool-tag">Python</span><span class="tool-tag">SVG Charts</span><span class="tool-tag">FEC</span><span class="tool-tag">IFRS</span></div>
+          <div class="tool-actions">
+            <a href="https://advertuo.com/tools/forecast_breakeven.html" target="_blank" rel="noopener" class="btn-launch">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              <span data-fr>Ouvrir</span><span data-en>Open</span>
+            </a>
+            <span class="tool-status"><span data-fr>En production</span><span data-en>In production</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tool 2: SIREN Qualification -->
+      <div class="tool-card reveal reveal-delay-1">
+        <div class="tool-preview">
+          <iframe src="https://advertuo.com/tools/requalification-base-client-v2.html" title="SIREN Qualification preview" tabindex="-1" aria-hidden="true"></iframe>
+          <span class="tool-preview-badge">✓ Live</span>
+        </div>
+        <div class="tool-info">
+          <div class="tool-name"><span data-fr>Qualification &amp; Scoring Clients</span><span data-en>Customer Qualification &amp; Scoring</span></div>
+          <p class="tool-desc"><span data-fr>Enrichissement automatique de bases clients : matching fuzzy des noms d'entreprises (API SIREN), données financières (Infogreffe), validation TVA intracommunautaire (VIES). Conçu pour la réforme facturation électronique 2026.</span><span data-en>Automated customer base enrichment: fuzzy company name matching (SIREN API), financial data (Infogreffe), EU VAT validation (VIES). Designed for the 2026 e-invoicing reform.</span></p>
+          <div class="tool-tags"><span class="tool-tag">Python</span><span class="tool-tag">API SIREN</span><span class="tool-tag">Infogreffe</span><span class="tool-tag">VIES</span></div>
+          <div class="tool-actions">
+            <a href="https://advertuo.com/tools/requalification-base-client-v2.html" target="_blank" rel="noopener" class="btn-launch">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              <span data-fr>Ouvrir</span><span data-en>Open</span>
+            </a>
+            <span class="tool-status"><span data-fr>En production</span><span data-en>In production</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tool 3: BDESE -->
+      <div class="tool-card reveal">
+        <div class="tool-preview">
+          <div class="tool-preview-placeholder">
+            <span class="tool-preview-icon">👥</span>
+            <span class="tool-preview-label">BDESE Generator</span>
+          </div>
+          <span class="tool-preview-badge" style="background:rgba(100,116,139,0.2);border-color:rgba(100,116,139,0.3);color:#94a3b8">⚙ Bientôt</span>
+        </div>
+        <div class="tool-info">
+          <div class="tool-name"><span data-fr>Générateur BDESE</span><span data-en>BDESE Report Generator</span></div>
+          <p class="tool-desc"><span data-fr>Génération automatisée de la Base de Données Économiques, Sociales et Environnementales (IDCC 1539) à partir des fichiers DSN. Rapport Word structuré + Excel 30 colonnes, heatmaps effectifs, analyse DSN exploitable en comptabilité analytique.</span><span data-en>Automated generation of the mandatory French workforce database (BDESE / IDCC 1539) from DSN payroll files. Structured Word report + 30-column Excel, headcount heatmaps, DSN field mapping for management accounting.</span></p>
+          <div class="tool-tags"><span class="tool-tag">Python</span><span class="tool-tag">DSN</span><span class="tool-tag">Word</span><span class="tool-tag">Excel</span></div>
+          <div class="tool-actions">
+            <span class="btn-launch" style="background:rgba(100,116,139,0.2);color:#94a3b8;cursor:default">
+              <span data-fr>Interface en cours</span><span data-en>UI in progress</span>
+            </span>
+            <span class="tool-status soon"><span data-fr>Démo prochainement</span><span data-en>Demo coming soon</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tool 4: Balance âgée FEC -->
+      <div class="tool-card reveal reveal-delay-1">
+        <div class="tool-preview">
+          <div class="tool-preview-placeholder">
+            <span class="tool-preview-icon">📊</span>
+            <span class="tool-preview-label">FEC Balance Engine</span>
+          </div>
+          <span class="tool-preview-badge" style="background:rgba(100,116,139,0.2);border-color:rgba(100,116,139,0.3);color:#94a3b8">⚙ Bientôt</span>
+        </div>
+        <div class="tool-info">
+          <div class="tool-name"><span data-fr>Balance Âgée &amp; Échéancier FEC</span><span data-en>Aged Balance &amp; FEC Scheduler</span></div>
+          <p class="tool-desc"><span data-fr>Construction de la balance âgée clients &amp; fournisseurs sur gros FEC (300 000+ lignes) avec reconstitution du solde nettinglorsque le lettrage est partiel (ordre chronologique ancien → récent), tranches réglementaires, échéancier export Excel. Intégration trésorerie en cours.</span><span data-en>Aged balance construction for A/R and A/P from large FEC files (300k+ lines) with net balance reconstruction when partial matching exists (oldest-first allocation), statutory aging tranches, Excel export. Treasury integration in progress.</span></p>
+          <div class="tool-tags"><span class="tool-tag">Python</span><span class="tool-tag">FEC</span><span class="tool-tag">PCG</span><span class="tool-tag">Excel</span></div>
+          <div class="tool-actions">
+            <span class="btn-launch" style="background:rgba(100,116,139,0.2);color:#94a3b8;cursor:default">
+              <span data-fr>Interface en cours</span><span data-en>UI in progress</span>
+            </span>
+            <span class="tool-status soon"><span data-fr>Démo prochainement</span><span data-en>Demo coming soon</span></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICATIONS -->
+<section id="publications">
+  <div class="container">
+    <div class="section-eyebrow reveal">Publications</div>
+    <h2 class="section-title reveal reveal-delay-1"><span data-fr>Réflexions &amp; <em>analyses</em></span><span data-en>Insights &amp; <em>analysis</em></span></h2>
+    <p class="section-lead reveal reveal-delay-2"><span data-fr>Articles et analyses sur l'économie, l'énergie et le management — croisant données quantitatives et regard critique.</span><span data-en>Articles and analyses on economics, energy and management — combining quantitative data and critical thinking.</span></p>
+    <div class="pub-grid">
+
+      <!-- Publication 1: Fessenheim / Charbon -->
+      <div class="pub-card reveal">
+        <div class="pub-header">
+          <div class="pub-category">Énergie &amp; Politique industrielle</div>
+          <div class="pub-title"><span data-fr>Fessenheim fermée, une centrale à charbon rouverte — le paradoxe énergétique français</span><span data-en>Fessenheim closed, a coal plant reopened — France's energy paradox</span></div>
+          <p class="pub-lead"><span data-fr>Réflexion sur l'article du Canard Enchaîné : la fermeture de la centrale nucléaire de Fessenheim et l'ouverture d'une centrale à charbon. Une décision aux conséquences CO₂ et économiques rarement quantifiées.</span><span data-en>Analysis of the Canard Enchaîné article: the closure of the Fessenheim nuclear plant and the reopening of a coal-fired power station. A decision whose CO₂ and economic consequences are rarely quantified.</span></p>
+        </div>
+        <div class="pub-linkedin">
+          <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7452734331514621952" height="400" frameborder="0" allowfullscreen title="Post LinkedIn — Fessenheim"></iframe>
+        </div>
+        <div class="pub-analysis">
+          <button class="pub-analysis-toggle" onclick="togglePubAnalysis(this)" id="btn-fess">
+            <span>📊 <span data-fr>Voir l'analyse quantitative (Claude.ai)</span><span data-en>View quantitative analysis (Claude.ai)</span></span>
+            <span class="arr">▼</span>
+          </button>
+          <div class="pub-analysis-body" id="body-fess">
+            <div class="pub-analysis-inner">
+              <div id="fess-chart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publication 2: Montée en incompétence -->
+      <div class="pub-card reveal reveal-delay-1">
+        <div class="pub-header">
+          <div class="pub-category">Management &amp; Organisation</div>
+          <div class="pub-title"><span data-fr>La montée en incompétence — ceux qui doutent le plus sont les plus compétents</span><span data-en>The rise of incompetence — those who doubt most are the most competent</span></div>
+          <p class="pub-lead"><span data-fr>Réflexion sur l'article du Canard Enchaîné sur l'effet Dunning-Kruger inversé dans les organisations : les individus les plus compétents sont souvent ceux qui sous-estiment leurs capacités, au détriment de leur visibilité et de leur carrière.</span><span data-en>Reflection on the Canard Enchaîné article on the reverse Dunning-Kruger effect in organisations: the most competent individuals often underestimate their own abilities, to the detriment of their visibility and career.</span></p>
+        </div>
+        <div class="pub-linkedin">
+          <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7438534052128731137" height="400" frameborder="0" allowfullscreen title="Post LinkedIn — Incompétence"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="section-eyebrow reveal" style="color:var(--accent)"><span data-fr>Travaillons ensemble</span><span data-en>Let's work together</span></div>
+      <h2 class="section-title reveal reveal-delay-1" style="color:white"><span data-fr>Parlons de <em style="color:var(--accent-light)">votre projet</em></span><span data-en>Let's talk about <em style="color:var(--accent-light)">your project</em></span></h2>
+      <p class="section-lead reveal reveal-delay-2"><span data-fr>Que vous traversiez une période de transformation, cherchiez à digitaliser votre fonction Finance ou ayez besoin d'un DAF de transition opérationnel rapidement — je suis disponible pour un premier échange sans engagement.</span><span data-en>Whether you are going through a transformation phase, looking to digitalise your Finance function or need an operational interim CFO quickly — I am available for a first exchange with no commitment.</span></p>
+      <ul class="contact-items reveal reveal-delay-3">
+        <li class="contact-item">
+          <span class="ci-icon">📞</span>
+          <div>
+            <div class="ci-label"><span data-fr>Téléphone</span><span data-en>Phone</span></div>
+            <div class="ci-value">
+              <span class="contact-canvas-wrap" id="phone-wrap" title="Cliquer pour appeler / Click to call" style="cursor:pointer">
+                <canvas id="phone-canvas" width="180" height="22"></canvas>
+              </span>
+            </div>
+          </div>
+        </li>
+        <li class="contact-item">
+          <span class="ci-icon">✉️</span>
+          <div>
+            <div class="ci-label">Email</div>
+            <div class="ci-value">
+              <span class="contact-canvas-wrap" id="email-wrap" title="Cliquer pour envoyer un email / Click to send email" style="cursor:pointer">
+                <canvas id="email-canvas" width="260" height="22"></canvas>
+              </span>
+            </div>
+          </div>
+        </li>
+        <li class="contact-item">
+          <span class="ci-icon">💼</span>
+          <div>
+            <div class="ci-label">LinkedIn</div>
+            <div class="ci-value"><a href="https://linkedin.com/in/claudeweiss77" target="_blank" rel="noopener">linkedin.com/in/claudeweiss77</a></div>
+          </div>
+        </li>
+        <li class="contact-item">
+          <span class="ci-icon">📍</span>
+          <div>
+            <div class="ci-label"><span data-fr>Localisation</span><span data-en>Location</span></div>
+            <div class="ci-value"><span data-fr>Bordeaux · Strasbourg · Paris - France entière · International</span><span data-en>Bordeaux · Strasbourg · France · International</span></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="contact-form">
+        <div class="form-title"><span data-fr>Envoyer un message</span><span data-en>Send a message</span></div>
+        <div id="contactForm">
+          <div class="form-row">
+            <div class="form-group"><label><span data-fr>Prénom *</span><span data-en>First name *</span></label><input type="text" id="firstName" placeholder="Marie" required/></div>
+            <div class="form-group"><label><span data-fr>Nom *</span><span data-en>Last name *</span></label><input type="text" id="lastName" placeholder="Dupont" required/></div>
+          </div>
+          <div class="form-group"><label>Email *</label><input type="email" id="email" placeholder="marie.dupont@entreprise.fr" required/></div>
+          <div class="form-group"><label><span data-fr>Société</span><span data-en>Company</span></label><input type="text" id="company" placeholder="Votre entreprise / Your company"/></div>
+          <div class="form-group">
+            <label><span data-fr>Objet de la mission</span><span data-en>Mission type</span></label>
+            <select id="subject">
+              <option value="">— <span data-fr>Sélectionner</span><span data-en>Select</span> —</option>
+              <option>DAF de Transition / Interim CFO</option>
+              <option>Digitalisation Finance / ERP</option>
+              <option>Trésorerie &amp; Financement / Treasury &amp; Financing</option>
+              <option>M&amp;A / Post-merger</option>
+              <option>Outils IA Finance / AI Finance Tools</option>
+              <option>Contrôle de Gestion / Management Control</option>
+              <option>Compliance / CNIL / RH</option>
+              <option>Commerce International / International Trade</option>
+              <option>Autre / Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Message *</label><textarea id="message" placeholder="Décrivez brièvement votre contexte et vos besoins… / Briefly describe your context and needs…" required></textarea></div>
+          <button class="btn-submit" onclick="submitForm()"><span data-fr>Envoyer le message</span><span data-en>Send message</span></button>
+          <p class="form-note"><span data-fr>Réponse sous 24 h · Échange initial sans engagement</span><span data-en>Reply within 24h · No-commitment initial exchange</span></p>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div style="font-size:2rem;margin-bottom:12px">✓</div>
+          <strong style="color:white"><span data-fr>Message envoyé !</span><span data-en>Message sent!</span></strong><br>
+          <span><span data-fr>Je vous répondrai dans les meilleurs délais.</span><span data-en>I will get back to you as soon as possible.</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="4" cy="18" r="2" fill="#c8a96e"/><circle cx="10" cy="10" r="2" fill="#c8a96e"/>
+        <circle cx="17" cy="14" r="2" fill="#c8a96e"/><circle cx="22" cy="5" r="2" fill="#c8a96e"/>
+        <polyline points="4,18 10,10 17,14 22,5" stroke="#c8a96e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="footer-brand">Advertuo</span>
+  </div>
+  <div class="footer-right">© 2025 Advertuo · Claude Weiss · DAF de Transition &amp; Interim CFO</div>
+</footer>
+
+<script>
+// ── LANGUAGE TOGGLE ──────────────────────────────
+function setLang(lang) {
+  const html = document.getElementById('html-root');
+  html.classList.remove('fr','en');
+  html.classList.add(lang);
+  ['btn-fr','btn-en','mob-btn-fr','mob-btn-en'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (id.includes(lang)) { el.classList.add('active'); el.style.background = 'var(--navy)'; el.style.color = 'white'; }
+    else { el.classList.remove('active'); el.style.background = 'none'; el.style.color = 'var(--navy)'; }
+  });
+  renderContactCanvas();
+}
+
+// ── ANTI-SPAM CANVAS CONTACTS ────────────────────
+function renderContactCanvas() {
+  const isEn = document.getElementById('html-root').classList.contains('en');
+  const accent = '#c8a96e';
+  const font = '14px "DM Sans", sans-serif';
+
+  // Email
+  const ec = document.getElementById('email-canvas');
+  const ectx = ec.getContext('2d');
+  ectx.clearRect(0,0,ec.width,ec.height);
+  ectx.font = font; ectx.fillStyle = accent;
+  const ep = ['claud','e.weis','s@adv','ertuo','.com'];
+  ectx.fillText(ep.join(''), 0, 16);
+
+  // Phone
+  const pc = document.getElementById('phone-canvas');
+  const pctx = pc.getContext('2d');
+  pctx.clearRect(0,0,pc.width,pc.height);
+  pctx.font = font; pctx.fillStyle = accent;
+  const pp = ['+33 6','.64.','00.',' 77.81'];
+  pctx.fillText(pp.join(''), 0, 16);
+}
+
+// Clickable canvas → action
+document.addEventListener('DOMContentLoaded', function() {
+  renderContactCanvas();
+  document.getElementById('email-wrap').addEventListener('click', function() {
+    const ep = ['claud','e.weis','s@adv','ertuo','.com'];
+    window.location.href = 'mailto:' + ep.join('');
+  });
+  document.getElementById('phone-wrap').addEventListener('click', function() {
+    const pp = ['+336','64','007','781'];
+    window.location.href = 'tel:' + pp.join('');
+  });
+});
+
+// ── NAV ──────────────────────────────────────────
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
+function toggleMenu() {
+  const m = document.getElementById('mobileMenu');
+  m.classList.toggle('open');
+}
+
+// ── SMOOTH SCROLL ────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) window.scrollTo({top: t.offsetTop - 80, behavior:'smooth'});
+  });
+});
+
+// ── REVEAL ON SCROLL ─────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── FORM ─────────────────────────────────────────
+function submitForm() {
+  const fn = document.getElementById('firstName').value.trim();
+  const em = document.getElementById('email').value.trim();
+  const msg = document.getElementById('message').value.trim();
+  if (!fn || !em || !msg) { alert('Merci de remplir au minimum prénom, email et message.'); return; }
+  const ln = document.getElementById('lastName').value.trim();
+  const co = document.getElementById('company').value.trim();
+  const su = document.getElementById('subject').value;
+  const ep = ['claud','e.weis','s@adv','ertuo','.com'];
+  const body = encodeURIComponent(`Prénom : ${fn}\nNom : ${ln}\nEmail : ${em}\nSociété : ${co}\nObjet : ${su}\n\n${msg}`);
+  window.location.href = `mailto:${ep.join('')}?subject=Mission Advertuo – ${su||'Contact'}&body=${body}`;
+  setTimeout(() => {
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }, 500);
+}
+</script>
+
+
+
+<script>
+// ── Fessenheim Energy Analysis ────────────────────────────────
+(function() {
+  function renderFessChart() {
+    var root = document.getElementById('fess-chart');
+    if (!root) return;
+    root.innerHTML = '';
+
+    var ns = 'http://www.w3.org/2000/svg';
+    function s(tag, attrs, txt) {
+      var e = document.createElementNS(ns, tag);
+      if (attrs) Object.keys(attrs).forEach(function(k) { e.setAttribute(k, attrs[k]); });
+      if (txt !== undefined) e.textContent = txt;
+      return e;
+    }
+    function d(tag, attrs, inner) {
+      var e = document.createElement(tag);
+      if (attrs) Object.keys(attrs).forEach(function(k) {
+        if (k === 'style' && typeof attrs[k] === 'object') Object.assign(e.style, attrs[k]);
+        else e.setAttribute(k, attrs[k]);
+      });
+      if (inner !== undefined) e.innerHTML = inner;
+      return e;
+    }
+
+    var C = { bg:'#0f172a', card:'#1e293b', border:'#334155',
+      nuke:'#22d3ee', coal:'#ef4444', gas:'#f59e0b',
+      txt:'#e2e8f0', dim:'#64748b', pos:'#10b981', neg:'#ef4444', acc:'#38bdf8' };
+
+    // Title
+    root.appendChild(d('div', {style:{fontFamily:"'DM Sans',sans-serif",fontSize:'13px',fontWeight:700,color:'#0f1f3d',marginBottom:'16px',paddingBottom:'12px',borderBottom:'1px solid #e2e8f0'}},
+      '⚡ Analyse quantitative : Fessenheim vs Émissions CO₂'));
+
+    // ── Chart 1: CO2 g/kWh comparison ─────────────
+    var co2Data = [
+      {label:'Nucléaire', val:12, color:C.nuke},
+      {label:'Fessenheim', val:12, color:'#0891b2'},
+      {label:'Gaz naturel', val:490, color:C.gas},
+      {label:'Charbon\n(Saint-Avold)', val:820, color:C.coal},
+      {label:'Lignite', val:1050, color:'#dc2626'},
+    ];
+    var maxVal = 1050, w = 500, barH = 26, gap = 8, labelW = 120;
+    var svgH = co2Data.length * (barH + gap) + 60;
+    var svg1 = s('svg', {viewBox:'0 0 '+w+' '+svgH, style:'width:100%;max-width:'+w+'px;display:block;margin-bottom:4px'});
+    svg1.appendChild(s('text',{x:0,y:14,fill:'#0f1f3d',fontSize:10.5,fontWeight:700},'Émissions CO₂ par source (g CO₂eq/kWh)'));
+    co2Data.forEach(function(item, i) {
+      var y = 28 + i*(barH+gap);
+      var bw = (item.val/maxVal)*(w-labelW-60);
+      var g = s('g');
+      g.appendChild(s('text',{x:0,y:y+barH/2+4,fill:'#334155',fontSize:9.5},item.label));
+      g.appendChild(s('rect',{x:labelW,y:y,width:bw,height:barH,fill:item.color,rx:3,opacity:0.85}));
+      g.appendChild(s('text',{x:labelW+bw+5,y:y+barH/2+4,fill:item.color,fontSize:9,fontWeight:700},item.val+' g'));
+      svg1.appendChild(g);
+    });
+    root.appendChild(svg1);
+
+    // ── Key metrics row ────────────────────────────
+    var metrics = [
+      {l:'Capacité Fessenheim', v:'1 800 MW', c:'#0891b2'},
+      {l:'Production annuelle ≈', v:'12 TWh', c:'#0891b2'},
+      {l:'CO₂ Fessenheim (≈0)', v:'0,14 Mt/an', c:'#22d3ee'},
+      {l:'CO₂ charbon équivalent', v:'9,8 Mt/an', c:'#ef4444'},
+      {l:'Différence', v:'+9,7 Mt', c:'#ef4444'},
+    ];
+    var mrow = d('div',{style:{display:'flex',flexWrap:'wrap',gap:'8px',margin:'14px 0'}});
+    metrics.forEach(function(m){
+      var b = d('div',{style:{background:C.card,borderRadius:'6px',padding:'8px 12px',border:'1px solid '+C.border,flex:'1',minWidth:'120px'}});
+      b.appendChild(d('div',{style:{color:C.dim,fontSize:'9px',textTransform:'uppercase',letterSpacing:'0.4px',marginBottom:'3px'}},m.l));
+      b.appendChild(d('div',{style:{color:m.c,fontSize:'15px',fontWeight:700}},m.v));
+      mrow.appendChild(b);
+    });
+    root.appendChild(mrow);
+
+    // ── Chart 2: Cost comparison bar ───────────────
+    var costData = [
+      {label:'Nucléaire (existant)', val:30, color:C.nuke, unit:'€/MWh'},
+      {label:'Charbon (Saint-Avold)', val:85, color:C.coal, unit:'€/MWh'},
+      {label:'Gaz CCGT', val:110, color:C.gas, unit:'€/MWh'},
+      {label:'Éolien offshore (neuf)', val:80, color:C.pos, unit:'€/MWh'},
+    ];
+    var maxC = 120, w2 = 500, bH2 = 24;
+    var svg2H = costData.length*(bH2+gap)+55;
+    var svg2 = s('svg',{viewBox:'0 0 '+w2+' '+svg2H,style:'width:100%;max-width:'+w2+'px;display:block;margin-top:8px'});
+    svg2.appendChild(s('text',{x:0,y:14,fill:'#0f1f3d',fontSize:10.5,fontWeight:700},'Coût de production comparé (€/MWh — ordre de grandeur 2020)'));
+    costData.forEach(function(item,i){
+      var y=26+i*(bH2+gap);
+      var bw=(item.val/maxC)*(w2-labelW-70);
+      var g=s('g');
+      g.appendChild(s('text',{x:0,y:y+bH2/2+4,fill:'#334155',fontSize:9.5},item.label));
+      g.appendChild(s('rect',{x:labelW,y:y,width:bw,height:bH2,fill:item.color,rx:3,opacity:0.85}));
+      g.appendChild(s('text',{x:labelW+bw+5,y:y+bH2/2+4,fill:item.color,fontSize:9,fontWeight:700},item.val+' '+item.unit));
+      svg2.appendChild(g);
+    });
+    root.appendChild(svg2);
+
+    // ── Analysis note ──────────────────────────────
+    var note = d('div',{style:{background:'#fffbeb',border:'1px solid #fbbf24',borderLeft:'3px solid #f59e0b',borderRadius:'0 6px 6px 0',padding:'14px 16px',marginTop:'16px'}});
+    note.innerHTML = '<div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:6px">💡 Analyse — Claude Weiss / Advertuo (avec Claude, Anthropic)</div>'+
+      '<div style="font-size:11px;color:#78350f;line-height:1.7">'+
+      'La fermeture de Fessenheim (1 800 MW, ~12 TWh/an, quasi-zéro carbone en exploitation) et la remise en service de la centrale à charbon de Saint-Avold représente un écart d\'émissions de <strong>~9,7 Mt CO₂/an</strong> — l\'équivalent de 4,5 millions de voitures supplémentaires sur les routes françaises. '+
+      'En termes de coût de production, le charbon (~85 €/MWh) est 2,8× plus cher que le nucléaire existant (~30 €/MWh). La décision a été prise en contexte de crise énergétique 2022 et d\'arrêts simultanés du parc nucléaire EDF, mais elle illustre un paradoxe de politique énergétique : une centrale bas-carbone fermée pour des raisons politiques remplacée transitoirement par la source la plus carbonée. '+
+      '<strong>La décision optimale sur le plan économique et climatique aurait été la prolongation de Fessenheim.</strong>'+
+      '</div>';
+    root.appendChild(note);
+  }
+
+  // Render on toggle open
+  var btn = document.getElementById('btn-fess');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      setTimeout(function() {
+        var body = document.getElementById('body-fess');
+        if (body && body.classList.contains('open')) renderFessChart();
+      }, 100);
+    });
+  }
+  // Also try on load in case it's already open
+  document.addEventListener('DOMContentLoaded', function() {
+    var body = document.getElementById('body-fess');
+    if (body && body.classList.contains('open')) renderFessChart();
+  });
+})();
+
+// Toggle publication analysis panels
+function togglePubAnalysis(btn) {
+  btn.classList.toggle('open');
+  var bodyId = btn.id.replace('btn-', 'body-');
+  var body = document.getElementById(bodyId);
+  if (body) body.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
