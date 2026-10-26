@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur Placements & Défiscalisation — Advertuo</title>
+<meta name="description" content="Simulateur interactif des placements financiers et dispositifs de défiscalisation français 2025 — comparatif, impact fiscal, export Excel. Par Advertuo, Claude Weiss DAF de transition.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --navy:#0f1f3d; --navy-mid:#1a3260; --navy-light:#243e7a;
+  --accent:#c8a96e; --accent-light:#e8d5aa;
+  --cream:#f5f0e8; --off-white:#faf8f5; --white:#ffffff;
+  --text-dark:#0f1f3d; --text-mid:#3a4a6b; --text-light:#6b7a9a;
+  --border:rgba(15,31,61,0.1);
+  --shadow:0 8px 40px rgba(15,31,61,0.12);
+  --shadow-lg:0 24px 80px rgba(15,31,61,0.18);
+  --pos:#2f6b4f; --pos-bg:#e8f2ec;
+  --neg:#9a3b3b; --neg-bg:#f7eaea;
+  --warn-bg:#fbf3e3;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--off-white);
+  color:var(--text-dark);
+  line-height:1.6;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'DM Mono',monospace}
+.serif{font-family:'Cormorant Garamond',serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ───── HEADER ───── */
+header.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);
+  color:var(--white);
+  padding:52px 0 44px;
+  position:relative;
+  overflow:hidden;
+}
+header.hero::after{
+  content:"";position:absolute;top:-40%;right:-10%;width:520px;height:520px;
+  background:radial-gradient(circle,rgba(200,169,110,0.14) 0%,transparent 70%);
+  border-radius:50%;
+}
+.eyebrow{
+  font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:16px;
+}
+header.hero h1{
+  font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:clamp(2.1rem,5vw,3.3rem);line-height:1.08;letter-spacing:-0.01em;
+  margin-bottom:14px;
+}
+header.hero h1 em{font-style:italic;color:var(--accent-light)}
+header.hero p.lede{
+  font-size:1.02rem;color:rgba(255,255,255,0.78);max-width:640px;font-weight:300;
+}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;position:relative;z-index:2;
+}
+.chip{
+  font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.04em;
+  padding:7px 14px;border:1px solid rgba(200,169,110,0.35);border-radius:4px;
+  color:var(--accent-light);background:rgba(200,169,110,0.06);
+}
+
+/* ───── KPI STRIP ───── */
+.kpi-strip{
+  background:var(--navy-mid);border-top:1px solid rgba(200,169,110,0.15);
+}
+.kpi-strip .wrap{display:flex;flex-wrap:wrap}
+.kpi{
+  flex:1;min-width:150px;padding:22px 20px;text-align:center;
+  border-right:1px solid rgba(255,255,255,0.07);
+}
+.kpi:last-child{border-right:none}
+.kpi .v{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--accent-light);font-weight:500}
+.kpi .l{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-top:4px}
+
+/* ───── NAV TABS ───── */
+nav.tabs{
+  position:sticky;top:0;z-index:50;background:rgba(250,248,245,0.94);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:8px;padding-bottom:0}
+.tab-btn{
+  font-family:'DM Mono',monospace;font-size:0.76rem;letter-spacing:0.04em;
+  text-transform:uppercase;color:var(--text-light);background:none;border:none;
+  padding:16px 18px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;
+  transition:all 0.2s;font-weight:500;
+}
+.tab-btn:hover{color:var(--navy)}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--accent)}
+
+/* ───── SECTIONS ───── */
+.panel{display:none;padding:46px 0 60px;animation:fade 0.35s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.section-label{
+  font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:10px;
+}
+h2.section-title{
+  font-family:'Cormorant Garamond',serif;font-weight:400;font-size:2rem;
+  letter-spacing:-0.01em;margin-bottom:8px;color:var(--navy);
+}
+h2.section-title em{font-style:italic;color:var(--accent)}
+.section-sub{color:var(--text-mid);font-size:0.96rem;margin-bottom:32px;max-width:720px}
+
+/* ───── CARDS GRID (placements / defisc) ───── */
+.grid{display:grid;gap:18px}
+.card{
+  background:var(--white);border:1px solid var(--border);border-radius:8px;
+  box-shadow:var(--shadow);overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;
+}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.card-head{
+  background:var(--navy);color:var(--white);padding:16px 20px;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+}
+.card-head .name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;line-height:1.15}
+.card-head .cat{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-light);margin-top:4px}
+.badge{
+  font-family:'DM Mono',monospace;font-size:0.66rem;letter-spacing:0.03em;
+  padding:5px 10px;border-radius:4px;white-space:nowrap;font-weight:500;flex-shrink:0;
+}
+.badge.gold{background:var(--accent);color:var(--navy)}
+.badge.outline{border:1px solid rgba(200,169,110,0.4);color:var(--accent-light)}
+.card-body{padding:18px 20px}
+.metrics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.metric{flex:1;min-width:92px;background:var(--cream);border-radius:6px;padding:10px 12px}
+.metric .ml{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light)}
+.metric .mv{font-size:0.92rem;font-weight:500;color:var(--navy);margin-top:3px}
+.metric .mv.rdt{color:var(--pos)}
+.av-inc{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.av-inc{grid-template-columns:1fr}}
+.av-inc h4{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.av h4{color:var(--pos)}
+.inc h4{color:var(--neg)}
+.av ul,.inc ul{list-style:none;font-size:0.82rem;color:var(--text-mid)}
+.av li,.inc li{padding:3px 0 3px 15px;position:relative;line-height:1.4}
+.av li::before{content:"+";position:absolute;left:0;color:var(--pos);font-weight:600}
+.inc li::before{content:"−";position:absolute;left:0;color:var(--neg);font-weight:600}
+
+/* niche flag for defisc cards */
+.niche-flag{
+  display:inline-block;font-family:'DM Mono',monospace;font-size:0.64rem;
+  letter-spacing:0.03em;padding:4px 9px;border-radius:4px;margin-top:4px;
+}
+.niche-flag.out{background:var(--pos-bg);color:var(--pos)}
+.niche-flag.in{background:var(--warn-bg);color:#9a6b1f}
+
+/* ───── SIMULATOR ───── */
+.sim-layout{display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:start}
+@media(max-width:860px){.sim-layout{grid-template-columns:1fr}}
+.sim-inputs{
+  background:var(--navy);border-radius:10px;padding:26px 24px;color:var(--white);
+  box-shadow:var(--shadow-lg);position:sticky;top:70px;
+}
+@media(max-width:860px){.sim-inputs{position:static}}
+.sim-inputs h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:500;margin-bottom:4px}
+.sim-inputs .hint{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:0.82rem;color:rgba(255,255,255,0.75);margin-bottom:7px;font-weight:400}
+.field label .note{display:block;font-family:'DM Mono',monospace;font-size:0.62rem;color:rgba(255,255,255,0.4);letter-spacing:0.04em;margin-top:2px}
+.field input,.field select{
+  width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(200,169,110,0.3);
+  border-radius:5px;padding:12px 14px;color:var(--white);font-family:'DM Mono',monospace;
+  font-size:0.98rem;transition:border 0.2s,background 0.2s;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:rgba(255,255,255,0.1)}
+.field select option{background:var(--navy);color:var(--white)}
+.field.parts-toggle{display:flex;gap:8px}
+.part-opt{
+  flex:1;text-align:center;padding:11px;border:1px solid rgba(200,169,110,0.3);
+  border-radius:5px;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.82rem;
+  color:rgba(255,255,255,0.7);transition:all 0.2s;background:rgba(255,255,255,0.04);
+}
+.part-opt.sel{background:var(--accent);color:var(--navy);border-color:var(--accent);font-weight:500}
+
+.sim-results{min-height:400px}
+.result-hero{
+  background:linear-gradient(135deg,var(--white),var(--cream));
+  border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:8px;padding:24px 26px;margin-bottom:18px;box-shadow:var(--shadow);
+}
+.result-hero .big-label{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-light)}
+.result-hero .big-val{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:500;color:var(--pos);line-height:1;margin:6px 0}
+.result-hero .big-sub{font-size:0.9rem;color:var(--text-mid)}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+@media(max-width:560px){.res-grid{grid-template-columns:1fr}}
+.res-cell{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:18px 20px;box-shadow:var(--shadow)}
+.res-cell .rl{font-family:'DM Mono',monospace;font-size:0.64rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:6px}
+.res-cell .rv{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:500;color:var(--navy);line-height:1}
+.res-cell .rnote{font-size:0.76rem;color:var(--text-light);margin-top:5px}
+.res-cell.before .rv{color:var(--neg)}
+.res-cell.after .rv{color:var(--navy)}
+.bar-compare{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:20px 22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.bar-compare h4{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mid);margin-bottom:16px}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.bar-row .bl{font-size:0.8rem;width:120px;color:var(--text-mid);flex-shrink:0}
+.bar-track{flex:1;height:26px;background:var(--cream);border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.6s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:10px}
+.bar-fill.ir{background:linear-gradient(90deg,var(--navy-light),var(--navy))}
+.bar-fill.cost{background:linear-gradient(90deg,var(--accent),var(--accent-light))}
+.bar-fill span{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--white);font-weight:500}
+.bar-fill.cost span{color:var(--navy)}
+.attractivite{background:var(--navy-mid);color:var(--white);border-radius:8px;padding:18px 22px;display:flex;align-items:center;gap:14px}
+.attractivite .stars{font-size:1.2rem;color:var(--accent);letter-spacing:2px}
+.attractivite .txt{font-size:0.88rem}
+.plafond-warn{font-family:'DM Mono',monospace;font-size:0.74rem;color:#9a6b1f;background:var(--warn-bg);border-radius:6px;padding:10px 14px;margin-top:14px;display:none}
+.plafond-warn.show{display:block}
+
+/* ───── EXPORT BAR ───── */
+.export-bar{
+  background:var(--white);border:1px solid var(--border);border-radius:10px;
+  padding:22px 26px;margin-bottom:32px;box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+}
+.export-bar .etxt h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:500;color:var(--navy)}
+.export-bar .etxt p{font-size:0.86rem;color:var(--text-mid);margin-top:2px}
+.btn-primary{
+  background:var(--accent);color:var(--navy);padding:15px 30px;border:none;
+  border-radius:4px;font-family:'DM Mono',monospace;font-weight:500;font-size:0.82rem;
+  letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.25s;
+  display:inline-flex;align-items:center;gap:9px;white-space:nowrap;
+}
+.btn-primary:hover{background:var(--accent-light);transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn-primary:active{transform:none}
+.btn-primary svg{width:17px;height:17px}
+
+/* ───── SOURCES ───── */
+.src-group{margin-bottom:26px}
+.src-group .gh{font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.src-item{display:grid;grid-template-columns:200px 1fr auto;gap:16px;padding:11px 0;border-bottom:1px solid rgba(15,31,61,0.05);align-items:start}
+@media(max-width:680px){.src-item{grid-template-columns:1fr}}
+.src-item .org{font-weight:500;color:var(--navy);font-size:0.88rem}
+.src-item .org .ty{display:block;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;font-weight:400}
+.src-item .ttl{font-size:0.84rem;color:var(--text-mid)}
+.src-item .ttl a{color:var(--navy-light);text-decoration:none;border-bottom:1px solid rgba(36,62,122,0.25);word-break:break-word}
+.src-item .ttl a:hover{color:var(--accent);border-color:var(--accent)}
+.src-item .rel{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent);white-space:nowrap}
+
+/* SOFICA note box */
+.note-box{
+  background:var(--warn-bg);border-left:3px solid var(--accent);border-radius:6px;
+  padding:18px 22px;margin:22px 0;
+}
+.note-box h4{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;color:var(--navy);margin-bottom:8px}
+.note-box p{font-size:0.86rem;color:var(--text-mid);margin-bottom:8px}
+.note-box .calc{font-family:'DM Mono',monospace;font-size:0.8rem;background:var(--white);border-radius:5px;padding:12px 14px;color:var(--navy);margin:8px 0;line-height:1.7}
+
+/* disclaimer / footer */
+.disclaimer{background:var(--cream);border-radius:8px;padding:18px 22px;font-size:0.8rem;color:var(--text-mid);font-style:italic;margin-top:20px;border:1px solid var(--border)}
+footer.ft{background:var(--navy);color:rgba(255,255,255,0.55);padding:28px 0;text-align:center;font-size:0.8rem;margin-top:10px}
+footer.ft .brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--accent-light);font-weight:500;letter-spacing:0.05em}
+footer.ft a{color:var(--accent-light);text-decoration:none}
+
+.toast{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--navy);color:var(--white);padding:14px 26px;border-radius:6px;
+  font-family:'DM Mono',monospace;font-size:0.82rem;box-shadow:var(--shadow-lg);
+  border:1px solid var(--accent);z-index:200;transition:transform 0.35s cubic-bezier(.4,0,.2,1);
+  display:flex;align-items:center;gap:10px;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Outil IA Finance · Advertuo</div>
+    <h1>Placements &amp; <em>Défiscalisation</em><br>Guide interactif France 2025</h1>
+    <p class="lede">Comparez 10 véhicules d'épargne et 14 dispositifs fiscaux, simulez l'impact réel sur votre impôt, et exportez une synthèse Excel complète en un clic.</p>
+    <div class="hero-meta">
+      <span class="chip">Barème IR 2025</span>
+      <span class="chip">Sources officielles citées</span>
+      <span class="chip">Export .xlsx</span>
+      <span class="chip">Simulateur dynamique</span>
+    </div>
+  </div>
+</header>
+
+<div class="kpi-strip">
+  <div class="wrap">
+    <div class="kpi"><div class="v">10</div><div class="l">Placements comparés</div></div>
+    <div class="kpi"><div class="v">14</div><div class="l">Dispositifs fiscaux</div></div>
+    <div class="kpi"><div class="v">48%</div><div class="l">Réduction SOFICA max</div></div>
+    <div class="kpi"><div class="v">37 094€</div><div class="l">Plafond PER 2025</div></div>
+    <div class="kpi"><div class="v">23</div><div class="l">Sources citées</div></div>
+  </div>
+</div>
+
+<nav class="tabs">
+  <div class="wrap">
+    <button class="tab-btn active" data-tab="sim">Simulateur</button>
+    <button class="tab-btn" data-tab="placements">Placements</button>
+    <button class="tab-btn" data-tab="defisc">Défiscalisation</button>
+    <button class="tab-btn" data-tab="sources">Sources</button>
+  </div>
+</nav>
+
+<!-- ════════ SIMULATEUR ════════ -->
+<section class="panel active" id="panel-sim">
+  <div class="wrap">
+
+    <div class="export-bar">
+      <div class="etxt">
+        <h3>Synthèse Excel complète</h3>
+        <p>5 onglets · comparatifs · simulateur à formules liées · sources — format professionnel navy &amp; or</p>
+      </div>
+      <button class="btn-primary" id="exportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Télécharger le fichier .xlsx
+      </button>
+    </div>
+
+    <div class="section-label">Simulateur d'impact fiscal</div>
+    <h2 class="section-title">Testez votre <em>investissement</em></h2>
+    <p class="section-sub">Saisissez votre revenu imposable, le montant à investir et le dispositif. Le calcul applique le barème progressif 2025 et distingue déduction du revenu (PER, déficit foncier…) et réduction d'impôt directe (SOFICA, Malraux, Madelin…).</p>
+
+    <div class="sim-layout">
+      <!-- INPUTS -->
+      <div class="sim-inputs">
+        <h3>Paramètres</h3>
+        <div class="hint">Modifier les valeurs</div>
+
+        <div class="field">
+          <label>Revenu net imposable
+            <span class="note">Revenus nets annuels à déclarer</span>
+          </label>
+          <input type="number" id="revenu" value="80000" min="0" step="1000">
+        </div>
+
+        <div class="field">
+          <label>Nombre de parts fiscales</label>
+          <div class="parts-toggle">
+            <div class="part-opt sel" data-parts="1">1 part · Célibataire</div>
+            <div class="part-opt" data-parts="2">2 parts · Couple</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Montant à investir
+            <span class="note">Capital total engagé</span>
+          </label>
+          <input type="number" id="montant" value="10000" min="0" step="500">
+        </div>
+
+        <div class="field">
+          <label>Dispositif sélectionné</label>
+          <select id="produit"></select>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="sim-results" id="results"></div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ Simulateur indicatif à vocation pédagogique. Le calcul n'intègre pas le plafonnement du quotient familial (pour 2 parts, l'avantage par demi-part est plafonné à 1 759€ en 2025), ni la décote, ni le plafonnement global des niches fiscales (10 000€/an, hors dispositifs dérogatoires). Ne constitue pas un conseil en investissement ou fiscal. Consultez un conseiller agréé avant toute décision.
+    </div>
+  </div>
+</section>
+
+<!-- ════════ PLACEMENTS ════════ -->
+<section class="panel" id="panel-placements">
+  <div class="wrap">
+    <div class="section-label">Véhicules d'épargne</div>
+    <h2 class="section-title">Synthèse des <em>placements</em></h2>
+    <p class="section-sub">10 produits comparés : rendement net estimé, régime fiscal, liquidité, garantie du capital, avantages et inconvénients.</p>
+    <div class="grid" id="placementsGrid"></div>
+  </div>
+</section>
+
+<!-- ════════ DÉFISCALISATION ════════ -->
+<section class="panel" id="panel-defisc">
+  <div class="wrap">
+    <div class="section-label">Dispositifs fiscaux</div>
+    <h2 class="section-title">Outils de <em>défiscalisation</em></h2>
+    <p class="section-sub">14 dispositifs : taux de réduction, plafonds, appartenance au plafonnement global des niches (10 000€/an), avantages et risques.</p>
+    <div class="grid" id="defiscGrid"></div>
+
+    <div class="note-box">
+      <h4>★ Le cas SOFICA — d'où vient le « 65 % » ?</h4>
+      <p>Le taux <strong>légal maximum</strong> de réduction d'impôt SOFICA est de <strong>48 %</strong> (article 199 unvicies du CGI). Le chiffre de 60–65 % cité dans certains articles est un <em>taux effectif prospectif</em> qui combine la réduction d'impôt directe et le retour partiel estimé du capital (revenus des œuvres financées, sur 5 à 7 ans).</p>
+      <div class="calc">
+        10 000 € investis<br>
+        − 4 800 € de réduction d'impôt (48 %)<br>
+        − ~1 700 € de retour de capital estimé (non garanti)<br>
+        = coût net ~3 500 € → « défiscalisation effective » ~65 %
+      </div>
+      <p>Seuls les <strong>48 % légaux sont certains</strong>. Le retour de capital dépend du succès des films et n'est jamais garanti — risque de perte en capital réel. Sources : art. 199 unvicies CGI, CNC, AMF.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SOURCES ════════ -->
+<section class="panel" id="panel-sources">
+  <div class="wrap">
+    <div class="section-label">Bibliographie</div>
+    <h2 class="section-title">Sources de <em>référence</em></h2>
+    <p class="section-sub">Textes officiels, publications institutionnelles et analyses spécialisées — mise à jour mai 2025.</p>
+    <div id="sourcesList"></div>
+    <div class="disclaimer">
+      Légende fiabilité : ★★★★★ source officielle (loi, ministère, banque centrale) · ★★★★ source institutionnelle · ★★★ presse spécialisée / estimation. Taux et plafonds susceptibles d'évoluer — vérifier les sources officielles avant toute décision.
+    </div>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="brand">Advertuo</div>
+    <p style="margin-top:8px">DAF de Transition &amp; Interim CFO · Claude Weiss<br>
+    Outil développé avec Claude (Anthropic) — données France 2025, à titre informatif.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Fichier Excel téléchargé</span></div>
+
+<script>
+/* ═══════════════ DONNÉES ═══════════════ */
+// Barème IR 2025 (revenus 2024), par part
+const TRANCHES = [
+  {min:0,      max:11497,  taux:0.00},
+  {min:11497,  max:29315,  taux:0.11},
+  {min:29315,  max:83823,  taux:0.30},
+  {min:83823,  max:180294, taux:0.41},
+  {min:180294, max:Infinity, taux:0.45}
+];
+
+// Produits simulateur : type D=déduction revenu / R=réduction impôt ; taux ; plafond
+const PRODUITS = [
+  {nom:"PER Individuel (déduction du revenu)",                 type:"D", taux:0,    plafond:37094},
+  {nom:"SOFICA cinéma — taux de base (30%)",                   type:"R", taux:0.30, plafond:18000},
+  {nom:"SOFICA cinéma — taux majoré (48%)",                    type:"R", taux:0.48, plafond:18000},
+  {nom:"IR-PME / Madelin (18%)",                               type:"R", taux:0.18, plafond:50000},
+  {nom:"FCPI (18%)",                                           type:"R", taux:0.18, plafond:12000},
+  {nom:"FIP — taux standard (18%)",                            type:"R", taux:0.18, plafond:12000},
+  {nom:"FIP Corse / DOM (30%)",                                type:"R", taux:0.30, plafond:12000},
+  {nom:"Loi Malraux — ZPPAUP (22%) · hors niche",             type:"R", taux:0.22, plafond:400000},
+  {nom:"Loi Malraux — Secteur sauvegardé (30%) · hors niche", type:"R", taux:0.30, plafond:400000},
+  {nom:"Loi Denormandie 6 ans (12%)",                          type:"R", taux:0.12, plafond:300000},
+  {nom:"Loi Denormandie 12 ans (21%)",                         type:"R", taux:0.21, plafond:300000},
+  {nom:"Déficit Foncier (déduction du revenu global)",         type:"D", taux:0,    plafond:10750},
+  {nom:"Déficit Foncier · DPE passoire (déduction x2)",        type:"D", taux:0,    plafond:21400},
+  {nom:"Monument Historique (déduction illimitée)",            type:"D", taux:0,    plafond:9999999},
+  {nom:"Girardin Industriel (115%) · hors niche",              type:"R", taux:1.15, plafond:40000},
+  {nom:"GFF / GFV Forêts (18%)",                               type:"R", taux:0.18, plafond:50000}
+];
+
+// Placements (onglet + cards)
+const PLACEMENTS = [
+  {nom:"Livret A",cat:"Épargne réglementée",horizon:"Court terme < 2 ans",risque:"Très faible",rdt:"3,00 %",fiscal:"Exonéré IR + PS (100% net)",av:["Liquidité totale","Garantie de l'État","Zéro frais","Taux administré garanti"],inc:["Plafond bas","Rendement réel négatif vs inflation","Taux révisable à la baisse"],plafond:"22 950 €",liq:"Immédiate",gar:"Oui · État"},
+  {nom:"LDDS",cat:"Épargne réglementée",horizon:"Court terme < 2 ans",risque:"Très faible",rdt:"3,00 %",fiscal:"Exonéré IR + PS (100% net)",av:["Liquidité totale","Garantie de l'État","Zéro frais"],inc:["Plafond très bas","Réservé résidents fiscaux FR"],plafond:"12 000 €",liq:"Immédiate",gar:"Oui · État"},
+  {nom:"LEP",cat:"Épargne réglementée",horizon:"Court terme < 2 ans",risque:"Très faible",rdt:"4,00 %",fiscal:"Exonéré IR + PS (100% net)",av:["Meilleur taux de l'épargne réglementée","Garantie de l'État"],inc:["Sous conditions de ressources (RFR < 22 419€)","Plafond bas"],plafond:"10 000 €",liq:"Immédiate",gar:"Oui · État"},
+  {nom:"PEL",cat:"Épargne logement",horizon:"Moyen terme 4-10 ans",risque:"Très faible",rdt:"2,25 % brut → ~1,57 % net",fiscal:"PFU 30% dès l'ouverture (depuis 2018)",av:["Taux garanti à l'ouverture","Droit à prêt immobilier avantageux","Cumulable avec CEL"],inc:["Bloqué 4 ans minimum","Taux peu attractif","Pénalités en cas de retrait anticipé"],plafond:"61 200 €",liq:"Faible (4 ans min)",gar:"Oui · FGDR"},
+  {nom:"Compte à Terme (CAT)",cat:"Épargne bancaire",horizon:"Court/Moyen · 3 mois – 3 ans",risque:"Très faible",rdt:"2,50 – 4,50 % → ~1,75 – 3,15 % net",fiscal:"PFU 30% (IR 12,8% + PS 17,2%)",av:["Taux librement négocié","Sans plafond légal","Taux fixe ou révisable"],inc:["Capital bloqué jusqu'à l'échéance","Pénalités retrait anticipé","Taux variable selon banque"],plafond:"Illimité",liq:"Nulle pendant la durée",gar:"Oui · FGDR"},
+  {nom:"PEA (Actions UE)",cat:"Actions / OPCVM",horizon:"Long terme > 5 ans",risque:"Élevé",rdt:"5 – 8 % brut → ~4 – 6,6 % net après 5 ans",fiscal:"Exonéré IR après 5 ans (PS 17,2% dus)",av:["Enveloppe fiscale puissante","Nombreux supports","PEA-PME cumulable (+225 000€)"],inc:["Actions zone euro uniquement","Risque de perte en capital","Clôture si retrait avant 5 ans"],plafond:"150 000 €",liq:"Bonne (casse l'enveloppe si <5 ans)",gar:"Non"},
+  {nom:"Assurance Vie",cat:"Multi-support (fonds €, UC)",horizon:"Moyen/Long · 8 ans conseillé",risque:"Faible à élevé",rdt:"Fonds € : 2,5 – 3,5 % · UC : selon marché",fiscal:"7,5% + PS après 8 ans · abattement 4 600€/9 200€ · 152 500€/bénéficiaire en succession",av:["Flexibilité (rachats partiels)","Transmission hors succession","Diversification fonds €/UC","Fiscalité douce après 8 ans"],inc:["Frais de gestion élevés (0,5 – 1,2 %/an)","Performance UC non garantie","Frais d'entrée parfois"],plafond:"Illimité",liq:"Bonne (rachats partiels)",gar:"Partielle (fonds €)"},
+  {nom:"SICAV / FCP (OPCVM actif)",cat:"OPCVM",horizon:"Moyen/Long · 3 – 10 ans",risque:"Moyen à élevé",rdt:"~3 – 7 % selon catégorie",fiscal:"PFU 30% (IR 12,8% + PS 17,2%)",av:["Gestion déléguée professionnelle","Diversification instantanée","Grande variété de stratégies"],inc:["Frais de gestion élevés (1,5 – 2,5 %/an)","Performance non garantie","Dépend de la qualité du gérant"],plafond:"Illimité",liq:"Très bonne (VL quotidienne)",gar:"Non"},
+  {nom:"ETF / Tracker",cat:"OPCVM indiciel",horizon:"Long terme > 5 ans",risque:"Moyen à élevé",rdt:"MSCI World ~7-8 % brut → ~4,9 – 5,6 % net",fiscal:"PFU 30% · éligible PEA si zone euro",av:["Frais ultra-réduits (0,05 – 0,30 %/an)","Diversification mondiale","Transparence totale","Surperforme la gestion active 80% du temps"],inc:["Risque marché (aucune protection)","Volatilité court terme","Discipline nécessaire"],plafond:"Illimité",liq:"Très bonne (liquidité boursière)",gar:"Non"},
+  {nom:"PER Individuel",cat:"Retraite / défiscalisation",horizon:"Très long terme (retraite)",risque:"Faible à élevé",rdt:"Variable selon allocations",fiscal:"Déductible du revenu (10% des revenus, max 37 094€) · imposé à la sortie",av:["Déduction immédiate = TMI × versement","Sortie en capital ou rente","5 cas de déblocage anticipé","Transmission en cas de décès"],inc:["Bloqué jusqu'à la retraite (sauf cas légaux)","Imposé à la sortie","Performance variable","Frais selon contrat"],plafond:"37 094 €/an",liq:"Très faible (blocage retraite)",gar:"Selon fonds"}
+];
+
+// Défiscalisation (onglet + cards)
+const DEFISC = [
+  {nom:"PER Individuel",avtype:"Déduction du revenu",taux:"= TMI (11% à 45%)",base:"Versements volontaires (10% des revenus N-1)",plafond:"37 094 €/an",duree:"Blocage jusqu'à la retraite",niche:"out",nicheTxt:"Hors plafond 10 000€",av:["Économie immédiate = TMI × versement","Sortie capital ou rente","5 cas de déblocage anticipé","Défiscalisation + retraite"],inc:["Imposition à la sortie","Fonds bloqués","Risque sur unités de compte"],statut:"Actif"},
+  {nom:"SOFICA (Cinéma/Audiovisuel)",avtype:"Réduction d'impôt",taux:"30% · 36% · 48% (majoré)",base:"Capital souscrit (SOFICA agréée CNC)",plafond:"18 000 €/an (ou 25% du RNG)",duree:"5 ans minimum",niche:"in",nicheTxt:"Plafond majoré 18 000€",av:["Taux de réduction élevé (jusqu'à 48%)","Soutien à la création cinématographique","Taux effectif ~60-65% si retour de capital"],inc:["Risque de perte en capital","Très peu liquide (5-7 ans)","Rendements non garantis","Quotas annuels limités"],statut:"Actif · quotas limités"},
+  {nom:"IR-PME / Madelin",avtype:"Réduction d'impôt",taux:"18% (2024-2025)",base:"Souscription au capital de PME éligibles",plafond:"50 000 € (100 000 € couple)",duree:"5 ans de conservation",niche:"in",nicheTxt:"Niche 10 000€",av:["Soutien à l'économie réelle","Diversification du portefeuille","Potentiel plus-value à terme"],inc:["Risque de perte totale du capital","Illiquidité totale 5 ans","Taux abaissé à 18% (vs 25%)","Sélection rigoureuse nécessaire"],statut:"Actif"},
+  {nom:"FCPI (Capital innovation)",avtype:"Réduction d'impôt",taux:"18%",base:"Fonds d'innovation (70% PME innovantes)",plafond:"12 000 € (24 000 € couple)",duree:"7 à 10 ans",niche:"in",nicheTxt:"Niche 10 000€",av:["Accès au capital-innovation diversifié","Gestion professionnelle","Éligibilité encadrée AMF"],inc:["Risque de perte en capital élevé","Frais de gestion importants (2-3%/an)","Liquidité quasi nulle","Performances historiques décevantes"],statut:"Actif"},
+  {nom:"FIP (Invest. Proximité)",avtype:"Réduction d'impôt",taux:"18% · 30% (Corse/DOM)",base:"Fonds de PME régionales",plafond:"12 000 € (24 000 € couple)",duree:"7 à 10 ans",niche:"in",nicheTxt:"Niche 10 000€",av:["Investissement local/régional","FIP Corse à 30%","Gestion déléguée"],inc:["Mêmes risques que FCPI","Concentration géographique","Liquidité nulle"],statut:"Actif"},
+  {nom:"Loi Malraux",avtype:"Réduction d'impôt",taux:"22% (ZPPAUP) · 30% (secteur sauvegardé)",base:"Montant des travaux de restauration",plafond:"400 000 € sur 4 ans",duree:"Location nue 3 ans après travaux",niche:"out",nicheTxt:"HORS niche 10 000€",av:["Taux élevé hors plafond global","Patrimoine historique tangible","Mutualisable via SCPI Malraux"],inc:["Travaux lourds et complexes","Secteurs géographiques limités","Vacance locative possible","Investissement initial élevé (>300K€)"],statut:"Actif"},
+  {nom:"Monument Historique",avtype:"Déduction du revenu global",taux:"100% des charges et travaux",base:"Charges foncières + restauration",plafond:"Illimité",duree:"Recommandé 15 ans +",niche:"out",nicheTxt:"HORS niche (illimité)",av:["Avantage fiscal illimité sur les charges","Transmission patrimoniale exceptionnelle","Valeur historique"],inc:["Investissement colossal (500K€+)","Gestion très contraignante","Agrément ABF obligatoire","Ouverture au public parfois exigée"],statut:"Actif"},
+  {nom:"Déficit Foncier",avtype:"Déduction du revenu global",taux:"100% des travaux déductibles",base:"Travaux d'amélioration / réparation",plafond:"10 750 €/an (21 400€ si passoire DPE)",duree:"3 ans de location",niche:"out",nicheTxt:"HORS niche 10 000€",av:["Hors plafonnement des niches","Report excédent 10 ans","Double avantage : bien + fiscalité","Accessible à budget modéré"],inc:["Nécessite des revenus fonciers","Plafond relativement bas","Risque de vacance locative","Travaux à engager"],statut:"Actif"},
+  {nom:"Loi Denormandie",avtype:"Réduction d'impôt",taux:"12% (6a) · 18% (9a) · 21% (12a)",base:"Prix + travaux (≥ 25% du coût total)",plafond:"300 000 € (+ 5 500 €/m²)",duree:"6, 9 ou 12 ans de location",niche:"in",nicheTxt:"Niche 10 000€",av:["Rénovation des centres-villes","Cumulable avec déficit foncier","Éligible SCPI Denormandie"],inc:["Zones éligibles limitées (>245 villes)","Contraintes loyers et ressources","Pinel classique terminé fin 2024"],statut:"Actif · jusqu'en 2027"},
+  {nom:"GFF / GFV (Forêts / Vignes)",avtype:"Réduction d'impôt",taux:"18%",base:"Capital en groupements fonciers",plafond:"50 000 € (100 000 € couple)",duree:"7 à 8 ans de conservation",niche:"in",nicheTxt:"Niche 10 000€",av:["Actif tangible (forêt, vignes)","Transmission IFI avantageuse (75%)","Revenu locatif modeste mais réel"],inc:["Très faible liquidité","Risques naturels (incendies, tempêtes)","Rendement financier très faible","Gestion contraignante"],statut:"Actif"},
+  {nom:"Girardin Industriel (DOM-TOM)",avtype:"Réduction d'impôt",taux:"110 – 120 % (> capital investi)",base:"Outil industriel en Outre-mer",plafond:"Variable (quota opérateur)",duree:"5 ans d'engagement",niche:"out",nicheTxt:"HORS niche (one-shot)",av:["Retour > 100% du capital investi","Effet immédiat (année N+1)","Soutien au développement ultramarin"],inc:["Risque de requalification fiscale","Dépendance à la fiabilité de l'opérateur","Capital définitivement perdu","Responsabilité solidaire possible"],statut:"Actif · risque élevé"},
+  {nom:"PEA-PME",avtype:"Exonération IR après 5 ans",taux:"Exonéré IR (PS 17,2% dus)",base:"Actions / OPCVM PME-ETI cotées",plafond:"225 000 € (cumulable PEA)",duree:"5 ans",niche:"out",nicheTxt:"HORS niche (enveloppe)",av:["Exonération IR totale après 5 ans","Cumulable avec le PEA classique","Soutien aux PME cotées"],inc:["Actions PME : risque plus élevé","Univers moins liquide","Marchés moins profonds"],statut:"Actif"},
+  {nom:"Épargne salariale (PEE / PERCOL)",avtype:"Exonération IR + abondement",taux:"100% exonéré sur abondement",base:"Versements + abondement employeur",plafond:"Abondement max 3 290 €/an (PEE)",duree:"5 ans (PEE) · retraite (PERCOL)",niche:"out",nicheTxt:"HORS niche",av:["Abondement employeur (gratuit)","Exonération IR + PS sur abondement","Participation/intéressement exonérés","6 cas de déblocage anticipé"],inc:["Capital bloqué 5 ans (PEE)","Dépend de l'employeur","Fonds parfois limités"],statut:"Actif"},
+  {nom:"SCPI Fiscale (Malraux / Denorm.)",avtype:"Selon loi sous-jacente",taux:"Selon stratégie (22%, 30%, 21%…)",base:"Quote-part × taux de la loi",plafond:"Selon produit SCPI",duree:"Selon loi correspondante",niche:"in",nicheTxt:"Selon loi",av:["Ticket d'entrée modéré (5 000€+)","Gestion déléguée spécialisée","Mutualisation du risque locatif","Immobilier fiscal sans gestion"],inc:["Frais de souscription élevés (8-12%)","Moins de contrôle qu'en direct","Performance variable","Moins efficace qu'en direct"],statut:"Variable selon produit"}
+];
+
+// Sources
+const SOURCES = [
+  {grp:"Fiscalité générale",items:[
+    {org:"DGFiP",ty:"Barème officiel IR",ttl:"Barème progressif de l'impôt sur le revenu 2025 (revenus 2024)",url:"https://www.impots.gouv.fr/particulier/simulateurs",rel:"★★★★★"},
+    {org:"BOFIP",ty:"Instruction fiscale",ttl:"IR — base d'imposition, quotient familial et calcul de l'impôt",url:"https://bofip.impots.gouv.fr",rel:"★★★★★"},
+    {org:"Service-Public.fr",ty:"Guide officiel (DILA)",ttl:"Impôt sur le revenu : calcul, tranches, barème 2025",url:"https://www.service-public.fr/particuliers/vosdroits/F1419",rel:"★★★★★"},
+    {org:"Légifrance",ty:"Code Général des Impôts",ttl:"CGI : art. 163 quatervicies (PER), 199 unvicies (SOFICA), 217 undecies (Girardin)",url:"https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006069577",rel:"★★★★★"}
+  ]},
+  {grp:"Placements financiers",items:[
+    {org:"Banque de France",ty:"Publication officielle",ttl:"Taux d'intérêt des livrets réglementés — statistiques mensuelles",url:"https://www.banque-france.fr",rel:"★★★★★"},
+    {org:"AMF",ty:"Guide investisseur",ttl:"Les placements collectifs (OPCVM, ETF, FCPI, FIP) — guide épargnant",url:"https://www.amf-france.org/fr/espace-epargnants",rel:"★★★★★"},
+    {org:"FGDR",ty:"Information officielle",ttl:"Protection des dépôts bancaires : 100 000€ par banque et par personne",url:"https://www.garantiedesdepots.fr",rel:"★★★★★"},
+    {org:"Ministère de l'Économie",ty:"Réglementation",ttl:"PEA : conditions, plafonds et régime fiscal (150 000€ + PEA-PME 225 000€)",url:"https://www.economie.gouv.fr/particuliers/plan-epargne-actions-pea",rel:"★★★★★"}
+  ]},
+  {grp:"Produits de défiscalisation",items:[
+    {org:"CNC",ty:"Rapport SOFICA",ttl:"SOFICA : agrément, quotas annuels, réductions d'impôt (art. 199 unvicies CGI)",url:"https://www.cnc.fr",rel:"★★★★★"},
+    {org:"BOFIP — art. 199 unvicies",ty:"Instruction fiscale",ttl:"Réduction d'impôt des souscripteurs de parts de SOFICA",url:"https://bofip.impots.gouv.fr",rel:"★★★★★"},
+    {org:"Ministère de la Culture",ty:"Communiqué officiel",ttl:"Agrément des SOFICA 2024-2025 — liste et quotas CNC",url:"https://www.culture.gouv.fr",rel:"★★★★★"},
+    {org:"FFA",ty:"Rapport annuel 2024",ttl:"Assurance vie : encours, taux des fonds euros, collecte nette",url:"https://www.franceassureurs.fr",rel:"★★★★"},
+    {org:"Ministère du Logement",ty:"Texte réglementaire",ttl:"Loi Malraux : zones éligibles, travaux, taux (art. 199 tervicies CGI)",url:"https://www.cohesion-territoires.gouv.fr",rel:"★★★★★"},
+    {org:"DHUP / Légifrance",ty:"Instruction",ttl:"Déficit foncier : plafond 10 750€ (21 400€ passoires) — art. 156 CGI",url:"https://www.legifrance.gouv.fr",rel:"★★★★★"},
+    {org:"BOFIP — Girardin",ty:"Instruction fiscale",ttl:"Réductions d'impôt pour investissements outre-mer (art. 217 undecies CGI)",url:"https://bofip.impots.gouv.fr",rel:"★★★★★"}
+  ]},
+  {grp:"Presse & analyses spécialisées",items:[
+    {org:"Capital",ty:"Article",ttl:"SOFICA : investir dans le cinéma pour défiscaliser — jusqu'à 48% de réduction (2023)",url:"https://www.capital.fr",rel:"★★★"},
+    {org:"Le Revenu",ty:"Analyse",ttl:"PER individuel : la défiscalisation retraite expliquée — calculs TMI et plafonds",url:"https://www.lerevenu.com",rel:"★★★★"},
+    {org:"Les Échos",ty:"Analyse",ttl:"Loi Malraux : profiter de la réduction d'impôt sans plafonnement",url:"https://www.lesechos.fr",rel:"★★★★"},
+    {org:"MoneyVox",ty:"Comparateurs",ttl:"Comparateurs de placements, simulateurs fiscaux, taux de livrets actualisés",url:"https://www.moneyvox.fr",rel:"★★★"},
+    {org:"INSEE",ty:"Statistiques",ttl:"Inflation France 2024-2025 (IPC) — impact réel sur les rendements nets",url:"https://www.insee.fr",rel:"★★★★★"}
+  ]}
+];
+
+/* ═══════════════ CALCUL IR ═══════════════ */
+function impotParPart(revenuParPart){
+  let impot=0;
+  for(const t of TRANCHES){
+    if(revenuParPart>t.min){
+      impot += (Math.min(revenuParPart,t.max)-t.min)*t.taux;
+    }
+  }
+  return impot;
+}
+function calculIR(revenu,parts){
+  if(revenu<=0) return 0;
+  return Math.round(impotParPart(revenu/parts)*parts);
+}
+function tmi(revenu,parts){
+  if(revenu<=0) return "0 %";
+  const rpp=revenu/parts;
+  if(rpp<=11497) return "0 %";
+  if(rpp<=29315) return "11 %";
+  if(rpp<=83823) return "30 %";
+  if(rpp<=180294) return "41 %";
+  return "45 %";
+}
+function tmiTaux(revenu,parts){
+  const rpp=revenu/parts;
+  if(rpp<=11497) return 0;
+  if(rpp<=29315) return 0.11;
+  if(rpp<=83823) return 0.30;
+  if(rpp<=180294) return 0.41;
+  return 0.45;
+}
+const fmtE = n => Math.round(n).toLocaleString('fr-FR')+" €";
+const fmtP = n => (n*100).toFixed(1).replace('.',',')+" %";
+
+/* ═══════════════ ÉTAT ═══════════════ */
+let state = {revenu:80000, parts:1, montant:10000, produitIdx:0};
+
+function runSim(){
+  const p = PRODUITS[state.produitIdx];
+  const assiette = p.plafond>0 ? Math.min(state.montant, p.plafond) : state.montant;
+  const irAvant = calculIR(state.revenu, state.parts);
+  let irApres, economie;
+  if(p.type==="D"){
+    irApres = calculIR(Math.max(0,state.revenu-assiette), state.parts);
+    economie = irAvant - irApres;
+  } else {
+    economie = assiette * p.taux;
+    irApres = Math.max(0, irAvant - economie);
+  }
+  const coutNet = state.montant - economie;
+  const effort = state.montant>0 ? coutNet/state.montant : 0;
+  const effic = state.montant>0 ? economie/state.montant : 0;
+
+  // attractivité
+  let stars, txt;
+  if(effic>=0.45){stars="★★★★★";txt="Très attractif — taux d'effort < 55%";}
+  else if(effic>=0.30){stars="★★★★";txt="Attractif — taux d'effort 55-70%";}
+  else if(effic>=0.18){stars="★★★";txt="Modéré — taux d'effort 70-82%";}
+  else if(effic>=0.10){stars="★★";txt="Faible — vérifier la cohérence";}
+  else {stars="★";txt="Très faible — revoir le scénario";}
+
+  const plafonne = p.plafond>0 && state.montant>p.plafond && p.plafond<9000000;
+  const maxBar = Math.max(irAvant, state.montant, 1);
+
+  const html = `
+    <div class="result-hero">
+      <div class="big-label">Économie d'impôt estimée</div>
+      <div class="big-val">${fmtE(economie)}</div>
+      <div class="big-sub">${p.type==="D"?"Par déduction du revenu imposable":"Par réduction d'impôt directe"} · ${PRODUITS[state.produitIdx].nom}</div>
+    </div>
+
+    <div class="res-grid">
+      <div class="res-cell before">
+        <div class="rl">Impôt AVANT</div>
+        <div class="rv">${fmtE(irAvant)}</div>
+        <div class="rnote">Barème 2025 · ${state.parts} part${state.parts>1?'s':''} · TMI ${tmi(state.revenu,state.parts)}</div>
+      </div>
+      <div class="res-cell after">
+        <div class="rl">Impôt APRÈS</div>
+        <div class="rv">${fmtE(irApres)}</div>
+        <div class="rnote">Après application du dispositif</div>
+      </div>
+      <div class="res-cell">
+        <div class="rl">Coût net réel</div>
+        <div class="rv">${fmtE(coutNet)}</div>
+        <div class="rnote">Capital décaissé − économie</div>
+      </div>
+      <div class="res-cell">
+        <div class="rl">Efficacité fiscale</div>
+        <div class="rv">${fmtP(effic)}</div>
+        <div class="rnote">Économie / capital investi</div>
+      </div>
+    </div>
+
+    <div class="bar-compare">
+      <h4>Capital investi vs économie d'impôt</h4>
+      <div class="bar-row">
+        <div class="bl">Montant investi</div>
+        <div class="bar-track"><div class="bar-fill ir" style="width:${Math.min(100,state.montant/maxBar*100)}%"><span>${fmtE(state.montant)}</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bl">Coût net réel</div>
+        <div class="bar-track"><div class="bar-fill cost" style="width:${Math.max(2,Math.min(100,coutNet/maxBar*100))}%"><span>${fmtE(coutNet)}</span></div></div>
+      </div>
+    </div>
+
+    <div class="attractivite">
+      <span class="stars">${stars}</span>
+      <span class="txt">${txt}<br><span style="color:rgba(255,255,255,0.55);font-size:0.78rem">Assiette défiscalisable : ${fmtE(assiette)}${p.plafond<9000000?` · plafond ${fmtE(p.plafond)}`:' · plafond illimité'}</span></span>
+    </div>
+
+    <div class="plafond-warn ${plafonne?'show':''}">⚠️ Montant investi (${fmtE(state.montant)}) supérieur au plafond légal (${fmtE(p.plafond)}). Le calcul retient l'assiette plafonnée.</div>
+  `;
+  document.getElementById('results').innerHTML = html;
+}
+
+/* ═══════════════ RENDU ONGLETS ═══════════════ */
+function badgeRisque(r){
+  return `<span class="badge outline">${r}</span>`;
+}
+function renderPlacements(){
+  document.getElementById('placementsGrid').innerHTML = PLACEMENTS.map(p=>`
+    <div class="card">
+      <div class="card-head">
+        <div><div class="name">${p.nom}</div><div class="cat">${p.cat}</div></div>
+        ${badgeRisque("Risque "+p.risque)}
+      </div>
+      <div class="card-body">
+        <div class="metrics">
+          <div class="metric"><div class="ml">Rendement net</div><div class="mv rdt">${p.rdt}</div></div>
+          <div class="metric"><div class="ml">Plafond</div><div class="mv">${p.plafond}</div></div>
+          <div class="metric"><div class="ml">Liquidité</div><div class="mv">${p.liq}</div></div>
+          <div class="metric"><div class="ml">Garantie capital</div><div class="mv">${p.gar}</div></div>
+        </div>
+        <div class="metric" style="margin-bottom:16px"><div class="ml">Régime fiscal</div><div class="mv" style="font-size:0.84rem;font-weight:400">${p.fiscal}</div></div>
+        <div class="av-inc">
+          <div class="av"><h4>Avantages</h4><ul>${p.av.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+          <div class="inc"><h4>Inconvénients</h4><ul>${p.inc.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function renderDefisc(){
+  document.getElementById('defiscGrid').innerHTML = DEFISC.map(d=>`
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="name">${d.nom}</div>
+          <div class="cat">${d.avtype}</div>
+          <span class="niche-flag ${d.niche}">${d.nicheTxt}</span>
+        </div>
+        <span class="badge gold">${d.taux}</span>
+      </div>
+      <div class="card-body">
+        <div class="metrics">
+          <div class="metric"><div class="ml">Plafond annuel</div><div class="mv">${d.plafond}</div></div>
+          <div class="metric"><div class="ml">Engagement</div><div class="mv" style="font-size:0.8rem;font-weight:400">${d.duree}</div></div>
+          <div class="metric"><div class="ml">Statut 2025</div><div class="mv" style="font-size:0.8rem;font-weight:400">${d.statut}</div></div>
+        </div>
+        <div class="metric" style="margin-bottom:16px"><div class="ml">Base de calcul</div><div class="mv" style="font-size:0.82rem;font-weight:400">${d.base}</div></div>
+        <div class="av-inc">
+          <div class="av"><h4>Avantages</h4><ul>${d.av.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+          <div class="inc"><h4>Inconvénients / Risques</h4><ul>${d.inc.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function renderSources(){
+  document.getElementById('sourcesList').innerHTML = SOURCES.map(g=>`
+    <div class="src-group">
+      <div class="gh">${g.grp}</div>
+      ${g.items.map(i=>`
+        <div class="src-item">
+          <div class="org">${i.org}<span class="ty">${i.ty}</span></div>
+          <div class="ttl"><a href="${i.url}" target="_blank" rel="noopener">${i.ttl}</a></div>
+          <div class="rel">${i.rel}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+/* ═══════════════ INIT UI ═══════════════ */
+function initSelect(){
+  document.getElementById('produit').innerHTML = PRODUITS.map((p,i)=>`<option value="${i}">${p.nom}</option>`).join('');
+}
+function bind(){
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById('panel-'+b.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+  document.getElementById('revenu').addEventListener('input',e=>{state.revenu=+e.target.value||0;runSim();});
+  document.getElementById('montant').addEventListener('input',e=>{state.montant=+e.target.value||0;runSim();});
+  document.getElementById('produit').addEventListener('change',e=>{state.produitIdx=+e.target.value;runSim();});
+  document.querySelectorAll('.part-opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      document.querySelectorAll('.part-opt').forEach(x=>x.classList.remove('sel'));
+      o.classList.add('sel');state.parts=+o.dataset.parts;runSim();
+    });
+  });
+  document.getElementById('exportBtn').addEventListener('click',exportXLSX);
+}
+function toast(msg){
+  document.getElementById('toastMsg').textContent=msg;
+  const t=document.getElementById('toast');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ═══════════════ EXPORT XLSX (SheetJS) ═══════════════ */
+function exportXLSX(){
+  const wb = XLSX.utils.book_new();
+  const NAVY="0F1F3D", GOLD="C8A96E", NAVYLT="243E7A", CREAM="F5F0E8", WHITE="FFFFFF",
+        LGREEN="E8F2EC", LRED="F7EAEA", LWARN="FBF3E3", GREY="EDEAE3";
+
+  const bNavy = {fill:{fgColor:{rgb:NAVY}},font:{color:{rgb:WHITE},bold:true,name:"Arial",sz:10},alignment:{horizontal:"center",vertical:"center",wrapText:true}};
+  const bGold = {fill:{fgColor:{rgb:GOLD}},font:{color:{rgb:NAVY},bold:true,name:"Arial",sz:10},alignment:{horizontal:"left",vertical:"center"}};
+  const bHdr  = {fill:{fgColor:{rgb:NAVYLT}},font:{color:{rgb:WHITE},bold:true,name:"Arial",sz:9},alignment:{horizontal:"center",vertical:"center",wrapText:true}};
+  const cell  = (extra={})=>({font:{name:"Arial",sz:9},alignment:{vertical:"center",wrapText:true},...extra});
+
+  function applyStyles(ws, styleMap){
+    for(const ref in styleMap){ if(ws[ref]) ws[ref].s = styleMap[ref]; }
+  }
+
+  /* ── Onglet 1 : Accueil ── */
+  const a = [
+    ["GUIDE PLACEMENTS & DÉFISCALISATION"],
+    ["Synthèse des produits d'épargne et dispositifs fiscaux — France 2025"],
+    ["Barème IR 2025 (revenus 2024) · Sources officielles · Export Advertuo"],
+    [],
+    ["CHIFFRES CLÉS 2025"],
+    ["Plafond Livret A","22 950 €","","Plafond PER (max)","37 094 €"],
+    ["Plafond PEA","150 000 €","","SOFICA réduction max","48 %"],
+    ["Malraux réduction max","30 %","","TMI maximum","45 %"],
+    ["PFU (flat tax)","30 %","","Prélèvements sociaux","17,2 %"],
+    [],
+    ["NAVIGATION"],
+    ["Onglet","Contenu"],
+    ["Placements","10 véhicules d'épargne comparés sur rendement, fiscalité, liquidité"],
+    ["Défiscalisation","14 dispositifs : PER, SOFICA, Malraux, Madelin, Girardin…"],
+    ["Simulation IR","Simulateur : impôt avant/après, économie, coût net réel"],
+    ["Sources","23 références officielles avec liens"],
+    [],
+    ["AVERTISSEMENT"],
+    ["Document informatif et pédagogique. Ne constitue pas un conseil en investissement, fiscal ou juridique. Taux et plafonds susceptibles d'évoluer. Consultez un conseiller agréé. Sources : impots.gouv.fr, BOFIP, service-public.fr, AMF, CNC (mai 2025)."]
+  ];
+  const wsA = XLSX.utils.aoa_to_sheet(a);
+  wsA['!cols']=[{wch:26},{wch:16},{wch:3},{wch:24},{wch:16}];
+  wsA['!merges']=[
+    {s:{r:0,c:0},e:{r:0,c:4}},{s:{r:1,c:0},e:{r:1,c:4}},{s:{r:2,c:0},e:{r:2,c:4}},
+    {s:{r:4,c:0},e:{r:4,c:4}},{s:{r:10,c:0},e:{r:10,c:4}},
+    {s:{r:11,c:1},e:{r:11,c:4}},
+    {s:{r:12,c:1},e:{r:12,c:4}},{s:{r:13,c:1},e:{r:13,c:4}},{s:{r:14,c:1},e:{r:14,c:4}},{s:{r:15,c:1},e:{r:15,c:4}},
+    {s:{r:17,c:0},e:{r:17,c:4}},{s:{r:18,c:0},e:{r:18,c:4}}
+  ];
+  const sA={};
+  sA['A1']={fill:{fgColor:{rgb:NAVY}},font:{color:{rgb:WHITE},bold:true,name:"Arial",sz:16},alignment:{horizontal:"center",vertical:"center"}};
+  sA['A2']={fill:{fgColor:{rgb:NAVYLT}},font:{color:{rgb:GOLD},bold:true,name:"Arial",sz:11},alignment:{horizontal:"center"}};
+  sA['A3']={fill:{fgColor:{rgb:"3A4A6B"}},font:{color:{rgb:WHITE},italic:true,name:"Arial",sz:9},alignment:{horizontal:"center"}};
+  sA['A5']=bGold; sA['A11']=bNavy; sA['A18']={fill:{fgColor:{rgb:"9A3B3B"}},font:{color:{rgb:WHITE},bold:true,name:"Arial",sz:10}};
+  sA['A19']=cell({fill:{fgColor:{rgb:LWARN}},font:{name:"Arial",sz:8,italic:true}});
+  [6,7,8,9].forEach(r=>{['A','D'].forEach(c=>{if(sA[c+(r)]===undefined)sA[c+(r)]=cell({font:{name:"Arial",sz:9,bold:true},fill:{fgColor:{rgb:CREAM}}});});['B','E'].forEach(c=>{sA[c+(r)]=cell({font:{name:"Arial",sz:9,color:{rgb:NAVY},bold:true},alignment:{horizontal:"right"}});});});
+  sA['A12']=bHdr; sA['B12']=bHdr;
+  [13,14,15,16].forEach(r=>{sA['A'+r]=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:NAVY}}});sA['B'+r]=cell();});
+  applyStyles(wsA,sA);
+  wsA['!rows']=[{hpt:34},{hpt:22},{hpt:18},{},{hpt:20},{hpt:20},{hpt:20},{hpt:20},{hpt:20},{},{hpt:20},{hpt:18},{hpt:22},{hpt:22},{hpt:22},{hpt:22},{},{hpt:18},{hpt:50}];
+  XLSX.utils.book_append_sheet(wb,wsA,"Accueil");
+
+  /* ── Onglet 2 : Placements ── */
+  const ph=["Produit","Catégorie","Horizon","Risque","Rendement net","Régime fiscal","Avantages","Inconvénients","Plafond","Liquidité","Garantie"];
+  const pRows=[ph, ...PLACEMENTS.map(p=>[p.nom,p.cat,p.horizon,p.risque,p.rdt,p.fiscal,p.av.join(" · "),p.inc.join(" · "),p.plafond,p.liq,p.gar])];
+  const wsP=XLSX.utils.aoa_to_sheet(pRows);
+  wsP['!cols']=[{wch:22},{wch:18},{wch:16},{wch:12},{wch:20},{wch:30},{wch:34},{wch:34},{wch:14},{wch:16},{wch:14}];
+  const sP={};
+  ph.forEach((_,c)=>{sP[XLSX.utils.encode_cell({r:0,c})]=bHdr;});
+  PLACEMENTS.forEach((p,i)=>{const r=i+1;for(let c=0;c<11;c++){const ref=XLSX.utils.encode_cell({r,c});let st=cell();if(c===0)st=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:NAVY}}});if(c===4)st=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:"2F6B4F"}},fill:{fgColor:{rgb:LGREEN}}});if(c===6)st=cell({font:{name:"Arial",sz:8,color:{rgb:"2F6B4F"}},fill:{fgColor:{rgb:LGREEN}}});if(c===7)st=cell({font:{name:"Arial",sz:8,color:{rgb:"9A3B3B"}},fill:{fgColor:{rgb:LRED}}});if([1,2,3,5,8,9,10].includes(c)&&i%2===0)st.fill={fgColor:{rgb:GREY}};sP[ref]=st;}});
+  applyStyles(wsP,sP);
+  wsP['!rows']=[{hpt:32},...PLACEMENTS.map(()=>({hpt:60}))];
+  if(!wsP['!freeze'])wsP['!freeze']={xSplit:0,ySplit:1};
+  wsP['!autofilter']={ref:"A1:K1"};
+  XLSX.utils.book_append_sheet(wb,wsP,"Placements");
+
+  /* ── Onglet 3 : Défiscalisation ── */
+  const dh=["Dispositif","Type d'avantage","Taux réduction","Base de calcul","Plafond annuel","Engagement","Niche 10 000€ ?","Avantages","Inconvénients / Risques","Statut 2025"];
+  const dRows=[dh, ...DEFISC.map(d=>[d.nom,d.avtype,d.taux,d.base,d.plafond,d.duree,d.nicheTxt,d.av.join(" · "),d.inc.join(" · "),d.statut])];
+  const wsD=XLSX.utils.aoa_to_sheet(dRows);
+  wsD['!cols']=[{wch:24},{wch:18},{wch:18},{wch:24},{wch:18},{wch:18},{wch:16},{wch:34},{wch:34},{wch:16}];
+  const sD={};
+  dh.forEach((_,c)=>{sD[XLSX.utils.encode_cell({r:0,c})]=bHdr;});
+  DEFISC.forEach((d,i)=>{const r=i+1;for(let c=0;c<10;c++){const ref=XLSX.utils.encode_cell({r,c});let st=cell();if(c===0)st=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:NAVY}}});if(c===2)st=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:"8B6914"}},fill:{fgColor:{rgb:LWARN}},alignment:{horizontal:"center",vertical:"center",wrapText:true}});if(c===6){const isOut=d.niche==="out";st=cell({font:{name:"Arial",sz:8,bold:true,color:{rgb:isOut?"2F6B4F":"8B6914"}},fill:{fgColor:{rgb:isOut?LGREEN:LWARN}},alignment:{horizontal:"center",vertical:"center",wrapText:true}});}if(c===7)st=cell({font:{name:"Arial",sz:8,color:{rgb:"2F6B4F"}},fill:{fgColor:{rgb:LGREEN}}});if(c===8)st=cell({font:{name:"Arial",sz:8,color:{rgb:"9A3B3B"}},fill:{fgColor:{rgb:LRED}}});if([1,3,4,5,9].includes(c)&&i%2===0)st.fill={fgColor:{rgb:GREY}};sD[ref]=st;}});
+  applyStyles(wsD,sD);
+  wsD['!rows']=[{hpt:32},...DEFISC.map(()=>({hpt:62}))];
+  wsD['!freeze']={xSplit:0,ySplit:1};
+  wsD['!autofilter']={ref:"A1:J1"};
+  XLSX.utils.book_append_sheet(wb,wsD,"Défiscalisation");
+
+  /* ── Onglet 4 : Simulation IR (avec FORMULES liées) ── */
+  // Table de référence produits en bas (lignes 30+), VLOOKUP dessus
+  const simAoa=[];
+  simAoa.push(["SIMULATEUR D'IMPACT FISCAL"]);                 //1
+  simAoa.push(["Barème IR 2025 · Modifier les cellules bleues (B4, B5, B6, B7)"]); //2
+  simAoa.push([]);                                             //3
+  simAoa.push(["Revenu net imposable",state.revenu,"€"]);      //4  B4
+  simAoa.push(["Nombre de parts",state.parts,"parts"]);        //5  B5
+  simAoa.push(["Montant à investir",state.montant,"€"]);       //6  B6
+  simAoa.push(["Produit sélectionné",PRODUITS[state.produitIdx].nom,""]); //7 B7
+  simAoa.push([]);                                             //8
+  simAoa.push(["RÉSULTATS (calculs automatiques)"]);           //9
+  simAoa.push(["Type d'avantage (D/R)",{f:'VLOOKUP(B7,$A$30:$D$45,2,FALSE)'}]);           //10 B10
+  simAoa.push(["Taux de réduction",{f:'VLOOKUP(B7,$A$30:$D$45,3,FALSE)'}]);               //11 B11
+  simAoa.push(["Plafond du dispositif",{f:'VLOOKUP(B7,$A$30:$D$45,4,FALSE)'}]);           //12 B12
+  simAoa.push(["Assiette défiscalisable",{f:'IF(B12>0,MIN(B6,B12),B6)'}]);                //13 B13
+  // IR avant (barème sur B4/B5)
+  const irA = 'B5*(MAX(0,MIN(B4/B5,29315)-11497)*0.11+MAX(0,MIN(B4/B5,83823)-29315)*0.3+MAX(0,MIN(B4/B5,180294)-83823)*0.41+MAX(0,B4/B5-180294)*0.45)';
+  simAoa.push(["Impôt sur le revenu AVANT",{f:'ROUND('+irA+',0)'}]);                      //14 B14
+  // IR après pour type D : barème sur (B4 - assiette si D)
+  const revD='MAX(0,B4-IF(B10="D",B13,0))';
+  const irAp = 'B5*(MAX(0,MIN('+revD+'/B5,29315)-11497)*0.11+MAX(0,MIN('+revD+'/B5,83823)-29315)*0.3+MAX(0,MIN('+revD+'/B5,180294)-83823)*0.41+MAX(0,'+revD+'/B5-180294)*0.45)';
+  simAoa.push(["(IR recalculé si déduction)",{f:'ROUND('+irAp+',0)'}]);                   //15 B15
+  simAoa.push(["Impôt sur le revenu APRÈS",{f:'IF(B10="D",B15,MAX(0,B14-B13*B11))'}]);    //16 B16
+  simAoa.push(["Économie d'impôt estimée",{f:'B14-B16'}]);                                //17 B17
+  simAoa.push(["Coût net réel de l'investissement",{f:'B6-B17'}]);                        //18 B18
+  simAoa.push(["Taux d'effort effectif",{f:'IFERROR(B18/B6,0)'}]);                        //19 B19
+  simAoa.push(["Efficacité fiscale (éco/capital)",{f:'IFERROR(B17/B6,0)'}]);              //20 B20
+  simAoa.push(["TMI",{f:'IF(B4/B5<=11497,"0%",IF(B4/B5<=29315,"11%",IF(B4/B5<=83823,"30%",IF(B4/B5<=180294,"41%","45%"))))'}]); //21 B21
+  simAoa.push([]);                                             //22
+  simAoa.push(["BARÈME IR 2025 (par part)"]);                  //23
+  simAoa.push(["Tranche","Revenu / part","Taux"]);             //24
+  simAoa.push(["0 – 11 497 €","","0 %"]);                       //25
+  simAoa.push(["11 497 – 29 315 €","","11 %"]);                 //26
+  simAoa.push(["29 315 – 83 823 €","","30 %"]);                 //27
+  simAoa.push(["83 823 – 180 294 €","","41 %"]);                //28
+  simAoa.push(["> 180 294 €","","45 %"]);                       //29
+  // Table réf produits ligne 30-45
+  PRODUITS.forEach(p=>simAoa.push([p.nom,p.type,p.taux,p.plafond]));
+
+  const wsS=XLSX.utils.aoa_to_sheet(simAoa);
+  wsS['!cols']=[{wch:34},{wch:26},{wch:10},{wch:14}];
+  wsS['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:1,c:0},e:{r:1,c:3}},{s:{r:8,c:0},e:{r:8,c:3}},{s:{r:22,c:0},e:{r:22,c:3}}];
+  // Number formats
+  const euroFmt='#,##0 "€"';
+  ['B4','B6','B12','B13','B14','B15','B16','B17','B18'].forEach(r=>{if(wsS[r])wsS[r].z=euroFmt;});
+  ['B11','B19','B20'].forEach(r=>{if(wsS[r])wsS[r].z='0.0%';});
+  // Styles
+  const sS={};
+  sS['A1']={fill:{fgColor:{rgb:NAVY}},font:{color:{rgb:WHITE},bold:true,name:"Arial",sz:14},alignment:{horizontal:"center",vertical:"center"}};
+  sS['A2']={fill:{fgColor:{rgb:NAVYLT}},font:{color:{rgb:GOLD},italic:true,name:"Arial",sz:9},alignment:{horizontal:"center"}};
+  sS['A9']=bGold; sS['A23']=bGold;
+  // input cells (blue on yellow)
+  ['B4','B5','B6','B7'].forEach(r=>{sS[r]={font:{name:"Arial",sz:10,bold:true,color:{rgb:"0070C0"}},fill:{fgColor:{rgb:"FFFACC"}},alignment:{horizontal:"right",vertical:"center",wrapText:true}};});
+  sS['B7'].alignment={horizontal:"left",vertical:"center",wrapText:true};
+  // input labels
+  [4,5,6,7].forEach(r=>{sS['A'+r]=cell({font:{name:"Arial",sz:9,bold:true},fill:{fgColor:{rgb:"DDEEFF"}}});sS['C'+r]=cell({font:{name:"Arial",sz:8,color:{rgb:"6B7A9A"}}});});
+  // result cells
+  [10,11,12,13,14,15,16,17,18,19,20,21].forEach(r=>{
+    const hl=[17,18,20].includes(r);
+    sS['A'+r]=cell({font:{name:"Arial",sz:9,bold:hl,color:{rgb:hl?NAVY:"3A4A6B"}},fill:{fgColor:{rgb:hl?LGREEN:"F5F5F5"}}});
+    sS['B'+r]=cell({font:{name:"Arial",sz:10,bold:hl,color:{rgb:"000000"}},fill:{fgColor:{rgb:hl?LGREEN:"F5F5F5"}},alignment:{horizontal:"right",vertical:"center"}});
+  });
+  // barème rows
+  sS['A24']=bHdr;sS['B24']=bHdr;sS['C24']=bHdr;
+  const barColors=[LGREEN,"FFFACC",LWARN,LRED,"F2C4C4"];
+  [25,26,27,28,29].forEach((r,i)=>{['A','B','C'].forEach(c=>{sS[c+r]=cell({font:{name:"Arial",sz:9,bold:c==='C'},fill:{fgColor:{rgb:barColors[i]}},alignment:{horizontal:c==='A'?"left":"center",vertical:"center"}});});});
+  // hide reference table (white small font)
+  for(let r=30;r<=45;r++){['A','B','C','D'].forEach(c=>{sS[c+r]={font:{name:"Arial",sz:7,color:{rgb:"FFFFFF"}}};});}
+  applyStyles(wsS,sS);
+  wsS['!rows']=[{hpt:30},{hpt:18},{},{hpt:20},{hpt:20},{hpt:20},{hpt:26},{},{hpt:20},{hpt:18},{hpt:18},{hpt:18},{hpt:18},{hpt:18},{hpt:14},{hpt:18},{hpt:18},{hpt:18},{hpt:18},{hpt:18},{hpt:18},{},{hpt:20},{hpt:18},{hpt:16},{hpt:16},{hpt:16},{hpt:16},{hpt:16}];
+  XLSX.utils.book_append_sheet(wb,wsS,"Simulation IR");
+
+  /* ── Onglet 5 : Sources ── */
+  const srcAoa=[["BIBLIOGRAPHIE & SOURCES DE RÉFÉRENCE"],["Textes officiels · publications institutionnelles · analyses — mai 2025"],[],["Organisme","Type","Référence / Titre","URL","Fiabilité"]];
+  const srcStyleRows=[];
+  SOURCES.forEach(g=>{
+    srcAoa.push([g.grp.toUpperCase()]); srcStyleRows.push({r:srcAoa.length-1,type:"grp"});
+    g.items.forEach(i=>{srcAoa.push([i.org,i.ty,i.ttl,i.url,i.rel]);srcStyleRows.push({r:srcAoa.length-1,type:"item"});});
+  });
+  const wsSrc=XLSX.utils.aoa_to_sheet(srcAoa);
+  wsSrc['!cols']=[{wch:24},{wch:20},{wch:48},{wch:40},{wch:10}];
+  wsSrc['!merges']=[{s:{r:0,c:0},e:{r:0,c:4}},{s:{r:1,c:0},e:{r:1,c:4}}];
+  const sSrc={};
+  sSrc['A1']={fill:{fgColor:{rgb:NAVY}},font:{color:{rgb:WHITE},bold:true,name:"Arial",sz:14},alignment:{horizontal:"center",vertical:"center"}};
+  sSrc['A2']={fill:{fgColor:{rgb:NAVYLT}},font:{color:{rgb:GOLD},italic:true,name:"Arial",sz:9},alignment:{horizontal:"center"}};
+  ['A','B','C','D','E'].forEach(c=>{sSrc[c+'4']=bHdr;});
+  srcStyleRows.forEach(({r,type})=>{
+    const R=r+1;
+    if(type==="grp"){sSrc['A'+R]=bGold;wsSrc['!merges'].push({s:{r,c:0},e:{r,c:4}});}
+    else{
+      sSrc['A'+R]=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:NAVY}}});
+      sSrc['B'+R]=cell({font:{name:"Arial",sz:8,italic:true,color:{rgb:"6B7A9A"}}});
+      sSrc['C'+R]=cell({font:{name:"Arial",sz:8,color:{rgb:"3A4A6B"}}});
+      sSrc['D'+R]=cell({font:{name:"Arial",sz:8,color:{rgb:"0070C0"}}});
+      sSrc['E'+R]=cell({font:{name:"Arial",sz:9,bold:true,color:{rgb:GOLD}},alignment:{horizontal:"center"}});
+    }
+  });
+  applyStyles(wsSrc,sSrc);
+  wsSrc['!rows']=[{hpt:30},{hpt:18},{},{hpt:24},...srcStyleRows.map(x=>x.type==="grp"?{hpt:20}:{hpt:28})];
+  XLSX.utils.book_append_sheet(wb,wsSrc,"Sources");
+
+  XLSX.writeFile(wb,"Placements_Defiscalisation_FR_2025.xlsx",{compression:true});
+  toast("Fichier Excel téléchargé ✓");
+}
+
+/* ═══════════════ BOOT ═══════════════ */
+initSelect();
+renderPlacements();
+renderDefisc();
+renderSources();
+bind();
+runSim();
+</script>
+</body>
+</html>
